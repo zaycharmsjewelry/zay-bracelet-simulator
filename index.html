@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZAY Bracelet Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>ZAY Bracelet Simulator</h1>
+      <p>Choose your bracelet, then tap charms to build your design.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="designer">
+      <div class="toolbar">
+        <label>Bracelet
+          <select id="braceletSelect">
+            <option value="1">Bracelet 1</option>
+            <option value="2">Bracelet 2</option>
+          </select>
+        </label>
+        <button id="undoBtn" type="button">Undo</button>
+        <button id="clearBtn" type="button">Clear</button>
+        <button id="saveBtn" type="button" class="primary">Save image</button>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="braceletCanvas" width="900" height="700" aria-label="Bracelet preview"></canvas>
+        <p class="hint">Tip: drag a charm on the bracelet to reposition it.</p>
+      </div>
+      <div id="selectedList" class="selected-list"></div>
+    </section>
+
+    <section class="catalogue">
+      <div class="catalogue-head">
+        <h2>Choose charms</h2>
+        <input id="search" type="search" placeholder="Search charms…">
+        <select id="categoryFilter"><option value="all">All categories</option></select>
+      </div>
+      <div id="charmGrid" class="charm-grid"></div>
+    </section>
+  </main>
+
+  <script src="charms.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
