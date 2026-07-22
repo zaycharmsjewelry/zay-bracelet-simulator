@@ -23,14 +23,8 @@ const CATEGORY_RANGES = [
   },
 
   {
-    category: "Fruits",
+    category: "Fruits & Vegetables",
     start: 52,
-    end: 67
-  },
-
-  {
-    category: "Food & Vegetables",
-    start: 68,
     end: 80
   },
 
@@ -132,7 +126,7 @@ CATEGORY_RANGES.forEach(group => {
     // FRUITS
     // ------------------------------------
 
-    else if (group.category === "Fruits") {
+    else if (group.category === "Fruits & Vegetables") {
 
       charmName =
         `Fruit ${number - group.start + 1}`;
