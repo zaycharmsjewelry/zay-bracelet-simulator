@@ -1,1 +1,283 @@
-const CHARMS = [{"id": "c001", "name": "Vintage florals 1", "category": "Vintage florals", "src": "assets/charms/charm-001.png"}, {"id": "c002", "name": "Vintage florals 2", "category": "Vintage florals", "src": "assets/charms/charm-002.png"}, {"id": "c003", "name": "Vintage florals 3", "category": "Vintage florals", "src": "assets/charms/charm-003.png"}, {"id": "c004", "name": "Vintage florals 4", "category": "Vintage florals", "src": "assets/charms/charm-004.png"}, {"id": "c005", "name": "Vintage florals 5", "category": "Vintage florals", "src": "assets/charms/charm-005.png"}, {"id": "c006", "name": "Vintage florals 6", "category": "Vintage florals", "src": "assets/charms/charm-006.png"}, {"id": "c007", "name": "Vintage florals 7", "category": "Vintage florals", "src": "assets/charms/charm-007.png"}, {"id": "c008", "name": "Vintage florals 8", "category": "Vintage florals", "src": "assets/charms/charm-008.png"}, {"id": "c009", "name": "Vintage florals 9", "category": "Vintage florals", "src": "assets/charms/charm-009.png"}, {"id": "c010", "name": "Vintage florals 10", "category": "Vintage florals", "src": "assets/charms/charm-010.png"}, {"id": "c011", "name": "A", "category": "Letters", "src": "assets/charms/charm-011.png"}, {"id": "c012", "name": "B", "category": "Letters", "src": "assets/charms/charm-012.png"}, {"id": "c013", "name": "C", "category": "Letters", "src": "assets/charms/charm-013.png"}, {"id": "c014", "name": "D", "category": "Letters", "src": "assets/charms/charm-014.png"}, {"id": "c015", "name": "E", "category": "Letters", "src": "assets/charms/charm-015.png"}, {"id": "c016", "name": "F", "category": "Letters", "src": "assets/charms/charm-016.png"}, {"id": "c017", "name": "G", "category": "Letters", "src": "assets/charms/charm-017.png"}, {"id": "c018", "name": "H", "category": "Letters", "src": "assets/charms/charm-018.png"}, {"id": "c019", "name": "I", "category": "Letters", "src": "assets/charms/charm-019.png"}, {"id": "c020", "name": "J", "category": "Letters", "src": "assets/charms/charm-020.png"}, {"id": "c021", "name": "K", "category": "Letters", "src": "assets/charms/charm-021.png"}, {"id": "c022", "name": "L", "category": "Letters", "src": "assets/charms/charm-022.png"}, {"id": "c023", "name": "M", "category": "Letters", "src": "assets/charms/charm-023.png"}, {"id": "c024", "name": "N", "category": "Letters", "src": "assets/charms/charm-024.png"}, {"id": "c025", "name": "O", "category": "Letters", "src": "assets/charms/charm-025.png"}, {"id": "c026", "name": "P", "category": "Letters", "src": "assets/charms/charm-026.png"}, {"id": "c027", "name": "Q", "category": "Letters", "src": "assets/charms/charm-027.png"}, {"id": "c028", "name": "R", "category": "Letters", "src": "assets/charms/charm-028.png"}, {"id": "c029", "name": "S", "category": "Letters", "src": "assets/charms/charm-029.png"}, {"id": "c030", "name": "T", "category": "Letters", "src": "assets/charms/charm-030.png"}, {"id": "c031", "name": "U", "category": "Letters", "src": "assets/charms/charm-031.png"}, {"id": "c032", "name": "V", "category": "Letters", "src": "assets/charms/charm-032.png"}, {"id": "c033", "name": "W", "category": "Letters", "src": "assets/charms/charm-033.png"}, {"id": "c034", "name": "X", "category": "Letters", "src": "assets/charms/charm-034.png"}, {"id": "c035", "name": "Y", "category": "Letters", "src": "assets/charms/charm-035.png"}, {"id": "c036", "name": "Z", "category": "Letters", "src": "assets/charms/charm-036.png"}, {"id": "c037", "name": "Flower stems 37", "category": "Flower stems", "src": "assets/charms/charm-037.png"}, {"id": "c038", "name": "Flower stems 38", "category": "Flower stems", "src": "assets/charms/charm-038.png"}, {"id": "c039", "name": "Flower stems 39", "category": "Flower stems", "src": "assets/charms/charm-039.png"}, {"id": "c040", "name": "Flower stems 40", "category": "Flower stems", "src": "assets/charms/charm-040.png"}, {"id": "c041", "name": "Flower stems 41", "category": "Flower stems", "src": "assets/charms/charm-041.png"}, {"id": "c042", "name": "Flower stems 42", "category": "Flower stems", "src": "assets/charms/charm-042.png"}, {"id": "c043", "name": "Flower stems 43", "category": "Flower stems", "src": "assets/charms/charm-043.png"}, {"id": "c044", "name": "Flower stems 44", "category": "Flower stems", "src": "assets/charms/charm-044.png"}, {"id": "c045", "name": "Flower stems 45", "category": "Flower stems", "src": "assets/charms/charm-045.png"}, {"id": "c046", "name": "Flower stems 46", "category": "Flower stems", "src": "assets/charms/charm-046.png"}, {"id": "c047", "name": "Flower stems 47", "category": "Flower stems", "src": "assets/charms/charm-047.png"}, {"id": "c048", "name": "Flower stems 48", "category": "Flower stems", "src": "assets/charms/charm-048.png"}, {"id": "c049", "name": "Flower stems 49", "category": "Flower stems", "src": "assets/charms/charm-049.png"}, {"id": "c050", "name": "Flower stems 50", "category": "Flower stems", "src": "assets/charms/charm-050.png"}, {"id": "c051", "name": "Flower stems 51", "category": "Flower stems", "src": "assets/charms/charm-051.png"}, {"id": "c052", "name": "Flower stems 52", "category": "Flower stems", "src": "assets/charms/charm-052.png"}, {"id": "c053", "name": "Fruits 53", "category": "Fruits", "src": "assets/charms/charm-053.png"}, {"id": "c054", "name": "Fruits 54", "category": "Fruits", "src": "assets/charms/charm-054.png"}, {"id": "c055", "name": "Fruits 55", "category": "Fruits", "src": "assets/charms/charm-055.png"}, {"id": "c056", "name": "Fruits 56", "category": "Fruits", "src": "assets/charms/charm-056.png"}, {"id": "c057", "name": "Fruits 57", "category": "Fruits", "src": "assets/charms/charm-057.png"}, {"id": "c058", "name": "Fruits 58", "category": "Fruits", "src": "assets/charms/charm-058.png"}, {"id": "c059", "name": "Fruits 59", "category": "Fruits", "src": "assets/charms/charm-059.png"}, {"id": "c060", "name": "Fruits 60", "category": "Fruits", "src": "assets/charms/charm-060.png"}, {"id": "c061", "name": "Fruits 61", "category": "Fruits", "src": "assets/charms/charm-061.png"}, {"id": "c062", "name": "Fruits 62", "category": "Fruits", "src": "assets/charms/charm-062.png"}, {"id": "c063", "name": "Fruits 63", "category": "Fruits", "src": "assets/charms/charm-063.png"}, {"id": "c064", "name": "Fruits 64", "category": "Fruits", "src": "assets/charms/charm-064.png"}, {"id": "c065", "name": "Fruits 65", "category": "Fruits", "src": "assets/charms/charm-065.png"}, {"id": "c066", "name": "Fruits 66", "category": "Fruits", "src": "assets/charms/charm-066.png"}, {"id": "c067", "name": "Fruits 67", "category": "Fruits", "src": "assets/charms/charm-067.png"}, {"id": "c068", "name": "Fruits 68", "category": "Fruits", "src": "assets/charms/charm-068.png"}, {"id": "c069", "name": "Food & vegetables 69", "category": "Food & vegetables", "src": "assets/charms/charm-069.png"}, {"id": "c070", "name": "Food & vegetables 70", "category": "Food & vegetables", "src": "assets/charms/charm-070.png"}, {"id": "c071", "name": "Food & vegetables 71", "category": "Food & vegetables", "src": "assets/charms/charm-071.png"}, {"id": "c072", "name": "Food & vegetables 72", "category": "Food & vegetables", "src": "assets/charms/charm-072.png"}, {"id": "c073", "name": "Food & vegetables 73", "category": "Food & vegetables", "src": "assets/charms/charm-073.png"}, {"id": "c074", "name": "Food & vegetables 74", "category": "Food & vegetables", "src": "assets/charms/charm-074.png"}, {"id": "c075", "name": "Food & vegetables 75", "category": "Food & vegetables", "src": "assets/charms/charm-075.png"}, {"id": "c076", "name": "Food & vegetables 76", "category": "Food & vegetables", "src": "assets/charms/charm-076.png"}, {"id": "c077", "name": "Food & vegetables 77", "category": "Food & vegetables", "src": "assets/charms/charm-077.png"}, {"id": "c078", "name": "Food & vegetables 78", "category": "Food & vegetables", "src": "assets/charms/charm-078.png"}, {"id": "c079", "name": "Food & vegetables 79", "category": "Food & vegetables", "src": "assets/charms/charm-079.png"}, {"id": "c080", "name": "Food & vegetables 80", "category": "Food & vegetables", "src": "assets/charms/charm-080.png"}, {"id": "c081", "name": "Food & vegetables 81", "category": "Food & vegetables", "src": "assets/charms/charm-081.png"}, {"id": "c082", "name": "Food & vegetables 82", "category": "Food & vegetables", "src": "assets/charms/charm-082.png"}, {"id": "c083", "name": "Mini flowers 83", "category": "Mini flowers", "src": "assets/charms/charm-083.png"}, {"id": "c084", "name": "Mini flowers 84", "category": "Mini flowers", "src": "assets/charms/charm-084.png"}, {"id": "c085", "name": "Mini flowers 85", "category": "Mini flowers", "src": "assets/charms/charm-085.png"}, {"id": "c086", "name": "Mini flowers 86", "category": "Mini flowers", "src": "assets/charms/charm-086.png"}, {"id": "c087", "name": "Mini flowers 87", "category": "Mini flowers", "src": "assets/charms/charm-087.png"}, {"id": "c088", "name": "Mini flowers 88", "category": "Mini flowers", "src": "assets/charms/charm-088.png"}, {"id": "c089", "name": "Mini flowers 89", "category": "Mini flowers", "src": "assets/charms/charm-089.png"}, {"id": "c090", "name": "Mini flowers 90", "category": "Mini flowers", "src": "assets/charms/charm-090.png"}, {"id": "c091", "name": "Mini flowers 91", "category": "Mini flowers", "src": "assets/charms/charm-091.png"}, {"id": "c092", "name": "Mini flowers 92", "category": "Mini flowers", "src": "assets/charms/charm-092.png"}, {"id": "c093", "name": "Mini flowers 93", "category": "Mini flowers", "src": "assets/charms/charm-093.png"}, {"id": "c094", "name": "Mini flowers 94", "category": "Mini flowers", "src": "assets/charms/charm-094.png"}, {"id": "c095", "name": "Ocean 95", "category": "Ocean", "src": "assets/charms/charm-095.png"}, {"id": "c096", "name": "Ocean 96", "category": "Ocean", "src": "assets/charms/charm-096.png"}, {"id": "c097", "name": "Ocean 97", "category": "Ocean", "src": "assets/charms/charm-097.png"}, {"id": "c098", "name": "Ocean 98", "category": "Ocean", "src": "assets/charms/charm-098.png"}, {"id": "c099", "name": "Ocean 99", "category": "Ocean", "src": "assets/charms/charm-099.png"}, {"id": "c100", "name": "Ocean 100", "category": "Ocean", "src": "assets/charms/charm-100.png"}, {"id": "c101", "name": "Ocean 101", "category": "Ocean", "src": "assets/charms/charm-101.png"}, {"id": "c102", "name": "Ocean 102", "category": "Ocean", "src": "assets/charms/charm-102.png"}, {"id": "c103", "name": "Ocean 103", "category": "Ocean", "src": "assets/charms/charm-103.png"}, {"id": "c104", "name": "Ocean 104", "category": "Ocean", "src": "assets/charms/charm-104.png"}, {"id": "c105", "name": "Ocean 105", "category": "Ocean", "src": "assets/charms/charm-105.png"}, {"id": "c106", "name": "Cute characters 106", "category": "Cute characters", "src": "assets/charms/charm-106.png"}, {"id": "c107", "name": "Cute characters 107", "category": "Cute characters", "src": "assets/charms/charm-107.png"}, {"id": "c108", "name": "Cute characters 108", "category": "Cute characters", "src": "assets/charms/charm-108.png"}, {"id": "c109", "name": "Cute characters 109", "category": "Cute characters", "src": "assets/charms/charm-109.png"}, {"id": "c110", "name": "Cute characters 110", "category": "Cute characters", "src": "assets/charms/charm-110.png"}, {"id": "c111", "name": "Cute characters 111", "category": "Cute characters", "src": "assets/charms/charm-111.png"}, {"id": "c112", "name": "Cute characters 112", "category": "Cute characters", "src": "assets/charms/charm-112.png"}, {"id": "c113", "name": "Cute characters 113", "category": "Cute characters", "src": "assets/charms/charm-113.png"}, {"id": "c114", "name": "Cute characters 114", "category": "Cute characters", "src": "assets/charms/charm-114.png"}, {"id": "c115", "name": "Cute characters 115", "category": "Cute characters", "src": "assets/charms/charm-115.png"}, {"id": "c116", "name": "Cute characters 116", "category": "Cute characters", "src": "assets/charms/charm-116.png"}, {"id": "c117", "name": "Cute characters 117", "category": "Cute characters", "src": "assets/charms/charm-117.png"}, {"id": "c118", "name": "Character minis 118", "category": "Character minis", "src": "assets/charms/charm-118.png"}, {"id": "c119", "name": "Character minis 119", "category": "Character minis", "src": "assets/charms/charm-119.png"}, {"id": "c120", "name": "Character minis 120", "category": "Character minis", "src": "assets/charms/charm-120.png"}, {"id": "c121", "name": "Character minis 121", "category": "Character minis", "src": "assets/charms/charm-121.png"}, {"id": "c122", "name": "Character minis 122", "category": "Character minis", "src": "assets/charms/charm-122.png"}, {"id": "c123", "name": "Character minis 123", "category": "Character minis", "src": "assets/charms/charm-123.png"}, {"id": "c124", "name": "Shells 124", "category": "Shells", "src": "assets/charms/charm-124.png"}, {"id": "c125", "name": "Shells 125", "category": "Shells", "src": "assets/charms/charm-125.png"}, {"id": "c126", "name": "Shells 126", "category": "Shells", "src": "assets/charms/charm-126.png"}, {"id": "c127", "name": "Shells 127", "category": "Shells", "src": "assets/charms/charm-127.png"}, {"id": "c128", "name": "Shells 128", "category": "Shells", "src": "assets/charms/charm-128.png"}, {"id": "c129", "name": "Shells 129", "category": "Shells", "src": "assets/charms/charm-129.png"}, {"id": "c130", "name": "Shells 130", "category": "Shells", "src": "assets/charms/charm-130.png"}, {"id": "c131", "name": "Shells 131", "category": "Shells", "src": "assets/charms/charm-131.png"}, {"id": "c132", "name": "Shells 132", "category": "Shells", "src": "assets/charms/charm-132.png"}, {"id": "c133", "name": "Shells 133", "category": "Shells", "src": "assets/charms/charm-133.png"}, {"id": "c134", "name": "Shells 134", "category": "Shells", "src": "assets/charms/charm-134.png"}, {"id": "c135", "name": "Shells 135", "category": "Shells", "src": "assets/charms/charm-135.png"}, {"id": "c136", "name": "Daisies 136", "category": "Daisies", "src": "assets/charms/charm-136.png"}, {"id": "c137", "name": "Daisies 137", "category": "Daisies", "src": "assets/charms/charm-137.png"}, {"id": "c138", "name": "Daisies 138", "category": "Daisies", "src": "assets/charms/charm-138.png"}, {"id": "c139", "name": "Daisies 139", "category": "Daisies", "src": "assets/charms/charm-139.png"}, {"id": "c140", "name": "Daisies 140", "category": "Daisies", "src": "assets/charms/charm-140.png"}, {"id": "c141", "name": "Daisies 141", "category": "Daisies", "src": "assets/charms/charm-141.png"}, {"id": "c142", "name": "Daisies 142", "category": "Daisies", "src": "assets/charms/charm-142.png"}, {"id": "c143", "name": "Daisies 143", "category": "Daisies", "src": "assets/charms/charm-143.png"}, {"id": "c144", "name": "Daisies 144", "category": "Daisies", "src": "assets/charms/charm-144.png"}, {"id": "c145", "name": "Daisies 145", "category": "Daisies", "src": "assets/charms/charm-145.png"}, {"id": "c146", "name": "Petal flowers 146", "category": "Petal flowers", "src": "assets/charms/charm-146.png"}, {"id": "c147", "name": "Petal flowers 147", "category": "Petal flowers", "src": "assets/charms/charm-147.png"}, {"id": "c148", "name": "Petal flowers 148", "category": "Petal flowers", "src": "assets/charms/charm-148.png"}, {"id": "c149", "name": "Petal flowers 149", "category": "Petal flowers", "src": "assets/charms/charm-149.png"}, {"id": "c150", "name": "Petal flowers 150", "category": "Petal flowers", "src": "assets/charms/charm-150.png"}, {"id": "c151", "name": "Petal flowers 151", "category": "Petal flowers", "src": "assets/charms/charm-151.png"}, {"id": "c152", "name": "Petal flowers 152", "category": "Petal flowers", "src": "assets/charms/charm-152.png"}, {"id": "c153", "name": "Petal flowers 153", "category": "Petal flowers", "src": "assets/charms/charm-153.png"}, {"id": "c154", "name": "Petal flowers 154", "category": "Petal flowers", "src": "assets/charms/charm-154.png"}, {"id": "c155", "name": "Petal flowers 155", "category": "Petal flowers", "src": "assets/charms/charm-155.png"}, {"id": "c156", "name": "Petal flowers 156", "category": "Petal flowers", "src": "assets/charms/charm-156.png"}, {"id": "c157", "name": "Petal flowers 157", "category": "Petal flowers", "src": "assets/charms/charm-157.png"}];
+// ========================================
+// ZAY BRACELET SIMULATOR
+// 154 CHARMS WITH CATEGORIES
+// ========================================
+
+const CATEGORY_RANGES = [
+  {
+    category: "Vintage Florals",
+    start: 1,
+    end: 9
+  },
+
+  {
+    category: "Letters",
+    start: 10,
+    end: 35
+  },
+
+  {
+    category: "Flower Stems",
+    start: 36,
+    end: 51
+  },
+
+  {
+    category: "Fruits",
+    start: 52,
+    end: 67
+  },
+
+  {
+    category: "Food & Vegetables",
+    start: 68,
+    end: 80
+  },
+
+  {
+    category: "Mini Flowers",
+    start: 81,
+    end: 92
+  },
+
+  {
+    category: "Ocean",
+    start: 93,
+    end: 103
+  },
+
+  {
+    category: "Cute Characters",
+    start: 104,
+    end: 115
+  },
+
+  {
+    category: "Character Minis",
+    start: 116,
+    end: 121
+  },
+
+  {
+    category: "Shells",
+    start: 122,
+    end: 133
+  },
+
+  {
+    category: "Daisies",
+    start: 134,
+    end: 143
+  },
+
+  {
+    category: "Petal Flowers",
+    start: 144,
+    end: 154
+  }
+];
+
+
+// ========================================
+// LETTER NAMES
+// ========================================
+
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+
+// ========================================
+// CREATE CHARM LIST
+// ========================================
+
+const CHARMS = [];
+
+CATEGORY_RANGES.forEach(group => {
+
+  for (let number = group.start; number <= group.end; number++) {
+
+    const paddedNumber =
+      String(number).padStart(3, "0");
+
+    let charmName;
+
+
+    // ------------------------------------
+    // LETTERS
+    // ------------------------------------
+
+    if (group.category === "Letters") {
+
+      const letterIndex =
+        number - group.start;
+
+      charmName =
+        `Letter ${LETTERS[letterIndex]}`;
+
+    }
+
+
+    // ------------------------------------
+    // VINTAGE FLORALS
+    // ------------------------------------
+
+    else if (group.category === "Vintage Florals") {
+
+      charmName =
+        `Vintage Floral ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // FLOWER STEMS
+    // ------------------------------------
+
+    else if (group.category === "Flower Stems") {
+
+      charmName =
+        `Flower ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // FRUITS
+    // ------------------------------------
+
+    else if (group.category === "Fruits") {
+
+      charmName =
+        `Fruit ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // FOOD & VEGETABLES
+    // ------------------------------------
+
+    else if (group.category === "Food & Vegetables") {
+
+      charmName =
+        `Food & Vegetable ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // MINI FLOWERS
+    // ------------------------------------
+
+    else if (group.category === "Mini Flowers") {
+
+      charmName =
+        `Mini Flower ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // OCEAN
+    // ------------------------------------
+
+    else if (group.category === "Ocean") {
+
+      charmName =
+        `Ocean Charm ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // CUTE CHARACTERS
+    // ------------------------------------
+
+    else if (group.category === "Cute Characters") {
+
+      charmName =
+        `Cute Character ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // CHARACTER MINIS
+    // ------------------------------------
+
+    else if (group.category === "Character Minis") {
+
+      charmName =
+        `Character Mini ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // SHELLS
+    // ------------------------------------
+
+    else if (group.category === "Shells") {
+
+      charmName =
+        `Shell ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // DAISIES
+    // ------------------------------------
+
+    else if (group.category === "Daisies") {
+
+      charmName =
+        `Daisy ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // PETAL FLOWERS
+    // ------------------------------------
+
+    else if (group.category === "Petal Flowers") {
+
+      charmName =
+        `Petal Flower ${number - group.start + 1}`;
+
+    }
+
+
+    // ------------------------------------
+    // FALLBACK
+    // ------------------------------------
+
+    else {
+
+      charmName =
+        `Charm ${paddedNumber}`;
+
+    }
+
+
+    CHARMS.push({
+
+      id: `c${paddedNumber}`,
+
+      name: charmName,
+
+      category: group.category,
+
+      src:
+        `assets/charms/charm-${paddedNumber}.png`
+
+    });
+
+  }
+
+});
+
+
+console.log(
+  `ZAY Simulator: ${CHARMS.length} charms loaded`
+);
