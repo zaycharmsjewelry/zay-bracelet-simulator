@@ -17,7 +17,7 @@ const CATEGORY_RANGES = [
   },
 
   {
-    category: "Flower Stems",
+    category: "Flower",
     start: 36,
     end: 51
   },
@@ -49,12 +49,6 @@ const CATEGORY_RANGES = [
   {
     category: "Cute Characters",
     start: 104,
-    end: 115
-  },
-
-  {
-    category: "Character Minis",
-    start: 116,
     end: 121
   },
 
@@ -67,12 +61,6 @@ const CATEGORY_RANGES = [
   {
     category: "Daisies",
     start: 134,
-    end: 143
-  },
-
-  {
-    category: "Petal Flowers",
-    start: 144,
     end: 154
   }
 ];
@@ -132,7 +120,7 @@ CATEGORY_RANGES.forEach(group => {
     // FLOWER STEMS
     // ------------------------------------
 
-    else if (group.category === "Flower Stems") {
+    else if (group.category === "Flower") {
 
       charmName =
         `Flower ${number - group.start + 1}`;
