@@ -329,53 +329,42 @@ document
 // DEFAULT CHARM POSITION
 // ------------------------------------------
 
-function defaultPosition(
-  index
-) {
+function defaultPosition(index) {
 
-  const total =
-    Math.max(
-      selected.length,
-      1
-    );
+  const total = Math.max(selected.length, 1);
 
+  // Space charms evenly across the middle of the bracelet
+  const startX = 190;
+  const endX = 710;
 
-  const t =
-    (index + 1) /
-    (total + 1);
+  let x;
 
+  if (total === 1) {
 
-  if (
-    currentBracelet === 1
-  ) {
+    x = 450;
 
-    return {
+  } else {
 
-      x:
-        110 +
-        t * 680,
-
-      y:
-        570 -
-        t * 470
-
-    };
+    x =
+      startX +
+      (
+        index /
+        (total - 1)
+      ) *
+      (endX - startX);
 
   }
 
 
+  // Same vertical position for every charm
+  // This makes them hang below the horizontal chain
+  const y = 410;
+
+
   return {
-
-    x:
-      115 +
-      t * 670,
-
-    y:
-      585 -
-      t * 490
-
+    x: x,
+    y: y
   };
-
 }
 
 
