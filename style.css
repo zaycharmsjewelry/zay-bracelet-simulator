@@ -1,606 +1,958 @@
+/* =========================================
+   ZAY BRACELET SIMULATOR
+========================================= */
+
 :root {
-  --cream: #fff9ef;
-  --cream2: #fffdf8;
-  --brown: #38261c;
-  --soft-brown: #79634f;
-  --gold: #c68a27;
-  --dark-gold: #a66f1f;
-  --light-gold: #ead4ad;
-  --border: #ead7b8;
+  --cream: #fffaf1;
+  --cream-light: #fffdf8;
+  --cream-dark: #f8eddd;
+
+  --brown: #3b291f;
+  --soft-brown: #78604d;
+
+  --gold: #c58b2a;
+  --gold-dark: #a66f1f;
+  --gold-light: #e7c98f;
+
+  --border: #ead5b1;
 }
+
+
+/* RESET */
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  min-height: 100vh;
+
   color: var(--brown);
+
   background:
-    radial-gradient(circle at 50% 0%, #fffef9 0%, var(--cream) 70%);
-  font-family: Georgia, "Times New Roman", serif;
+    radial-gradient(
+      circle at top center,
+      #fffefb 0%,
+      var(--cream) 75%
+    );
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
 }
 
 
-/* DECORATION */
-
-.page-decoration {
-  position: fixed;
-  top: 10px;
-  color: var(--gold);
-  font-size: 55px;
-  opacity: .4;
-  pointer-events: none;
-}
-
-.top-left {
-  left: 18px;
-}
-
-.top-right {
-  right: 18px;
-  transform: scaleX(-1);
-}
-
-
-/* HEADER */
+/* =========================================
+   HEADER
+========================================= */
 
 .hero {
-  width: min(1200px, calc(100% - 30px));
-  margin: auto;
-  padding: 25px 20px 20px;
+  width: min(1180px, calc(100% - 32px));
+
+  margin: 0 auto;
+
+  padding: 28px 15px 24px;
 
   display: grid;
-  grid-template-columns: 36% 64%;
+
+  grid-template-columns:
+    330px
+    1fr;
+
   align-items: center;
+
+  gap: 40px;
 }
 
-.brand-area {
+
+/* LOGO */
+
+.logo-side {
   display: flex;
+
   justify-content: center;
+
   align-items: center;
 }
 
 .logo {
-  width: 240px;
-  max-width: 85%;
+  display: block;
+
+  width: 190px;
+
+  max-width: 100%;
+
   height: auto;
-  object-fit: contain;
 }
 
-.hero-copy {
+
+/* HEADER TEXT */
+
+.hero-text {
   text-align: center;
+
+  padding-right: 70px;
 }
 
-.hero-copy h1 {
-  margin: 12px 0;
-  font-size: clamp(28px, 3.5vw, 46px);
+.hero-text h1 {
+  margin: 10px 0 8px;
+
+  font-size: 35px;
+
+  line-height: 1.05;
+
   font-weight: normal;
+
   letter-spacing: 2px;
 }
 
-.hero-copy h1 em {
-  color: var(--dark-gold);
-  font-style: normal;
+.hero-text h1 span {
+  color: var(--gold-dark);
+
+  font-style: italic;
 }
 
-.hero-copy p {
-  margin: 8px 0 12px;
-  color: var(--gold);
-  font-family: "Brush Script MT", "Snell Roundhand", cursive;
-  font-size: clamp(20px, 2.3vw, 29px);
+.hero-text p {
+  margin: 12px 0;
+
+  color: var(--gold-dark);
+
+  font-family:
+    "Snell Roundhand",
+    "Brush Script MT",
+    cursive;
+
+  font-size: 24px;
 }
 
-.ornament {
+
+/* ORNAMENT */
+
+.mini-ornament {
   display: flex;
+
   align-items: center;
+
   justify-content: center;
-  gap: 15px;
+
+  gap: 13px;
+
   color: var(--gold);
 }
 
-.ornament span {
-  width: 80px;
+.mini-ornament span {
+  width: 65px;
+
   height: 1px;
+
   background: var(--gold);
 }
 
-.ornament b {
+.mini-ornament b {
+  font-size: 11px;
+
   font-weight: normal;
-  font-size: 12px;
 }
 
 
-/* MAIN */
+/* =========================================
+   MAIN LAYOUT
+========================================= */
 
 .simulator {
-  width: min(1240px, calc(100% - 25px));
-  margin: auto;
+  width: min(1240px, calc(100% - 30px));
+
+  margin: 0 auto 35px;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: 18px;
+
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(360px, .85fr);
+
+  gap: 20px;
+
+  align-items: start;
 }
 
-.builder,
-.catalogue {
-  border: 1px solid var(--border);
-  background: rgba(255, 253, 248, .75);
+
+/* PANELS */
+
+.builder-panel,
+.charms-panel {
+  background:
+    rgba(255, 253, 248, .82);
+
+  border:
+    1px solid
+    var(--border);
+
   padding: 20px;
 }
 
 
-/* SECTION HEADING */
+/* =========================================
+   SECTION HEADINGS
+========================================= */
 
-.section-heading {
+.section-title {
   display: flex;
+
   align-items: center;
+
   gap: 14px;
+
   margin-bottom: 18px;
 }
 
-.step {
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
+.number {
+  width: 44px;
 
-  display: grid;
-  place-items: center;
+  height: 44px;
+
+  min-width: 44px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
 
   border-radius: 50%;
+
   background: var(--gold);
+
   color: white;
 
-  font-size: 16px;
+  font-size: 21px;
+
   font-weight: bold;
 }
 
-.section-heading h2 {
+.section-title h2 {
   margin: 0;
-  font-size: 18px;
-  letter-spacing: 1.2px;
+
+  font-size: 21px;
+
   font-weight: normal;
+
+  letter-spacing: 1.5px;
 }
 
-.section-heading p {
-  margin: 3px 0 0;
+.section-title p {
+  margin: 4px 0 0;
+
   color: var(--soft-brown);
-  font-size: 13px;
+
+  font-size: 14px;
 }
 
 
-/* CHAIN OPTIONS */
+/* =========================================
+   CHAIN OPTIONS
+========================================= */
 
 .chain-options {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 14px;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap: 14px;
+
+  margin-bottom: 15px;
 }
 
 .chain-card {
   position: relative;
-  min-height: 135px;
-  padding: 12px;
 
-  border: 1px solid var(--border);
-  background: var(--cream2);
-  color: var(--brown);
+  min-height: 160px;
+
+  padding: 13px;
+
+  border:
+    1px solid
+    var(--border);
+
+  background:
+    var(--cream-light);
+
+  color:
+    var(--brown);
 
   cursor: pointer;
+
   font-family: inherit;
+
+  transition:
+    border-color .2s,
+    transform .2s;
+}
+
+.chain-card:hover {
+  border-color:
+    var(--gold);
 }
 
 .chain-card.active {
-  border: 2px solid var(--gold);
+  border:
+    2px solid
+    var(--gold);
 }
 
 .chain-card h3 {
   margin: 0;
-  font-size: 13px;
+
+  font-size: 16px;
+
   font-weight: normal;
+
   letter-spacing: 1px;
 }
 
 .chain-card img {
   display: block;
-  width: 90%;
-  height: 65px;
-  margin: 6px auto;
+
+  width: 85%;
+
+  height: 78px;
+
+  margin: 4px auto;
+
   object-fit: contain;
 }
 
 .chain-card strong {
-  color: var(--dark-gold);
-  font-size: 15px;
+  display: block;
+
+  color:
+    var(--gold-dark);
+
+  font-size: 17px;
+
   font-weight: normal;
 }
 
-.check {
+.selected-check {
   display: none;
 
   position: absolute;
-  top: -10px;
-  right: -10px;
 
-  width: 29px;
-  height: 29px;
+  top: -12px;
+
+  right: -12px;
+
+  width: 34px;
+
+  height: 34px;
+
+  align-items: center;
+
+  justify-content: center;
 
   border-radius: 50%;
-  background: var(--gold);
+
+  background:
+    var(--gold);
+
   color: white;
 
-  place-items: center;
+  font-size: 18px;
 }
 
-.chain-card.active .check {
-  display: grid;
+.chain-card.active
+.selected-check {
+  display: flex;
 }
 
 
-/* LARGE DESIGN AREA */
+/* =========================================
+   BRACELET DESIGN AREA
+========================================= */
 
-.design-area {
-  position: relative;
+.design-box {
+  width: 100%;
 
-  border: 1px solid var(--border);
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--border);
+
   background:
     linear-gradient(
       145deg,
       #fffdf8,
       #fff8ed
     );
-
-  padding: 5px 5px 10px;
 }
 
 #braceletCanvas {
   display: block;
+
   width: 100%;
+
   height: auto;
+
+  cursor: default;
+
   touch-action: none;
 }
 
-.drag-tip {
-  margin: 2px 0 3px;
+.drag-message {
+  padding: 9px 10px 12px;
+
   text-align: center;
-  color: var(--soft-brown);
-  font-size: 12px;
+
+  color:
+    var(--soft-brown);
+
+  font-size: 13px;
+
+  border-top:
+    1px solid
+    rgba(234, 213, 177, .5);
 }
 
 
-/* CONTROLS */
+/* =========================================
+   ACTION BUTTONS
+========================================= */
 
-.controls {
+.action-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1.5fr;
+
   gap: 9px;
+
   margin-top: 12px;
 }
 
-.controls button {
-  min-height: 43px;
+.action-buttons button {
+  min-height: 44px;
 
-  border: 1px solid var(--border);
-  background: var(--cream2);
-  color: var(--brown);
+  padding: 8px;
+
+  border:
+    1px solid
+    var(--border);
+
+  background:
+    var(--cream-light);
+
+  color:
+    var(--brown);
+
+  cursor: pointer;
 
   font-family: inherit;
+
+  font-size: 12px;
+
   letter-spacing: .8px;
-  cursor: pointer;
 }
 
-.controls .save {
-  border-color: var(--gold);
-  background: linear-gradient(90deg, #b97a22, #d59b35);
+.action-buttons button:hover {
+  border-color:
+    var(--gold);
+}
+
+.action-buttons
+.gold-button {
+  background:
+    linear-gradient(
+      90deg,
+      #b77920,
+      #d49a35
+    );
+
+  border-color:
+    var(--gold);
+
   color: white;
 }
 
 
-/* SUMMARY */
+/* =========================================
+   PRICE SUMMARY
+========================================= */
 
-.summary {
+.price-box {
   margin-top: 14px;
-  padding: 17px 20px;
 
-  border: 1px solid var(--border);
-  background: var(--cream2);
+  padding: 18px 20px;
+
+  border:
+    1px solid
+    var(--border);
+
+  background:
+    var(--cream-light);
 }
 
-.summary-title {
+.price-heading {
   display: flex;
+
   justify-content: space-between;
 
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 
-  color: var(--dark-gold);
-  letter-spacing: 1.5px;
+  color:
+    var(--gold-dark);
+
   font-size: 14px;
+
+  letter-spacing: 1.4px;
 }
 
-.price-row {
+.price-line {
   display: flex;
+
   justify-content: space-between;
+
   padding: 5px 0;
+
   font-size: 14px;
 }
 
-.price-row strong {
+.price-line strong {
   font-weight: normal;
 }
 
-.summary-divider {
-  margin: 9px 0;
-  border-top: 1px solid var(--border);
+.price-divider {
+  margin: 10px 0;
+
+  border-top:
+    1px solid
+    var(--border);
 }
 
-.total-row {
+.total-line {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  font-size: 21px;
+  font-size: 20px;
+
   letter-spacing: 1px;
 }
 
-.total-row strong {
-  color: var(--dark-gold);
-  font-size: 27px;
+.total-line strong {
+  color:
+    var(--gold-dark);
+
+  font-size: 28px;
+
   font-weight: normal;
 }
 
-.delivery-note {
-  margin: 10px 0;
+.delivery {
+  margin:
+    11px 0 5px;
+
   text-align: center;
-  color: var(--soft-brown);
+
+  color:
+    var(--soft-brown);
+
+  font-size: 11px;
+}
+
+.selection-text {
+  margin:
+    5px 0 12px;
+
+  text-align: center;
+
+  color:
+    var(--soft-brown);
+
   font-size: 11px;
 }
 
 .made-by {
-  margin: 10px 0 0;
-  padding-top: 10px;
+  padding-top: 11px;
 
-  border-top: 1px solid var(--border);
+  border-top:
+    1px solid
+    var(--border);
 
   text-align: center;
-  color: var(--dark-gold);
+
+  color:
+    var(--gold-dark);
 
   font-size: 10px;
+
   letter-spacing: 2px;
 }
 
-.selected-list {
-  margin: 7px 0 0;
-  text-align: center;
-  color: var(--soft-brown);
-  font-size: 10px;
-}
 
-
-/* FILTERS */
+/* =========================================
+   SEARCH + FILTER
+========================================= */
 
 .filters {
   display: grid;
-  grid-template-columns: 1fr 145px;
-  gap: 9px;
-  margin-bottom: 12px;
-}
 
-.search-wrapper {
-  position: relative;
-}
+  grid-template-columns:
+    1fr
+    160px;
 
-.search-wrapper span {
-  position: absolute;
-  top: 50%;
-  left: 13px;
-  transform: translateY(-50%);
-  color: var(--gold);
+  gap: 8px;
+
+  margin-bottom: 13px;
 }
 
 #search,
 #categoryFilter {
   width: 100%;
-  height: 43px;
 
-  border: 1px solid var(--border);
-  background: var(--cream2);
-  color: var(--brown);
+  height: 44px;
+
+  border:
+    1px solid
+    var(--border);
+
+  background:
+    var(--cream-light);
+
+  color:
+    var(--brown);
 
   outline: none;
+
   font-family: inherit;
 }
 
 #search {
-  padding: 0 12px 0 38px;
+  padding:
+    0 13px;
 }
 
 #categoryFilter {
-  padding: 0 8px;
+  padding:
+    0 8px;
+}
+
+#search:focus,
+#categoryFilter:focus {
+  border-color:
+    var(--gold);
 }
 
 
-/* CHARM CATALOGUE */
+/* =========================================
+   CHARM GRID
+========================================= */
 
 .charm-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
 
-  max-height: 820px;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+
+  max-height: 830px;
+
   overflow-y: auto;
 
   padding-right: 3px;
 }
 
+
+/* SCROLLBAR */
+
+.charm-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.charm-grid::-webkit-scrollbar-thumb {
+  background:
+    var(--gold-light);
+
+  border-radius: 10px;
+}
+
+
+/* CHARM CARD */
+
 .charm-card {
   position: relative;
+
   min-width: 0;
 
-  padding: 8px 4px 10px;
+  padding:
+    9px 5px
+    10px;
 
-  border: 1px solid var(--border);
-  background: var(--cream2);
-  color: var(--brown);
+  border:
+    1px solid
+    var(--border);
+
+  background:
+    var(--cream-light);
+
+  color:
+    var(--brown);
 
   cursor: pointer;
+
   font-family: inherit;
 
-  transition: transform .15s ease, border-color .15s ease;
+  transition:
+    transform .15s,
+    border-color .15s;
 }
 
 .charm-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--gold);
+  transform:
+    translateY(-2px);
+
+  border-color:
+    var(--gold);
 }
 
 .charm-card img {
   display: block;
 
-  width: 72px;
-  max-width: 95%;
-  height: 72px;
+  width: 82px;
 
-  margin: auto;
+  max-width: 95%;
+
+  height: 82px;
+
+  margin: 0 auto;
 
   object-fit: contain;
 }
 
 .charm-name {
   display: block;
-  min-height: 23px;
-  margin-top: 3px;
 
-  font-size: 10px;
+  min-height: 25px;
+
+  margin-top: 4px;
+
+  font-size: 11px;
+
   line-height: 1.15;
 }
 
 .charm-price {
   display: block;
+
   margin-top: 3px;
 
-  color: var(--dark-gold);
-  font-size: 12px;
+  color:
+    var(--gold-dark);
+
+  font-size: 13px;
 }
 
 .charm-badge {
   display: none;
 
   position: absolute;
+
+  top: 5px;
+
   right: 5px;
-  bottom: 5px;
 
-  width: 21px;
-  height: 21px;
+  width: 23px;
 
-  border: 1px solid var(--gold);
+  height: 23px;
+
+  align-items: center;
+
+  justify-content: center;
+
   border-radius: 50%;
 
-  background: var(--cream2);
-  color: var(--gold);
+  background:
+    var(--gold);
 
-  place-items: center;
+  color: white;
 
-  font-size: 10px;
+  font-size: 11px;
+
   font-style: normal;
 }
 
 
-/* FOOTER */
+/* =========================================
+   FOOTER
+========================================= */
 
 footer {
-  padding: 25px 20px 40px;
+  padding:
+    15px 20px
+    40px;
+
   text-align: center;
 }
 
-.footer-line {
+.footer-decoration {
   display: flex;
-  justify-content: center;
+
   align-items: center;
+
+  justify-content: center;
+
   gap: 13px;
-  color: var(--gold);
+
+  color:
+    var(--gold);
 }
 
-.footer-line span {
-  width: 80px;
+.footer-decoration span {
+  width: 70px;
+
   height: 1px;
-  background: var(--gold);
+
+  background:
+    var(--gold);
 }
 
 footer p {
-  margin: 10px 0 5px;
+  margin:
+    10px 0 7px;
 
-  color: var(--dark-gold);
+  color:
+    var(--gold-dark);
 
-  font-family: "Brush Script MT", "Snell Roundhand", cursive;
-  font-size: 25px;
-}
+  font-family:
+    "Snell Roundhand",
+    "Brush Script MT",
+    cursive;
 
-footer p em {
-  margin-left: 12px;
+  font-size: 24px;
 }
 
 footer small {
-  color: var(--dark-gold);
+  color:
+    var(--gold-dark);
+
   letter-spacing: 3px;
 }
 
 
-/* TABLET */
+/* =========================================
+   TABLET
+========================================= */
 
-@media (max-width: 950px) {
+@media
+(max-width: 950px) {
 
   .hero {
-    grid-template-columns: 32% 68%;
+    grid-template-columns:
+      240px
+      1fr;
+
+    gap: 15px;
   }
 
   .logo {
-    width: 200px;
+    width: 160px;
+  }
+
+  .hero-text {
+    padding-right: 20px;
   }
 
   .simulator {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
   }
 
   .charm-grid {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      );
+
     max-height: 600px;
   }
+
 }
 
 
-/* MOBILE */
+/* =========================================
+   MOBILE
+========================================= */
 
-@media (max-width: 600px) {
+@media
+(max-width: 600px) {
 
   .hero {
     display: block;
-    padding-top: 22px;
+
+    padding-top: 18px;
   }
 
   .logo {
-    width: 175px;
+    width: 145px;
+
+    margin: auto;
   }
 
-  .hero-copy {
-    margin-top: 15px;
+  .hero-text {
+    padding: 0;
+
+    margin-top: 14px;
   }
 
-  .hero-copy h1 {
-    font-size: 29px;
+  .hero-text h1 {
+    font-size: 27px;
   }
 
-  .hero-copy p {
-    font-size: 20px;
+  .hero-text p {
+    font-size: 19px;
   }
 
   .simulator {
-    width: calc(100% - 16px);
+    width:
+      calc(100% - 14px);
   }
 
-  .builder,
-  .catalogue {
-    padding: 13px;
+  .builder-panel,
+  .charms-panel {
+    padding: 12px;
+  }
+
+  .number {
+    width: 37px;
+
+    height: 37px;
+
+    min-width: 37px;
+
+    font-size: 17px;
+  }
+
+  .section-title h2 {
+    font-size: 17px;
+  }
+
+  .section-title p {
+    font-size: 12px;
   }
 
   .chain-options {
@@ -608,33 +960,45 @@ footer small {
   }
 
   .chain-card {
-    min-height: 115px;
-    padding: 8px;
+    min-height: 125px;
+
+    padding: 7px;
   }
 
   .chain-card img {
-    height: 50px;
+    height: 58px;
   }
 
   .filters {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
   }
 
   .charm-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+
     gap: 6px;
   }
 
   .charm-card img {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+
+    height: 65px;
   }
 
-  .controls {
-    grid-template-columns: 1fr 1fr;
+  .action-buttons {
+    grid-template-columns:
+      1fr
+      1fr;
   }
 
-  .controls .save {
-    grid-column: 1 / -1;
+  .gold-button {
+    grid-column:
+      1 / -1;
   }
+
 }
