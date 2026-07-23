@@ -1,55 +1,85 @@
-// ==========================================
-// ZAY BRACELET SIMULATOR
-// ==========================================
+/* =========================================
+   ZAY BRACELET SIMULATOR
+========================================= */
 
 
-// ------------------------------------------
-// ELEMENTS
-// ------------------------------------------
+/* ELEMENTS */
 
-const canvas = document.getElementById("braceletCanvas");
-const ctx = canvas.getContext("2d");
+const canvas =
+  document.getElementById(
+    "braceletCanvas"
+  );
 
-const charmGrid = document.getElementById("charmGrid");
-const search = document.getElementById("search");
-const categoryFilter = document.getElementById("categoryFilter");
+const ctx =
+  canvas.getContext("2d");
+
+
+const charmGrid =
+  document.getElementById(
+    "charmGrid"
+  );
+
+const searchInput =
+  document.getElementById(
+    "search"
+  );
+
+const categoryFilter =
+  document.getElementById(
+    "categoryFilter"
+  );
+
 
 const braceletPriceLabel =
-  document.getElementById("braceletPriceLabel");
+  document.getElementById(
+    "braceletPriceLabel"
+  );
 
-const braceletPriceElement =
-  document.getElementById("braceletPrice");
+const braceletPriceEl =
+  document.getElementById(
+    "braceletPrice"
+  );
 
 const charmCountLabel =
-  document.getElementById("charmCountLabel");
+  document.getElementById(
+    "charmCountLabel"
+  );
 
-const charmPriceElement =
-  document.getElementById("charmPrice");
+const charmPriceEl =
+  document.getElementById(
+    "charmPrice"
+  );
 
-const totalPriceElement =
-  document.getElementById("totalPrice");
+const totalPriceEl =
+  document.getElementById(
+    "totalPrice"
+  );
 
 const selectedList =
-  document.getElementById("selectedList");
+  document.getElementById(
+    "selectedList"
+  );
 
 
-// ==========================================
-// PRICES
-// ==========================================
+/* =========================================
+   PRICES
+========================================= */
 
 const BRACELET_PRICES = {
   1: 15,
   2: 20
 };
 
-const REGULAR_PRICE = 5;
-const VINTAGE_PRICE = 8;
+const NORMAL_CHARM_PRICE = 5;
+
+const VINTAGE_CHARM_PRICE = 8;
+
 const CUTE_CHARACTER_PRICE = 6;
 
 
-// ==========================================
-// STATE
-// ==========================================
+/* =========================================
+   STATE
+========================================= */
 
 let currentBracelet = 1;
 
@@ -58,70 +88,105 @@ let selected = [];
 let draggingIndex = -1;
 
 let dragOffsetX = 0;
+
 let dragOffsetY = 0;
 
+
 const braceletImages = {};
+
 const charmImages = {};
 
 
-// ==========================================
-// CHARM PRICE
-// ==========================================
+/* =========================================
+   GET CHARM PRICE
+========================================= */
 
 function getCharmPrice(charm) {
 
   const category =
-    String(charm.category || "")
-      .toLowerCase();
+    String(
+      charm.category || ""
+    ).toLowerCase();
 
 
-  if (category.includes("vintage")) {
-    return VINTAGE_PRICE;
-  }
+  const name =
+    String(
+      charm.name || ""
+    ).toLowerCase();
 
+
+  /* VINTAGE = AED 8 */
 
   if (
-    category.includes("cute character") ||
-    category.includes("cute characters")
+    category.includes("vintage") ||
+    name.includes("vintage")
   ) {
-    return CUTE_CHARACTER_PRICE;
+
+    return VINTAGE_CHARM_PRICE;
+
   }
 
 
-  return REGULAR_PRICE;
+  /* CUTE CHARACTERS = AED 6 */
+
+  if (
+    category.includes("cute") ||
+    category.includes("character") ||
+    name.includes("hello kitty") ||
+    name.includes("kitty") ||
+    name.includes("kuromi") ||
+    name.includes("melody")
+  ) {
+
+    return CUTE_CHARACTER_PRICE;
+
+  }
+
+
+  /* EVERYTHING ELSE = AED 5 */
+
+  return NORMAL_CHARM_PRICE;
 }
 
 
-// ==========================================
-// IMAGE LOADING
-// ==========================================
+/* =========================================
+   IMAGE LOADER
+========================================= */
 
 function loadImage(src) {
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    const image = new Image();
+      const img =
+        new Image();
 
-    image.onload = () => resolve(image);
 
-    image.onerror = () =>
-      reject(
-        new Error(
-          `Could not load ${src}`
-        )
-      );
+      img.onload =
+        () => resolve(img);
 
-    image.src = src;
 
-  });
+      img.onerror =
+        () => reject(
+          new Error(
+            "Could not load " +
+            src
+          )
+        );
+
+
+      img.src = src;
+
+    }
+  );
 }
 
 
-// ==========================================
-// PRELOAD
-// ==========================================
+/* =========================================
+   PRELOAD IMAGES
+========================================= */
 
-async function preload() {
+async function preloadImages() {
 
   try {
 
@@ -130,10 +195,12 @@ async function preload() {
         "assets/bracelet-1.png"
       );
 
-  } catch (error) {
+  }
 
-    console.log(
-      "Could not load bracelet 1",
+  catch (error) {
+
+    console.error(
+      "Bracelet 1 failed:",
       error
     );
 
@@ -147,10 +214,12 @@ async function preload() {
         "assets/bracelet-2.png"
       );
 
-  } catch (error) {
+  }
 
-    console.log(
-      "Could not load bracelet 2",
+  catch (error) {
+
+    console.error(
+      "Bracelet 2 failed:",
       error
     );
 
@@ -159,180 +228,247 @@ async function preload() {
 
   await Promise.all(
 
-    CHARMS.map(async charm => {
+    CHARMS.map(
+      async charm => {
 
-      try {
+        try {
 
-        charmImages[charm.id] =
-          await loadImage(
+          charmImages[charm.id] =
+            await loadImage(
+              charm.src
+            );
+
+        }
+
+        catch (error) {
+
+          console.warn(
+            "Charm failed:",
             charm.src
           );
 
-      } catch (error) {
-
-        console.log(
-          "Missing charm:",
-          charm.src
-        );
+        }
 
       }
-
-    })
+    )
 
   );
 
 
-  createCategoryMenu();
+  buildCategories();
 
-  renderGrid();
+  renderCharmGrid();
+
+  arrangeAutomaticCharms();
 
   render();
+
 }
 
 
-// ==========================================
-// CATEGORY MENU
-// ==========================================
+/* =========================================
+   CATEGORY MENU
+========================================= */
 
-function createCategoryMenu() {
+function buildCategories() {
 
   const categories =
     [
       ...new Set(
-        CHARMS.map(
-          charm => charm.category
-        )
+        CHARMS
+          .map(
+            charm =>
+              charm.category
+          )
+          .filter(Boolean)
       )
     ];
 
 
-  categories.forEach(category => {
+  categories.forEach(
+    category => {
 
-    const option =
-      document.createElement(
-        "option"
-      );
-
-    option.value = category;
-
-    option.textContent = category;
-
-    categoryFilter.appendChild(
-      option
-    );
-
-  });
-}
-
-
-// ==========================================
-// BRACELET SELECTION
-// ==========================================
-
-document
-  .querySelectorAll(".chain-card")
-  .forEach(button => {
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        currentBracelet =
-          Number(
-            button.dataset.bracelet
-          );
-
-
-        document
-          .querySelectorAll(
-            ".chain-card"
-          )
-          .forEach(card => {
-
-            card.classList.remove(
-              "active"
-            );
-
-          });
-
-
-        button.classList.add(
-          "active"
+      const option =
+        document.createElement(
+          "option"
         );
 
 
-        arrangeCharms();
-
-        render();
-
-      }
-    );
-
-  });
+      option.value =
+        category;
 
 
-// ==========================================
-// LARGE CHAIN POSITION
-// ==========================================
+      option.textContent =
+        category;
 
-function getChainSettings() {
 
-  /*
-    This controls where the bracelet appears
-    inside the canvas.
+      categoryFilter.appendChild(
+        option
+      );
 
-    Chain width is 94% of the canvas.
-  */
-
-  return {
-    centerX: canvas.width / 2,
-    centerY: 190,
-    width: canvas.width * 0.94
-  };
+    }
+  );
 }
 
 
-// ==========================================
-// DRAW LARGE BRACELET
-// ==========================================
+/* =========================================
+   CHAIN BUTTONS
+========================================= */
 
-function drawBracelet(image) {
+document
+  .querySelectorAll(
+    ".chain-card"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          currentBracelet =
+            Number(
+              button.dataset
+                .bracelet
+            );
+
+
+          document
+            .querySelectorAll(
+              ".chain-card"
+            )
+            .forEach(
+              card => {
+
+                card.classList
+                  .remove(
+                    "active"
+                  );
+
+              }
+            );
+
+
+          button.classList
+            .add(
+              "active"
+            );
+
+
+          render();
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================
+   BRACELET POSITION
+========================================= */
+
+function getBraceletArea() {
+
+  return {
+
+    left: 55,
+
+    right:
+      canvas.width - 55,
+
+    centerX:
+      canvas.width / 2,
+
+    /*
+      Chain sits near the upper-middle
+      portion of the design area.
+    */
+
+    chainY: 145
+
+  };
+
+}
+
+
+/* =========================================
+   DRAW BRACELET
+========================================= */
+
+function drawBracelet() {
+
+  const image =
+    braceletImages[
+      currentBracelet
+    ];
+
 
   if (!image) return;
 
 
-  const settings =
-    getChainSettings();
+  const area =
+    getBraceletArea();
 
 
   /*
-    IMPORTANT:
-
-    Width controls the chain size.
-
-    We are NOT restricting it based on
-    the PNG height anymore.
+    Bracelet uses almost the entire
+    available width.
   */
 
-  const width =
-    settings.width;
+  const targetWidth =
+    area.right -
+    area.left;
 
 
   const scale =
-    width / image.width;
+    targetWidth /
+    image.width;
 
 
-  const height =
-    image.height * scale;
+  const targetHeight =
+    image.height *
+    scale;
+
+
+  /*
+    Prevent unusually tall transparent
+    PNG canvases from making the chain
+    enormous vertically.
+  */
+
+  const maxHeight = 115;
+
+
+  let width =
+    targetWidth;
+
+
+  let height =
+    targetHeight;
+
+
+  if (height > maxHeight) {
+
+    const correction =
+      maxHeight /
+      height;
+
+
+    width *= correction;
+
+    height *= correction;
+
+  }
 
 
   const x =
-    settings.centerX -
+    area.centerX -
     width / 2;
 
 
   const y =
-    settings.centerY -
+    area.chainY -
     height / 2;
 
 
@@ -343,168 +479,171 @@ function drawBracelet(image) {
     width,
     height
   );
+
 }
 
 
-// ==========================================
-// AUTOMATIC CHARM POSITION
-// ==========================================
+/* =========================================
+   AUTOMATIC CHARM POSITION
+========================================= */
 
-function defaultPosition(index) {
+function getAutomaticPosition(
+  index,
+  total
+) {
 
-  const total =
-    Math.max(
-      selected.length,
-      1
+  /*
+    All charms use EXACTLY
+    the same Y position.
+
+    This prevents the diagonal
+    layout from before.
+  */
+
+  const charmY = 205;
+
+
+  /*
+    Usable width for charms.
+  */
+
+  const startX = 105;
+
+  const endX =
+    canvas.width - 105;
+
+
+  if (total <= 1) {
+
+    return {
+
+      x:
+        canvas.width / 2,
+
+      y:
+        charmY
+
+    };
+
+  }
+
+
+  /*
+    If customer selects 7 charms:
+
+       x   x   x   x   x   x   x
+
+    evenly across the bracelet.
+  */
+
+  const spacing =
+    (
+      endX -
+      startX
+    ) /
+    (
+      total - 1
     );
 
 
-  /*
-    These positions span almost the entire
-    bracelet.
-
-    7 charms fit comfortably.
-  */
-
-  const startX = 100;
-  const endX = 900;
-
-
-  let x;
-
-
-  if (total === 1) {
-
-    x = canvas.width / 2;
-
-  }
-
-  else {
-
-    x =
-      startX +
-      (
-        index /
-        (total - 1)
-      ) *
-      (
-        endX -
-        startX
-      );
-
-  }
-
-
-  /*
-    Charm center.
-
-    The charm loop sits near the chain,
-    while the charm body hangs underneath.
-  */
-
-  const y = 270;
-
-
   return {
-    x,
-    y
+
+    x:
+      startX +
+      spacing *
+      index,
+
+    y:
+      charmY
+
   };
+
 }
 
 
-// ==========================================
-// ARRANGE CHARMS
-// ==========================================
+/* =========================================
+   ARRANGE AUTOMATIC CHARMS
+========================================= */
 
-function arrangeCharms() {
+function arrangeAutomaticCharms() {
 
-  selected.forEach(
+  const automatic =
+    selected.filter(
+      item =>
+        !item.moved
+    );
+
+
+  automatic.forEach(
     (item, index) => {
 
-      /*
-        Only automatically position charms
-        the customer has NOT manually moved.
-      */
+      const position =
+        getAutomaticPosition(
+          index,
+          automatic.length
+        );
 
-      if (!item.moved) {
 
-        const position =
-          defaultPosition(index);
+      item.x =
+        position.x;
 
-        item.x = position.x;
-        item.y = position.y;
 
-      }
+      item.y =
+        position.y;
 
     }
   );
+
 }
 
 
-// ==========================================
-// ENSURE POSITION
-// ==========================================
-
-function ensurePositions() {
-
-  selected.forEach(
-    (item, index) => {
-
-      if (
-        !Number.isFinite(item.x) ||
-        !Number.isFinite(item.y)
-      ) {
-
-        const position =
-          defaultPosition(index);
-
-        item.x = position.x;
-        item.y = position.y;
-
-      }
-
-    }
-  );
-}
-
-
-// ==========================================
-// DRAW CHARM
-// ==========================================
+/* =========================================
+   DRAW CHARM
+========================================= */
 
 function drawCharm(item) {
 
   const image =
-    charmImages[item.id];
+    charmImages[
+      item.id
+    ];
 
 
   if (!image) return;
 
 
   /*
-    82px gives enough room for
-    7+ charms on the bracelet.
+    Charm display size.
+
+    88px gives good visibility
+    while still fitting 7 charms.
   */
 
-  const targetSize = 82;
+  const boxSize = 88;
 
 
   const scale =
     Math.min(
-      targetSize / image.width,
-      targetSize / image.height
+      boxSize /
+        image.width,
+
+      boxSize /
+        image.height
     );
 
 
   const width =
-    image.width * scale;
+    image.width *
+    scale;
 
 
   const height =
-    image.height * scale;
+    image.height *
+    scale;
 
 
   item.w = width;
+
   item.h = height;
 
 
@@ -512,31 +651,39 @@ function drawCharm(item) {
 
 
   ctx.shadowColor =
-    "rgba(70, 45, 20, 0.18)";
+    "rgba(70,45,20,.16)";
 
-  ctx.shadowBlur = 5;
 
-  ctx.shadowOffsetY = 3;
+  ctx.shadowBlur = 4;
+
+  ctx.shadowOffsetY = 2;
 
 
   ctx.drawImage(
+
     image,
 
-    item.x - width / 2,
-    item.y - height / 2,
+    item.x -
+      width / 2,
+
+    item.y -
+      height / 2,
 
     width,
+
     height
+
   );
 
 
   ctx.restore();
+
 }
 
 
-// ==========================================
-// RENDER
-// ==========================================
+/* =========================================
+   RENDER CANVAS
+========================================= */
 
 function render() {
 
@@ -547,6 +694,11 @@ function render() {
     canvas.height
   );
 
+
+  /*
+    Background matching ZAY
+    cream aesthetic.
+  */
 
   ctx.fillStyle =
     "#fffaf1";
@@ -560,233 +712,39 @@ function render() {
   );
 
 
-  drawBracelet(
-    braceletImages[
-      currentBracelet
-    ]
+  drawBracelet();
+
+
+  selected.forEach(
+    item => {
+
+      drawCharm(item);
+
+    }
   );
 
 
-  ensurePositions();
+  updatePrices();
 
+  updateCharmBadges();
 
-  selected.forEach(item => {
-
-    drawCharm(item);
-
-  });
-
-
-  updatePrice();
-
-  updateBadges();
 }
 
 
-// ==========================================
-// PRICES
-// ==========================================
-
-function updatePrice() {
-
-  const braceletPrice =
-    BRACELET_PRICES[
-      currentBracelet
-    ];
-
-
-  let charmsTotal = 0;
-
-
-  selected.forEach(item => {
-
-    const charm =
-      CHARMS.find(
-        charm =>
-          charm.id === item.id
-      );
-
-
-    if (charm) {
-
-      charmsTotal +=
-        getCharmPrice(charm);
-
-    }
-
-  });
-
-
-  const total =
-    braceletPrice +
-    charmsTotal;
-
-
-  braceletPriceLabel.textContent =
-    `Chain ${currentBracelet}`;
-
-
-  braceletPriceElement.textContent =
-    `AED ${braceletPrice}`;
-
-
-  charmCountLabel.textContent =
-    selected.length === 1
-      ? "1 Charm"
-      : `${selected.length} Charms`;
-
-
-  charmPriceElement.textContent =
-    `AED ${charmsTotal}`;
-
-
-  totalPriceElement.textContent =
-    `AED ${total}`;
-
-
-  selectedList.textContent =
-    selected.length === 0
-      ? "No charms selected yet"
-      : `${selected.length} charm${
-          selected.length === 1
-            ? ""
-            : "s"
-        } selected`;
-}
-
-
-// ==========================================
-// CHARM GRID
-// ==========================================
-
-function renderGrid() {
-
-  const query =
-    search.value
-      .trim()
-      .toLowerCase();
-
-
-  const chosenCategory =
-    categoryFilter.value;
-
-
-  const visibleCharms =
-    CHARMS.filter(charm => {
-
-      if (!charmImages[charm.id]) {
-        return false;
-      }
-
-
-      const categoryMatch =
-        chosenCategory === "all" ||
-        charm.category ===
-          chosenCategory;
-
-
-      const searchMatch =
-        !query ||
-
-        String(charm.name)
-          .toLowerCase()
-          .includes(query) ||
-
-        String(charm.category)
-          .toLowerCase()
-          .includes(query);
-
-
-      return (
-        categoryMatch &&
-        searchMatch
-      );
-
-    });
-
-
-  charmGrid.innerHTML = "";
-
-
-  visibleCharms.forEach(charm => {
-
-    const price =
-      getCharmPrice(charm);
-
-
-    const card =
-      document.createElement(
-        "button"
-      );
-
-
-    card.type = "button";
-
-    card.className =
-      "charm-card";
-
-    card.dataset.id =
-      charm.id;
-
-
-    card.innerHTML = `
-
-      <img
-        src="${charm.src}"
-        alt="${charm.name}"
-      >
-
-      <span class="charm-name">
-        ${charm.name}
-      </span>
-
-      <span class="charm-price">
-        AED ${price}
-      </span>
-
-      <i class="charm-badge">
-        0
-      </i>
-
-    `;
-
-
-    card.addEventListener(
-      "click",
-      () => {
-
-        addCharm(
-          charm.id
-        );
-
-      }
-    );
-
-
-    charmGrid.appendChild(
-      card
-    );
-
-  });
-
-
-  updateBadges();
-}
-
-
-// ==========================================
-// ADD CHARM
-// ==========================================
+/* =========================================
+   ADD CHARM
+========================================= */
 
 function addCharm(id) {
 
   selected.push({
 
-    id,
+    id: id,
 
-    x: null,
+    x:
+      canvas.width / 2,
 
-    y: null,
+    y: 205,
 
     moved: false
 
@@ -794,71 +752,369 @@ function addCharm(id) {
 
 
   /*
-    Re-space all automatically placed charms
-    whenever another charm is added.
+    Every newly selected charm
+    is automatically distributed
+    along the bracelet.
   */
 
-  arrangeCharms();
+  arrangeAutomaticCharms();
+
 
   render();
+
 }
 
 
-// ==========================================
-// BADGES
-// ==========================================
+/* =========================================
+   PRICE CALCULATION
+========================================= */
 
-function updateBadges() {
+function updatePrices() {
+
+  const braceletPrice =
+    BRACELET_PRICES[
+      currentBracelet
+    ];
+
+
+  let charmsPrice = 0;
+
+
+  selected.forEach(
+    item => {
+
+      const charm =
+        CHARMS.find(
+          charm =>
+            charm.id ===
+            item.id
+        );
+
+
+      if (charm) {
+
+        charmsPrice +=
+          getCharmPrice(
+            charm
+          );
+
+      }
+
+    }
+  );
+
+
+  const total =
+    braceletPrice +
+    charmsPrice;
+
+
+  braceletPriceLabel
+    .textContent =
+      "Chain " +
+      currentBracelet;
+
+
+  braceletPriceEl
+    .textContent =
+      "AED " +
+      braceletPrice;
+
+
+  charmCountLabel
+    .textContent =
+      selected.length === 1
+        ? "1 Charm"
+        : selected.length +
+          " Charms";
+
+
+  charmPriceEl
+    .textContent =
+      "AED " +
+      charmsPrice;
+
+
+  totalPriceEl
+    .textContent =
+      "AED " +
+      total;
+
+
+  if (
+    selected.length === 0
+  ) {
+
+    selectedList
+      .textContent =
+        "No charms selected yet.";
+
+  }
+
+  else {
+
+    selectedList
+      .textContent =
+        selected.length +
+        (
+          selected.length === 1
+            ? " charm selected."
+            : " charms selected."
+        );
+
+  }
+
+}
+
+
+/* =========================================
+   CHARM CATALOGUE
+========================================= */
+
+function renderCharmGrid() {
+
+  const searchTerm =
+    searchInput
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const category =
+    categoryFilter
+      .value;
+
+
+  const filtered =
+    CHARMS.filter(
+      charm => {
+
+        /*
+          Don't display broken
+          charm images.
+        */
+
+        if (
+          !charmImages[
+            charm.id
+          ]
+        ) {
+
+          return false;
+
+        }
+
+
+        const categoryMatch =
+          category === "all" ||
+          charm.category ===
+            category;
+
+
+        const searchMatch =
+          !searchTerm ||
+
+          String(
+            charm.name || ""
+          )
+            .toLowerCase()
+            .includes(
+              searchTerm
+            ) ||
+
+          String(
+            charm.category || ""
+          )
+            .toLowerCase()
+            .includes(
+              searchTerm
+            );
+
+
+        return (
+          categoryMatch &&
+          searchMatch
+        );
+
+      }
+    );
+
+
+  charmGrid.innerHTML = "";
+
+
+  filtered.forEach(
+    charm => {
+
+      const card =
+        document.createElement(
+          "button"
+        );
+
+
+      card.type =
+        "button";
+
+
+      card.className =
+        "charm-card";
+
+
+      card.dataset.id =
+        charm.id;
+
+
+      const price =
+        getCharmPrice(
+          charm
+        );
+
+
+      card.innerHTML = `
+
+        <img
+          src="${charm.src}"
+          alt="${charm.name}"
+        >
+
+        <span class="charm-name">
+          ${charm.name}
+        </span>
+
+        <span class="charm-price">
+          AED ${price}
+        </span>
+
+        <i class="charm-badge">
+          0
+        </i>
+
+      `;
+
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          addCharm(
+            charm.id
+          );
+
+        }
+      );
+
+
+      charmGrid.appendChild(
+        card
+      );
+
+    }
+  );
+
+
+  updateCharmBadges();
+
+}
+
+
+/* =========================================
+   SELECTED BADGES
+========================================= */
+
+function updateCharmBadges() {
 
   document
     .querySelectorAll(
       ".charm-card"
     )
-    .forEach(card => {
+    .forEach(
+      card => {
 
-      const count =
-        selected.filter(
-          item =>
-            item.id ===
-            card.dataset.id
-        ).length;
+        const id =
+          card.dataset.id;
 
 
-      const badge =
-        card.querySelector(
-          ".charm-badge"
-        );
+        const count =
+          selected.filter(
+            item =>
+              String(
+                item.id
+              ) ===
+              String(id)
+          ).length;
 
 
-      if (!badge) return;
+        const badge =
+          card.querySelector(
+            ".charm-badge"
+          );
 
 
-      badge.textContent =
-        count;
+        if (!badge) return;
 
 
-      badge.style.display =
-        count > 0
-          ? "grid"
-          : "none";
+        badge.textContent =
+          count;
 
-    });
+
+        badge.style.display =
+          count > 0
+            ? "flex"
+            : "none";
+
+      }
+    );
+
 }
 
 
-// ==========================================
-// UNDO
-// ==========================================
+/* =========================================
+   SEARCH EVENTS
+========================================= */
+
+searchInput.addEventListener(
+  "input",
+  renderCharmGrid
+);
+
+
+categoryFilter.addEventListener(
+  "change",
+  renderCharmGrid
+);
+
+
+/* =========================================
+   UNDO
+========================================= */
 
 document
-  .getElementById("undoBtn")
+  .getElementById(
+    "undoBtn"
+  )
   .addEventListener(
     "click",
     () => {
 
+      if (
+        selected.length === 0
+      ) {
+
+        return;
+
+      }
+
+
       selected.pop();
 
-      arrangeCharms();
+
+      /*
+        Reposition remaining
+        automatic charms.
+      */
+
+      arrangeAutomaticCharms();
+
 
       render();
 
@@ -866,12 +1122,14 @@ document
   );
 
 
-// ==========================================
-// CLEAR
-// ==========================================
+/* =========================================
+   CLEAR
+========================================= */
 
 document
-  .getElementById("clearBtn")
+  .getElementById(
+    "clearBtn"
+  )
   .addEventListener(
     "click",
     () => {
@@ -884,30 +1142,17 @@ document
   );
 
 
-// ==========================================
-// SEARCH
-// ==========================================
+/* =========================================
+   POINTER POSITION
+========================================= */
 
-search.addEventListener(
-  "input",
-  renderGrid
-);
-
-
-categoryFilter.addEventListener(
-  "change",
-  renderGrid
-);
-
-
-// ==========================================
-// POINTER POSITION
-// ==========================================
-
-function getPointerPosition(event) {
+function getPointerPosition(
+  event
+) {
 
   const rect =
-    canvas.getBoundingClientRect();
+    canvas
+      .getBoundingClientRect();
 
 
   const source =
@@ -939,14 +1184,17 @@ function getPointerPosition(event) {
       )
 
   };
+
 }
 
 
-// ==========================================
-// HIT TEST
-// ==========================================
+/* =========================================
+   FIND CHARM UNDER POINTER
+========================================= */
 
-function findCharmAt(point) {
+function findCharmAt(
+  point
+) {
 
   for (
     let i =
@@ -961,26 +1209,40 @@ function findCharmAt(point) {
       selected[i];
 
 
-    const halfWidth =
-      (item.w || 82) / 2 + 15;
+    const halfW =
+      (
+        item.w || 88
+      ) /
+      2 +
+      15;
 
 
-    const halfHeight =
-      (item.h || 82) / 2 + 15;
+    const halfH =
+      (
+        item.h || 88
+      ) /
+      2 +
+      15;
 
 
     if (
+
       point.x >=
-        item.x - halfWidth &&
+        item.x -
+        halfW &&
 
       point.x <=
-        item.x + halfWidth &&
+        item.x +
+        halfW &&
 
       point.y >=
-        item.y - halfHeight &&
+        item.y -
+        halfH &&
 
       point.y <=
-        item.y + halfHeight
+        item.y +
+        halfH
+
     ) {
 
       return i;
@@ -991,52 +1253,78 @@ function findCharmAt(point) {
 
 
   return -1;
+
 }
 
 
-// ==========================================
-// START DRAG
-// ==========================================
+/* =========================================
+   START DRAGGING
+========================================= */
 
-function startDrag(event) {
+function startDrag(
+  event
+) {
 
   const point =
-    getPointerPosition(event);
+    getPointerPosition(
+      event
+    );
 
 
   draggingIndex =
-    findCharmAt(point);
+    findCharmAt(
+      point
+    );
 
 
-  if (draggingIndex < 0) {
+  if (
+    draggingIndex < 0
+  ) {
+
     return;
+
   }
 
 
   const item =
-    selected[draggingIndex];
+    selected[
+      draggingIndex
+    ];
 
 
   dragOffsetX =
-    point.x - item.x;
+    point.x -
+    item.x;
 
 
   dragOffsetY =
-    point.y - item.y;
+    point.y -
+    item.y;
+
+
+  canvas.style.cursor =
+    "grabbing";
 
 
   event.preventDefault();
+
 }
 
 
-// ==========================================
-// MOVE DRAG
-// ==========================================
+/* =========================================
+   DRAG CHARM
+========================================= */
 
-function moveDrag(event) {
+function dragCharm(
+  event
+) {
 
-  if (draggingIndex < 0) {
+  if (
+    draggingIndex < 0
+  ) {
+
     return;
+
   }
 
 
@@ -1044,29 +1332,39 @@ function moveDrag(event) {
 
 
   const point =
-    getPointerPosition(event);
+    getPointerPosition(
+      event
+    );
 
 
   const item =
-    selected[draggingIndex];
+    selected[
+      draggingIndex
+    ];
 
 
   item.x =
     Math.max(
       45,
+
       Math.min(
         canvas.width - 45,
-        point.x - dragOffsetX
+
+        point.x -
+        dragOffsetX
       )
     );
 
 
   item.y =
     Math.max(
-      100,
+      80,
+
       Math.min(
         canvas.height - 45,
-        point.y - dragOffsetY
+
+        point.y -
+        dragOffsetY
       )
     );
 
@@ -1075,31 +1373,37 @@ function moveDrag(event) {
 
 
   render();
+
 }
 
 
-// ==========================================
-// END DRAG
-// ==========================================
+/* =========================================
+   END DRAG
+========================================= */
 
 function endDrag() {
 
   draggingIndex = -1;
 
+  canvas.style.cursor =
+    "default";
+
 }
 
 
-// MOUSE
+/* MOUSE */
 
 canvas.addEventListener(
   "mousedown",
   startDrag
 );
 
+
 canvas.addEventListener(
   "mousemove",
-  moveDrag
+  dragCharm
 );
+
 
 window.addEventListener(
   "mouseup",
@@ -1107,7 +1411,7 @@ window.addEventListener(
 );
 
 
-// TOUCH
+/* TOUCH */
 
 canvas.addEventListener(
   "touchstart",
@@ -1117,13 +1421,15 @@ canvas.addEventListener(
   }
 );
 
+
 canvas.addEventListener(
   "touchmove",
-  moveDrag,
+  dragCharm,
   {
     passive: false
   }
 );
+
 
 canvas.addEventListener(
   "touchend",
@@ -1131,12 +1437,14 @@ canvas.addEventListener(
 );
 
 
-// ==========================================
-// SAVE DESIGN
-// ==========================================
+/* =========================================
+   SAVE IMAGE
+========================================= */
 
 document
-  .getElementById("saveBtn")
+  .getElementById(
+    "saveBtn"
+  )
   .addEventListener(
     "click",
     () => {
@@ -1151,7 +1459,7 @@ document
 
 
       link.download =
-        "zay-bracelet-design.png";
+        "my-zay-bracelet.png";
 
 
       link.href =
@@ -1166,8 +1474,8 @@ document
   );
 
 
-// ==========================================
-// START SIMULATOR
-// ==========================================
+/* =========================================
+   START
+========================================= */
 
-preload();
+preloadImages();
