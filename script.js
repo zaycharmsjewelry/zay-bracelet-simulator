@@ -1,644 +1,1503 @@
-const canvas = document.getElementById('braceletCanvas');
-const ctx = canvas.getContext('2d');
+// ==========================================
+// ZAY BRACELET SIMULATOR
+// ==========================================
 
-const braceletSelect = document.getElementById('braceletSelect');
-const grid = document.getElementById('charmGrid');
-const search = document.getElementById('search');
-const categoryFilter = document.getElementById('categoryFilter');
-const selectedList = document.getElementById('selectedList');
 
-const braceletImages = {};
-const charmImages = {};
+// ------------------------------------------
+// ELEMENTS
+// ------------------------------------------
+
+const canvas =
+  document.getElementById("braceletCanvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+const charmGrid =
+  document.getElementById("charmGrid");
+
+const search =
+  document.getElementById("search");
+
+const categoryFilter =
+  document.getElementById("categoryFilter");
+
+const selectedList =
+  document.getElementById("selectedList");
+
+const braceletPriceLabel =
+  document.getElementById("braceletPriceLabel");
+
+const braceletPriceElement =
+  document.getElementById("braceletPrice");
+
+const charmCountLabel =
+  document.getElementById("charmCountLabel");
+
+const charmPriceElement =
+  document.getElementById("charmPrice");
+
+const totalPriceElement =
+  document.getElementById("totalPrice");
+
+
+
+// ------------------------------------------
+// PRICING
+// ------------------------------------------
+
+const BRACELET_PRICES = {
+
+  1: 15,
+
+  2: 20
+
+};
+
+
+const REGULAR_CHARM_PRICE = 5;
+
+const VINTAGE_CHARM_PRICE = 8;
+
+
+
+// ------------------------------------------
+// STATE
+// ------------------------------------------
+
+let currentBracelet = 1;
 
 let selected = [];
-let dragging = -1;
+
+let draggingIndex = -1;
 
 
-// -----------------------------
-// IMAGE LOADING
-// -----------------------------
+const braceletImages = {};
 
-function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
+const charmImages = {};
 
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Could not load ${src}`));
 
-    img.src = src;
-  });
+
+// ------------------------------------------
+// CHARM PRICE
+// ------------------------------------------
+
+function getCharmPrice(charm) {
+
+  if (
+    charm.category
+      .toLowerCase()
+      .includes("vintage")
+  ) {
+
+    return VINTAGE_CHARM_PRICE;
+
+  }
+
+  return REGULAR_CHARM_PRICE;
+
 }
 
 
-// -----------------------------
-// LOAD BRACELETS + CHARMS
-// -----------------------------
+
+// ------------------------------------------
+// LOAD IMAGE
+// ------------------------------------------
+
+function loadImage(src) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      const image =
+        new Image();
+
+
+      image.onload =
+        () => resolve(image);
+
+
+      image.onerror =
+        () => reject(
+          new Error(
+            `Could not load ${src}`
+          )
+        );
+
+
+      image.src = src;
+
+    }
+  );
+
+}
+
+
+
+// ------------------------------------------
+// PRELOAD
+// ------------------------------------------
 
 async function preload() {
 
+
   // Bracelet 1
+
   try {
-    braceletImages[1] = await loadImage('assets/bracelet-1.png');
-  } catch (error) {
-    console.log('Bracelet 1 could not load');
-  }
 
-  // Bracelet 2
-  try {
-    braceletImages[2] = await loadImage('assets/bracelet-2.png');
-  } catch (error) {
-    console.log('Bracelet 2 could not load');
-  }
-
-  // Load charms
-  await Promise.all(
-    CHARMS.map(async (charm) => {
-      try {
-        charmImages[charm.id] = await loadImage(charm.src);
-      } catch (error) {
-        console.log('Skipping missing charm:', charm.src);
-      }
-    })
-  );
-
-  render();
-  renderGrid();
-}
-
-
-// -----------------------------
-// CATEGORY LIST
-// -----------------------------
-
-const categories = [...new Set(CHARMS.map(c => c.category))];
-
-categories.forEach(category => {
-  const option = document.createElement('option');
-
-  option.value = category;
-  option.textContent = category;
-
-  categoryFilter.appendChild(option);
-});
-
-
-// -----------------------------
-// DEFAULT CHARM POSITION
-// -----------------------------
-
-function defaultPosition(index) {
-
-  const type = braceletSelect.value;
-  const total = Math.max(selected.length, 1);
-
-  const t = (index + 1) / (total + 1);
-
-  if (type === '1') {
-    return {
-      x: 105 + t * 690,
-      y: 565 - t * 470
-    };
-  }
-
-  return {
-    x: 105 + t * 680,
-    y: 585 - t * 490
-  };
-}
-
-
-function ensurePositions() {
-
-  selected.forEach((item, index) => {
-
-    if (!Number.isFinite(item.x) || !Number.isFinite(item.y)) {
-
-      const position = defaultPosition(index);
-
-      item.x = position.x;
-      item.y = position.y;
-    }
-
-  });
-}
-
-
-// -----------------------------
-// DRAW BRACELET
-// -----------------------------
-
-function drawCoverImage(img) {
-
-  const scale =
-    Math.min(
-      canvas.width / img.width,
-      canvas.height / img.height
-    ) * 0.95;
-
-  const width = img.width * scale;
-  const height = img.height * scale;
-
-  ctx.drawImage(
-    img,
-    (canvas.width - width) / 2,
-    (canvas.height - height) / 2,
-    width,
-    height
-  );
-}
-
-
-// -----------------------------
-// MAIN RENDER
-// -----------------------------
-
-function render() {
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = '#fffdf9';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-
-  // Draw bracelet
-  const bracelet = braceletImages[braceletSelect.value];
-
-  if (bracelet) {
-    drawCoverImage(bracelet);
-  }
-
-
-  ensurePositions();
-
-
-  // Draw selected charms
-  selected.forEach((item) => {
-
-    const img = charmImages[item.id];
-
-    if (!img) return;
-
-
-    const targetSize = 92;
-
-    const ratio =
-      Math.min(
-        targetSize / img.width,
-        targetSize / img.height
+    braceletImages[1] =
+      await loadImage(
+        "assets/bracelet-1.png"
       );
 
+  }
 
-    const width = img.width * ratio;
-    const height = img.height * ratio;
+  catch (error) {
 
-
-    item.w = width;
-    item.h = height;
-
-
-    ctx.save();
-
-    ctx.shadowColor = 'rgba(0,0,0,.15)';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetY = 4;
-
-    ctx.drawImage(
-      img,
-      item.x - width / 2,
-      item.y - height / 2,
-      width,
-      height
+    console.log(
+      "Bracelet 1 could not load"
     );
-
-    ctx.restore();
-
-  });
-
-
-  // Selected count
-  if (selected.length > 0) {
-
-    selectedList.textContent =
-      `${selected.length} charm${selected.length > 1 ? 's' : ''} selected`;
-
-  } else {
-
-    selectedList.textContent =
-      'No charms selected yet';
 
   }
 
 
-  updateBadges();
-}
 
+  // Bracelet 2
 
-// -----------------------------
-// CHARM CATALOGUE
-// -----------------------------
+  try {
 
-function renderGrid() {
+    braceletImages[2] =
+      await loadImage(
+        "assets/bracelet-2.png"
+      );
 
-  const query =
-    search.value.trim().toLowerCase();
+  }
 
-  const category =
-    categoryFilter.value;
+  catch (error) {
 
-
-  const filtered = CHARMS.filter(charm => {
-
-    // Do not show missing images
-    if (!charmImages[charm.id]) {
-      return false;
-    }
-
-
-    const matchesCategory =
-      category === 'all' ||
-      charm.category === category;
-
-
-    const matchesSearch =
-      !query ||
-      charm.name.toLowerCase().includes(query) ||
-      charm.category.toLowerCase().includes(query);
-
-
-    return matchesCategory && matchesSearch;
-
-  });
-
-
-  grid.innerHTML = '';
-
-
-  filtered.forEach(charm => {
-
-    const card =
-      document.createElement('button');
-
-    card.className = 'charm-card';
-    card.type = 'button';
-    card.dataset.id = charm.id;
-
-
-    card.innerHTML = `
-      <img src="${charm.src}" alt="${charm.name}">
-      <span>${charm.name}</span>
-      <i class="badge" style="display:none">0</i>
-    `;
-
-
-    card.addEventListener(
-      'click',
-      () => addCharm(charm.id)
+    console.log(
+      "Bracelet 2 could not load"
     );
 
-
-    grid.appendChild(card);
-
-  });
+  }
 
 
-  updateBadges();
-}
 
+  // Charms
 
-// -----------------------------
-// BADGES
-// -----------------------------
+  await Promise.all(
 
-function updateBadges() {
+    CHARMS.map(
 
-  document
-    .querySelectorAll('.charm-card')
-    .forEach(card => {
+      async charm => {
 
-      const count =
-        selected.filter(
-          item => item.id === card.dataset.id
-        ).length;
+        try {
 
+          charmImages[charm.id] =
+            await loadImage(
+              charm.src
+            );
 
-      const badge =
-        card.querySelector('.badge');
+        }
 
+        catch (error) {
 
-      badge.textContent = count;
+          console.log(
+            "Skipping missing charm:",
+            charm.src
+          );
 
-      badge.style.display =
-        count ? 'grid' : 'none';
-
-    });
-}
-
-
-// -----------------------------
-// ADD CHARM
-// -----------------------------
-
-function addCharm(id) {
-
-  selected.push({
-    id: id,
-    x: null,
-    y: null,
-    moved: false
-  });
-
-
-  selected.forEach((item, index) => {
-
-    if (!item.moved) {
-
-      const position =
-        defaultPosition(index);
-
-      item.x = position.x;
-      item.y = position.y;
-
-    }
-
-  });
-
-
-  render();
-}
-
-
-// -----------------------------
-// BUTTONS
-// -----------------------------
-
-document.getElementById('undoBtn')
-  .addEventListener('click', () => {
-
-    selected.pop();
-
-    render();
-
-  });
-
-
-document.getElementById('clearBtn')
-  .addEventListener('click', () => {
-
-    selected = [];
-
-    render();
-
-  });
-
-
-// -----------------------------
-// CHANGE BRACELET
-// -----------------------------
-
-braceletSelect.addEventListener(
-  'change',
-  () => {
-
-    selected.forEach((item, index) => {
-
-      if (!item.moved) {
-
-        const position =
-          defaultPosition(index);
-
-        item.x = position.x;
-        item.y = position.y;
+        }
 
       }
 
-    });
+    )
+
+  );
 
 
-    render();
+  createCategories();
+
+  renderGrid();
+
+  render();
+
+}
+
+
+
+// ------------------------------------------
+// CATEGORY MENU
+// ------------------------------------------
+
+function createCategories() {
+
+  const categories = [
+
+    ...new Set(
+      CHARMS.map(
+        charm =>
+          charm.category
+      )
+    )
+
+  ];
+
+
+  categories.forEach(
+    category => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        category;
+
+
+      option.textContent =
+        category;
+
+
+      categoryFilter
+        .appendChild(
+          option
+        );
+
+    }
+  );
+
+}
+
+
+
+// ------------------------------------------
+// CHAIN BUTTONS
+// ------------------------------------------
+
+document
+  .querySelectorAll(
+    ".chain-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          currentBracelet =
+            Number(
+              button.dataset.bracelet
+            );
+
+
+          document
+            .querySelectorAll(
+              ".chain-button"
+            )
+            .forEach(
+              item =>
+                item.classList
+                  .remove(
+                    "active"
+                  )
+            );
+
+
+          button.classList
+            .add(
+              "active"
+            );
+
+
+          repositionUnmovedCharms();
+
+          render();
+
+        }
+      );
+
+    }
+  );
+
+
+
+// ------------------------------------------
+// DEFAULT CHARM POSITION
+// ------------------------------------------
+
+function defaultPosition(
+  index
+) {
+
+  const total =
+    Math.max(
+      selected.length,
+      1
+    );
+
+
+  const t =
+    (index + 1) /
+    (total + 1);
+
+
+  if (
+    currentBracelet === 1
+  ) {
+
+    return {
+
+      x:
+        110 +
+        t * 680,
+
+      y:
+        570 -
+        t * 470
+
+    };
 
   }
-);
-
-
-// -----------------------------
-// SEARCH + CATEGORY
-// -----------------------------
-
-search.addEventListener(
-  'input',
-  renderGrid
-);
-
-
-categoryFilter.addEventListener(
-  'change',
-  renderGrid
-);
-
-
-// -----------------------------
-// DRAGGING CHARMS
-// -----------------------------
-
-function pointFromEvent(event) {
-
-  const rect =
-    canvas.getBoundingClientRect();
-
-
-  const touch =
-    event.touches?.[0] ||
-    event.changedTouches?.[0];
-
-
-  const clientX =
-    touch
-      ? touch.clientX
-      : event.clientX;
-
-
-  const clientY =
-    touch
-      ? touch.clientY
-      : event.clientY;
 
 
   return {
 
     x:
-      (clientX - rect.left) *
-      canvas.width /
-      rect.width,
+      115 +
+      t * 670,
 
     y:
-      (clientY - rect.top) *
-      canvas.height /
-      rect.height
+      585 -
+      t * 490
 
   };
+
 }
 
 
-function hitTest(point) {
 
-  for (
-    let i = selected.length - 1;
-    i >= 0;
-    i--
+// ------------------------------------------
+// REPOSITION AUTOMATIC CHARMS
+// ------------------------------------------
+
+function repositionUnmovedCharms() {
+
+  selected.forEach(
+
+    (
+      item,
+      index
+    ) => {
+
+      if (
+        !item.moved
+      ) {
+
+        const position =
+          defaultPosition(
+            index
+          );
+
+
+        item.x =
+          position.x;
+
+        item.y =
+          position.y;
+
+      }
+
+    }
+
+  );
+
+}
+
+
+
+// ------------------------------------------
+// ENSURE POSITIONS
+// ------------------------------------------
+
+function ensurePositions() {
+
+  selected.forEach(
+
+    (
+      item,
+      index
+    ) => {
+
+      if (
+        !Number.isFinite(
+          item.x
+        )
+        ||
+        !Number.isFinite(
+          item.y
+        )
+      ) {
+
+        const position =
+          defaultPosition(
+            index
+          );
+
+
+        item.x =
+          position.x;
+
+
+        item.y =
+          position.y;
+
+      }
+
+    }
+
+  );
+
+}
+
+
+
+// ------------------------------------------
+// DRAW BRACELET
+// ------------------------------------------
+
+function drawBracelet(
+  image
+) {
+
+  if (!image) return;
+
+
+  const scale =
+    Math.min(
+
+      canvas.width /
+      image.width,
+
+      canvas.height /
+      image.height
+
+    ) * 0.95;
+
+
+  const width =
+    image.width *
+    scale;
+
+
+  const height =
+    image.height *
+    scale;
+
+
+  ctx.drawImage(
+
+    image,
+
+    (
+      canvas.width -
+      width
+    ) / 2,
+
+    (
+      canvas.height -
+      height
+    ) / 2,
+
+    width,
+
+    height
+
+  );
+
+}
+
+
+
+// ------------------------------------------
+// RENDER CANVAS
+// ------------------------------------------
+
+function render() {
+
+  ctx.clearRect(
+
+    0,
+    0,
+
+    canvas.width,
+    canvas.height
+
+  );
+
+
+  // Warm cream background
+
+  ctx.fillStyle =
+    "#fffaf2";
+
+
+  ctx.fillRect(
+
+    0,
+    0,
+
+    canvas.width,
+    canvas.height
+
+  );
+
+
+
+  // Bracelet
+
+  drawBracelet(
+
+    braceletImages[
+      currentBracelet
+    ]
+
+  );
+
+
+
+  ensurePositions();
+
+
+
+  // Draw charms
+
+  selected.forEach(
+
+    item => {
+
+      const image =
+        charmImages[
+          item.id
+        ];
+
+
+      if (!image) return;
+
+
+
+      const targetSize =
+        92;
+
+
+      const ratio =
+        Math.min(
+
+          targetSize /
+          image.width,
+
+          targetSize /
+          image.height
+
+        );
+
+
+      const width =
+        image.width *
+        ratio;
+
+
+      const height =
+        image.height *
+        ratio;
+
+
+      item.w =
+        width;
+
+
+      item.h =
+        height;
+
+
+
+      ctx.save();
+
+
+      ctx.shadowColor =
+        "rgba(70,45,20,0.16)";
+
+
+      ctx.shadowBlur =
+        7;
+
+
+      ctx.shadowOffsetY =
+        3;
+
+
+
+      ctx.drawImage(
+
+        image,
+
+        item.x -
+        width / 2,
+
+        item.y -
+        height / 2,
+
+        width,
+
+        height
+
+      );
+
+
+      ctx.restore();
+
+    }
+
+  );
+
+
+  updatePrice();
+
+  updateBadges();
+
+}
+
+
+
+// ------------------------------------------
+// PRICE CALCULATION
+// ------------------------------------------
+
+function updatePrice() {
+
+  const braceletPrice =
+    BRACELET_PRICES[
+      currentBracelet
+    ];
+
+
+  let charmsTotal =
+    0;
+
+
+  selected.forEach(
+
+    item => {
+
+      const charm =
+        CHARMS.find(
+          c =>
+            c.id ===
+            item.id
+        );
+
+
+      if (charm) {
+
+        charmsTotal +=
+          getCharmPrice(
+            charm
+          );
+
+      }
+
+    }
+
+  );
+
+
+  const total =
+    braceletPrice +
+    charmsTotal;
+
+
+
+  braceletPriceLabel
+    .textContent =
+      `Chain ${currentBracelet}`;
+
+
+  braceletPriceElement
+    .textContent =
+      `AED ${braceletPrice}`;
+
+
+
+  charmCountLabel
+    .textContent =
+
+      selected.length === 1
+
+        ? "1 Charm"
+
+        : `${selected.length} Charms`;
+
+
+
+  charmPriceElement
+    .textContent =
+      `AED ${charmsTotal}`;
+
+
+
+  totalPriceElement
+    .textContent =
+      `AED ${total}`;
+
+
+
+  if (
+    selected.length === 0
   ) {
 
-    const item = selected[i];
+    selectedList
+      .textContent =
+        "No charms selected yet";
+
+  }
+
+  else {
+
+    selectedList
+      .textContent =
+
+        `${selected.length} charm${
+          selected.length === 1
+            ? ""
+            : "s"
+        } selected`;
+
+  }
+
+}
+
+
+
+// ------------------------------------------
+// CHARM CATALOGUE
+// ------------------------------------------
+
+function renderGrid() {
+
+  const query =
+    search.value
+      .trim()
+      .toLowerCase();
+
+
+  const category =
+    categoryFilter.value;
+
+
+
+  const filtered =
+    CHARMS.filter(
+
+      charm => {
+
+
+        // Don't show missing images
+
+        if (
+          !charmImages[
+            charm.id
+          ]
+        ) {
+
+          return false;
+
+        }
+
+
+        const categoryMatch =
+
+          category === "all"
+          ||
+          charm.category ===
+          category;
+
+
+        const searchMatch =
+
+          !query
+
+          ||
+
+          charm.name
+            .toLowerCase()
+            .includes(
+              query
+            )
+
+          ||
+
+          charm.category
+            .toLowerCase()
+            .includes(
+              query
+            );
+
+
+        return (
+          categoryMatch
+          &&
+          searchMatch
+        );
+
+      }
+
+    );
+
+
+
+  charmGrid.innerHTML =
+    "";
+
+
+
+  filtered.forEach(
+
+    charm => {
+
+
+      const price =
+        getCharmPrice(
+          charm
+        );
+
+
+      const card =
+        document.createElement(
+          "button"
+        );
+
+
+      card.type =
+        "button";
+
+
+      card.className =
+        "charm-card";
+
+
+      card.dataset.id =
+        charm.id;
+
+
+
+      card.innerHTML = `
+
+        <img
+          src="${charm.src}"
+          alt="${charm.name}"
+        >
+
+        <span class="charm-name">
+          ${charm.name}
+        </span>
+
+        <span class="charm-price">
+          AED ${price}
+        </span>
+
+        <i
+          class="charm-badge"
+        >
+          0
+        </i>
+
+      `;
+
+
+
+      card.addEventListener(
+
+        "click",
+
+        () =>
+          addCharm(
+            charm.id
+          )
+
+      );
+
+
+
+      charmGrid.appendChild(
+        card
+      );
+
+    }
+
+  );
+
+
+  updateBadges();
+
+}
+
+
+
+// ------------------------------------------
+// BADGES
+// ------------------------------------------
+
+function updateBadges() {
+
+  document
+    .querySelectorAll(
+      ".charm-card"
+    )
+    .forEach(
+
+      card => {
+
+
+        const count =
+          selected.filter(
+
+            item =>
+              item.id ===
+              card.dataset.id
+
+          ).length;
+
+
+
+        const badge =
+          card.querySelector(
+            ".charm-badge"
+          );
+
+
+        if (!badge) return;
+
+
+
+        badge.textContent =
+          count;
+
+
+        badge.style.display =
+
+          count > 0
+
+            ? "grid"
+
+            : "none";
+
+      }
+
+    );
+
+}
+
+
+
+// ------------------------------------------
+// ADD CHARM
+// ------------------------------------------
+
+function addCharm(
+  id
+) {
+
+  selected.push({
+
+    id: id,
+
+    x: null,
+
+    y: null,
+
+    moved: false
+
+  });
+
+
+  repositionUnmovedCharms();
+
+  render();
+
+}
+
+
+
+// ------------------------------------------
+// UNDO
+// ------------------------------------------
+
+document
+  .getElementById(
+    "undoBtn"
+  )
+  .addEventListener(
+
+    "click",
+
+    () => {
+
+      selected.pop();
+
+      repositionUnmovedCharms();
+
+      render();
+
+    }
+
+  );
+
+
+
+// ------------------------------------------
+// CLEAR
+// ------------------------------------------
+
+document
+  .getElementById(
+    "clearBtn"
+  )
+  .addEventListener(
+
+    "click",
+
+    () => {
+
+      selected =
+        [];
+
+      render();
+
+    }
+
+  );
+
+
+
+// ------------------------------------------
+// SEARCH
+// ------------------------------------------
+
+search
+  .addEventListener(
+
+    "input",
+
+    renderGrid
+
+  );
+
+
+
+// ------------------------------------------
+// CATEGORY
+// ------------------------------------------
+
+categoryFilter
+  .addEventListener(
+
+    "change",
+
+    renderGrid
+
+  );
+
+
+
+// ------------------------------------------
+// POINTER POSITION
+// ------------------------------------------
+
+function pointFromEvent(
+  event
+) {
+
+  const rect =
+    canvas
+      .getBoundingClientRect();
+
+
+  const touch =
+
+    event.touches?.[0]
+
+    ||
+
+    event.changedTouches?.[0];
+
+
+
+  const clientX =
+
+    touch
+      ? touch.clientX
+      : event.clientX;
+
+
+
+  const clientY =
+
+    touch
+      ? touch.clientY
+      : event.clientY;
+
+
+
+  return {
+
+    x:
+
+      (
+        clientX -
+        rect.left
+      )
+      *
+      canvas.width
+      /
+      rect.width,
+
+
+    y:
+
+      (
+        clientY -
+        rect.top
+      )
+      *
+      canvas.height
+      /
+      rect.height
+
+  };
+
+}
+
+
+
+// ------------------------------------------
+// HIT TEST
+// ------------------------------------------
+
+function hitTest(
+  point
+) {
+
+  for (
+
+    let index =
+      selected.length - 1;
+
+    index >= 0;
+
+    index--
+
+  ) {
+
+
+    const item =
+      selected[index];
 
 
     const insideX =
-      Math.abs(point.x - item.x) <
-      (item.w || 90) / 2 + 10;
+
+      Math.abs(
+
+        point.x -
+        item.x
+
+      )
+
+      <
+
+      (
+        item.w || 90
+      ) / 2
+      + 12;
+
 
 
     const insideY =
-      Math.abs(point.y - item.y) <
-      (item.h || 90) / 2 + 10;
+
+      Math.abs(
+
+        point.y -
+        item.y
+
+      )
+
+      <
+
+      (
+        item.h || 90
+      ) / 2
+      + 12;
 
 
-    if (insideX && insideY) {
-      return i;
+
+    if (
+      insideX
+      &&
+      insideY
+    ) {
+
+      return index;
+
     }
 
   }
 
 
   return -1;
+
 }
 
 
-function startDrag(event) {
+
+// ------------------------------------------
+// START DRAG
+// ------------------------------------------
+
+function startDrag(
+  event
+) {
 
   const point =
-    pointFromEvent(event);
+    pointFromEvent(
+      event
+    );
 
 
-  dragging =
-    hitTest(point);
+  draggingIndex =
+    hitTest(
+      point
+    );
 
 
-  if (dragging >= 0) {
+  if (
+    draggingIndex >= 0
+  ) {
+
     event.preventDefault();
+
   }
 
 }
 
 
-function moveDrag(event) {
 
-  if (dragging < 0) return;
+// ------------------------------------------
+// MOVE DRAG
+// ------------------------------------------
+
+function moveDrag(
+  event
+) {
+
+  if (
+    draggingIndex < 0
+  ) {
+
+    return;
+
+  }
 
 
   event.preventDefault();
 
 
   const point =
-    pointFromEvent(event);
+    pointFromEvent(
+      event
+    );
 
 
-  selected[dragging].x =
+  selected[
+    draggingIndex
+  ].x =
+
     Math.max(
+
       45,
+
       Math.min(
-        canvas.width - 45,
+
+        canvas.width -
+        45,
+
         point.x
+
       )
+
     );
 
 
-  selected[dragging].y =
+
+  selected[
+    draggingIndex
+  ].y =
+
     Math.max(
+
       45,
+
       Math.min(
-        canvas.height - 45,
+
+        canvas.height -
+        45,
+
         point.y
+
       )
+
     );
 
 
-  selected[dragging].moved = true;
+
+  selected[
+    draggingIndex
+  ].moved =
+    true;
 
 
   render();
+
 }
 
+
+
+// ------------------------------------------
+// END DRAG
+// ------------------------------------------
 
 function endDrag() {
-  dragging = -1;
+
+  draggingIndex =
+    -1;
+
 }
+
 
 
 // Mouse
 
 canvas.addEventListener(
-  'mousedown',
+
+  "mousedown",
+
   startDrag
+
 );
+
 
 canvas.addEventListener(
-  'mousemove',
+
+  "mousemove",
+
   moveDrag
+
 );
 
+
 window.addEventListener(
-  'mouseup',
+
+  "mouseup",
+
   endDrag
+
 );
+
 
 
 // Touch
 
 canvas.addEventListener(
-  'touchstart',
+
+  "touchstart",
+
   startDrag,
-  { passive: false }
+
+  {
+    passive: false
+  }
+
 );
 
+
 canvas.addEventListener(
-  'touchmove',
+
+  "touchmove",
+
   moveDrag,
-  { passive: false }
+
+  {
+    passive: false
+  }
+
 );
+
 
 canvas.addEventListener(
-  'touchend',
+
+  "touchend",
+
   endDrag
+
 );
 
 
-// -----------------------------
+
+// ------------------------------------------
 // SAVE DESIGN
-// -----------------------------
+// ------------------------------------------
 
-document.getElementById('saveBtn')
-  .addEventListener('click', () => {
+document
+  .getElementById(
+    "saveBtn"
+  )
+  .addEventListener(
 
-    render();
+    "click",
 
-
-    const link =
-      document.createElement('a');
-
-
-    link.download =
-      'zay-bracelet-design.png';
+    () => {
 
 
-    link.href =
-      canvas.toDataURL('image/png');
+      render();
 
 
-    link.click();
+      const link =
+        document.createElement(
+          "a"
+        );
 
-  });
+
+      link.download =
+        "zay-bracelet-design.png";
 
 
-// -----------------------------
-// START SIMULATOR
-// -----------------------------
+      link.href =
+        canvas.toDataURL(
+          "image/png"
+        );
+
+
+      link.click();
+
+    }
+
+  );
+
+
+
+// ==========================================
+// START ZAY SIMULATOR
+// ==========================================
 
 preload();
