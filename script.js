@@ -6,59 +6,37 @@
 /* ELEMENTS */
 
 const canvas =
-  document.getElementById(
-    "braceletCanvas"
-  );
+  document.getElementById("braceletCanvas");
 
 const ctx =
   canvas.getContext("2d");
 
-
 const charmGrid =
-  document.getElementById(
-    "charmGrid"
-  );
+  document.getElementById("charmGrid");
 
 const searchInput =
-  document.getElementById(
-    "search"
-  );
+  document.getElementById("search");
 
 const categoryFilter =
-  document.getElementById(
-    "categoryFilter"
-  );
-
+  document.getElementById("categoryFilter");
 
 const braceletPriceLabel =
-  document.getElementById(
-    "braceletPriceLabel"
-  );
+  document.getElementById("braceletPriceLabel");
 
 const braceletPriceEl =
-  document.getElementById(
-    "braceletPrice"
-  );
+  document.getElementById("braceletPrice");
 
 const charmCountLabel =
-  document.getElementById(
-    "charmCountLabel"
-  );
+  document.getElementById("charmCountLabel");
 
 const charmPriceEl =
-  document.getElementById(
-    "charmPrice"
-  );
+  document.getElementById("charmPrice");
 
 const totalPriceEl =
-  document.getElementById(
-    "totalPrice"
-  );
+  document.getElementById("totalPrice");
 
 const selectedList =
-  document.getElementById(
-    "selectedList"
-  );
+  document.getElementById("selectedList");
 
 
 /* =========================================
@@ -71,9 +49,7 @@ const BRACELET_PRICES = {
 };
 
 const NORMAL_CHARM_PRICE = 5;
-
 const VINTAGE_CHARM_PRICE = 8;
-
 const CUTE_CHARACTER_PRICE = 6;
 
 
@@ -88,46 +64,35 @@ let selected = [];
 let draggingIndex = -1;
 
 let dragOffsetX = 0;
-
 let dragOffsetY = 0;
 
-
 const braceletImages = {};
-
+const braceletBounds = {};
 const charmImages = {};
 
 
 /* =========================================
-   GET CHARM PRICE
+   PRICE LOGIC
 ========================================= */
 
 function getCharmPrice(charm) {
 
   const category =
-    String(
-      charm.category || ""
-    ).toLowerCase();
-
+    String(charm.category || "")
+      .toLowerCase();
 
   const name =
-    String(
-      charm.name || ""
-    ).toLowerCase();
+    String(charm.name || "")
+      .toLowerCase();
 
-
-  /* VINTAGE = AED 8 */
 
   if (
     category.includes("vintage") ||
     name.includes("vintage")
   ) {
-
     return VINTAGE_CHARM_PRICE;
-
   }
 
-
-  /* CUTE CHARACTERS = AED 6 */
 
   if (
     category.includes("cute") ||
@@ -137,13 +102,9 @@ function getCharmPrice(charm) {
     name.includes("kuromi") ||
     name.includes("melody")
   ) {
-
     return CUTE_CHARACTER_PRICE;
-
   }
 
-
-  /* EVERYTHING ELSE = AED 5 */
 
   return NORMAL_CHARM_PRICE;
 }
@@ -158,22 +119,17 @@ function loadImage(src) {
   return new Promise(
     (resolve, reject) => {
 
-      const img =
-        new Image();
-
+      const img = new Image();
 
       img.onload =
         () => resolve(img);
 
-
       img.onerror =
         () => reject(
           new Error(
-            "Could not load " +
-            src
+            "Could not load " + src
           )
         );
-
 
       img.src = src;
 
@@ -183,7 +139,170 @@ function loadImage(src) {
 
 
 /* =========================================
-   PRELOAD IMAGES
+   FIND VISIBLE PNG AREA
+========================================= */
+
+/*
+  Your bracelet PNG contains transparent
+  empty space around the actual chain.
+
+  This function finds only the visible
+  non-transparent pixels so the chain
+  can be drawn MUCH larger.
+*/
+
+function findVisibleBounds(image) {
+
+  const tempCanvas =
+    document.createElement("canvas");
+
+  tempCanvas.width =
+    image.width;
+
+  tempCanvas.height =
+    image.height;
+
+
+  const tempCtx =
+    tempCanvas.getContext(
+      "2d",
+      {
+        willReadFrequently: true
+      }
+    );
+
+
+  tempCtx.drawImage(
+    image,
+    0,
+    0
+  );
+
+
+  const data =
+    tempCtx.getImageData(
+      0,
+      0,
+      image.width,
+      image.height
+    ).data;
+
+
+  let minX =
+    image.width;
+
+  let minY =
+    image.height;
+
+  let maxX = 0;
+  let maxY = 0;
+
+  let found = false;
+
+
+  for (
+    let y = 0;
+    y < image.height;
+    y++
+  ) {
+
+    for (
+      let x = 0;
+      x < image.width;
+      x++
+    ) {
+
+      const alpha =
+        data[
+          (
+            y *
+            image.width +
+            x
+          ) *
+          4 +
+          3
+        ];
+
+
+      if (alpha > 15) {
+
+        found = true;
+
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+
+      }
+
+    }
+
+  }
+
+
+  if (!found) {
+
+    return {
+      x: 0,
+      y: 0,
+      width: image.width,
+      height: image.height
+    };
+
+  }
+
+
+  const padding = 5;
+
+
+  minX =
+    Math.max(
+      0,
+      minX - padding
+    );
+
+  minY =
+    Math.max(
+      0,
+      minY - padding
+    );
+
+  maxX =
+    Math.min(
+      image.width - 1,
+      maxX + padding
+    );
+
+  maxY =
+    Math.min(
+      image.height - 1,
+      maxY + padding
+    );
+
+
+  return {
+
+    x: minX,
+
+    y: minY,
+
+    width:
+      maxX -
+      minX +
+      1,
+
+    height:
+      maxY -
+      minY +
+      1
+
+  };
+}
+
+
+/* =========================================
+   PRELOAD
 ========================================= */
 
 async function preloadImages() {
@@ -193,6 +312,11 @@ async function preloadImages() {
     braceletImages[1] =
       await loadImage(
         "assets/bracelet-1.png"
+      );
+
+    braceletBounds[1] =
+      findVisibleBounds(
+        braceletImages[1]
       );
 
   }
@@ -212,6 +336,11 @@ async function preloadImages() {
     braceletImages[2] =
       await loadImage(
         "assets/bracelet-2.png"
+      );
+
+    braceletBounds[2] =
+      findVisibleBounds(
+        braceletImages[2]
       );
 
   }
@@ -293,14 +422,11 @@ function buildCategories() {
           "option"
         );
 
-
       option.value =
         category;
 
-
       option.textContent =
         category;
-
 
       categoryFilter.appendChild(
         option
@@ -349,10 +475,9 @@ document
             );
 
 
-          button.classList
-            .add(
-              "active"
-            );
+          button.classList.add(
+            "active"
+          );
 
 
           render();
@@ -365,35 +490,7 @@ document
 
 
 /* =========================================
-   BRACELET POSITION
-========================================= */
-
-function getBraceletArea() {
-
-  return {
-
-    left: 55,
-
-    right:
-      canvas.width - 55,
-
-    centerX:
-      canvas.width / 2,
-
-    /*
-      Chain sits near the upper-middle
-      portion of the design area.
-    */
-
-    chainY: 145
-
-  };
-
-}
-
-
-/* =========================================
-   DRAW BRACELET
+   DRAW LARGE BRACELET
 ========================================= */
 
 function drawBracelet() {
@@ -404,82 +501,76 @@ function drawBracelet() {
     ];
 
 
-  if (!image) return;
+  const bounds =
+    braceletBounds[
+      currentBracelet
+    ];
 
 
-  const area =
-    getBraceletArea();
+  if (
+    !image ||
+    !bounds
+  ) {
+    return;
+  }
 
 
   /*
-    Bracelet uses almost the entire
-    available width.
+    This is the important part:
+
+    Make the ACTUAL VISIBLE CHAIN
+    about 92% of the canvas width.
   */
 
   const targetWidth =
-    area.right -
-    area.left;
+    canvas.width * 0.92;
 
 
   const scale =
     targetWidth /
-    image.width;
+    bounds.width;
 
 
   const targetHeight =
-    image.height *
+    bounds.height *
     scale;
 
 
+  const destinationX =
+    (
+      canvas.width -
+      targetWidth
+    ) / 2;
+
+
   /*
-    Prevent unusually tall transparent
-    PNG canvases from making the chain
-    enormous vertically.
+    Chain sits high enough for
+    charms to hang underneath.
   */
 
-  const maxHeight = 115;
+  const chainCenterY = 135;
 
 
-  let width =
-    targetWidth;
-
-
-  let height =
-    targetHeight;
-
-
-  if (height > maxHeight) {
-
-    const correction =
-      maxHeight /
-      height;
-
-
-    width *= correction;
-
-    height *= correction;
-
-  }
-
-
-  const x =
-    area.centerX -
-    width / 2;
-
-
-  const y =
-    area.chainY -
-    height / 2;
+  const destinationY =
+    chainCenterY -
+    targetHeight / 2;
 
 
   ctx.drawImage(
-    image,
-    x,
-    y,
-    width,
-    height
-  );
 
+    image,
+
+    bounds.x,
+    bounds.y,
+    bounds.width,
+    bounds.height,
+
+    destinationX,
+    destinationY,
+    targetWidth,
+    targetHeight
+
+  );
 }
 
 
@@ -493,24 +584,24 @@ function getAutomaticPosition(
 ) {
 
   /*
-    All charms use EXACTLY
-    the same Y position.
+    Use almost the full chain width.
 
-    This prevents the diagonal
-    layout from before.
+    This comfortably fits at least
+    7 charms.
   */
 
-  const charmY = 205;
+  const startX = 110;
+
+  const endX =
+    canvas.width - 110;
 
 
   /*
-    Usable width for charms.
+    Every charm stays on the SAME
+    horizontal level.
   */
 
-  const startX = 105;
-
-  const endX =
-    canvas.width - 105;
+  const charmY = 205;
 
 
   if (total <= 1) {
@@ -527,14 +618,6 @@ function getAutomaticPosition(
 
   }
 
-
-  /*
-    If customer selects 7 charms:
-
-       x   x   x   x   x   x   x
-
-    evenly across the bracelet.
-  */
 
   const spacing =
     (
@@ -557,12 +640,11 @@ function getAutomaticPosition(
       charmY
 
   };
-
 }
 
 
 /* =========================================
-   ARRANGE AUTOMATIC CHARMS
+   ARRANGE CHARMS
 ========================================= */
 
 function arrangeAutomaticCharms() {
@@ -593,7 +675,6 @@ function arrangeAutomaticCharms() {
 
     }
   );
-
 }
 
 
@@ -613,22 +694,21 @@ function drawCharm(item) {
 
 
   /*
-    Charm display size.
-
-    88px gives good visibility
-    while still fitting 7 charms.
+    Visible size of each charm.
   */
 
-  const boxSize = 88;
+  const boxSize = 90;
 
 
   const scale =
     Math.min(
+
       boxSize /
         image.width,
 
       boxSize /
         image.height
+
     );
 
 
@@ -653,7 +733,6 @@ function drawCharm(item) {
   ctx.shadowColor =
     "rgba(70,45,20,.16)";
 
-
   ctx.shadowBlur = 4;
 
   ctx.shadowOffsetY = 2;
@@ -677,12 +756,11 @@ function drawCharm(item) {
 
 
   ctx.restore();
-
 }
 
 
 /* =========================================
-   RENDER CANVAS
+   RENDER
 ========================================= */
 
 function render() {
@@ -694,11 +772,6 @@ function render() {
     canvas.height
   );
 
-
-  /*
-    Background matching ZAY
-    cream aesthetic.
-  */
 
   ctx.fillStyle =
     "#fffaf1";
@@ -727,7 +800,6 @@ function render() {
   updatePrices();
 
   updateCharmBadges();
-
 }
 
 
@@ -751,17 +823,10 @@ function addCharm(id) {
   });
 
 
-  /*
-    Every newly selected charm
-    is automatically distributed
-    along the bracelet.
-  */
-
   arrangeAutomaticCharms();
 
 
   render();
-
 }
 
 
@@ -841,34 +906,25 @@ function updatePrices() {
       total;
 
 
-  if (
-    selected.length === 0
-  ) {
+  selectedList
+    .textContent =
 
-    selectedList
-      .textContent =
-        "No charms selected yet.";
+      selected.length === 0
 
-  }
+        ? "No charms selected yet."
 
-  else {
-
-    selectedList
-      .textContent =
-        selected.length +
-        (
-          selected.length === 1
-            ? " charm selected."
-            : " charms selected."
-        );
-
-  }
+        : selected.length +
+          (
+            selected.length === 1
+              ? " charm selected."
+              : " charms selected."
+          );
 
 }
 
 
 /* =========================================
-   CHARM CATALOGUE
+   CHARM GRID
 ========================================= */
 
 function renderCharmGrid() {
@@ -889,10 +945,6 @@ function renderCharmGrid() {
     CHARMS.filter(
       charm => {
 
-        /*
-          Don't display broken
-          charm images.
-        */
 
         if (
           !charmImages[
@@ -1013,12 +1065,11 @@ function renderCharmGrid() {
 
 
   updateCharmBadges();
-
 }
 
 
 /* =========================================
-   SELECTED BADGES
+   BADGES
 ========================================= */
 
 function updateCharmBadges() {
@@ -1099,19 +1150,12 @@ document
       if (
         selected.length === 0
       ) {
-
         return;
-
       }
 
 
       selected.pop();
 
-
-      /*
-        Reposition remaining
-        automatic charms.
-      */
 
       arrangeAutomaticCharms();
 
@@ -1184,12 +1228,11 @@ function getPointerPosition(
       )
 
   };
-
 }
 
 
 /* =========================================
-   FIND CHARM UNDER POINTER
+   FIND CHARM
 ========================================= */
 
 function findCharmAt(
@@ -1211,7 +1254,7 @@ function findCharmAt(
 
     const halfW =
       (
-        item.w || 88
+        item.w || 90
       ) /
       2 +
       15;
@@ -1219,7 +1262,7 @@ function findCharmAt(
 
     const halfH =
       (
-        item.h || 88
+        item.h || 90
       ) /
       2 +
       15;
@@ -1253,12 +1296,11 @@ function findCharmAt(
 
 
   return -1;
-
 }
 
 
 /* =========================================
-   START DRAGGING
+   START DRAG
 ========================================= */
 
 function startDrag(
@@ -1280,9 +1322,7 @@ function startDrag(
   if (
     draggingIndex < 0
   ) {
-
     return;
-
   }
 
 
@@ -1302,17 +1342,12 @@ function startDrag(
     item.y;
 
 
-  canvas.style.cursor =
-    "grabbing";
-
-
   event.preventDefault();
-
 }
 
 
 /* =========================================
-   DRAG CHARM
+   DRAG
 ========================================= */
 
 function dragCharm(
@@ -1322,9 +1357,7 @@ function dragCharm(
   if (
     draggingIndex < 0
   ) {
-
     return;
-
   }
 
 
@@ -1358,7 +1391,7 @@ function dragCharm(
 
   item.y =
     Math.max(
-      80,
+      60,
 
       Math.min(
         canvas.height - 45,
@@ -1373,7 +1406,6 @@ function dragCharm(
 
 
   render();
-
 }
 
 
@@ -1384,9 +1416,6 @@ function dragCharm(
 function endDrag() {
 
   draggingIndex = -1;
-
-  canvas.style.cursor =
-    "default";
 
 }
 
