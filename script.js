@@ -51,8 +51,8 @@ const selectedList =
 const BRACELET_PRICES = {
   1: 15,
   2: 18,
-  3: 20,
-  4: 22
+  3: 22,
+  4: 20
 };
 
 const REGULAR_PRICE = 5;
