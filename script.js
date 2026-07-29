@@ -55,6 +55,13 @@ const BRACELET_PRICES = {
   4: 20
 };
 
+const BRACELET_NAMES = {
+  1: "Cable Chain",
+  2: "Curb Chain",
+  3: "Oval Link Chain",
+  4: "Paperclip Chain"
+};
+
 const REGULAR_PRICE = 5;
 const CUTE_PRICE = 6;
 const VINTAGE_PRICE = 8;
@@ -837,8 +844,8 @@ function updatePrices() {
     charmTotal;
 
   braceletPriceLabel
-    .textContent =
-      `Chain ${currentBracelet}`;
+  .textContent =
+    BRACELET_NAMES[currentBracelet];
 
   braceletPriceEl
     .textContent =
