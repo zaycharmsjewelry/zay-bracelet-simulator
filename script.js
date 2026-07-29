@@ -1,4 +1,3 @@
-
 /* =========================================
    ZAY BRACELET SIMULATOR
 ========================================= */
@@ -87,11 +86,17 @@ const charmImages = {};
 
 function getCharmPrice(charm) {
 
-  if (charm.category === "Vintage Florals") {
+  if (
+    charm.category ===
+    "Vintage Florals"
+  ) {
     return VINTAGE_PRICE;
   }
 
-  if (charm.category === "Cute Characters") {
+  if (
+    charm.category ===
+    "Cute Characters"
+  ) {
     return CUTE_PRICE;
   }
 
@@ -105,34 +110,45 @@ function getCharmPrice(charm) {
 
 function loadImage(src) {
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    const image = new Image();
+      const image = new Image();
 
-    image.onload = () => resolve(image);
+      image.onload =
+        () => resolve(image);
 
-    image.onerror = () =>
-      reject(
-        new Error(`Could not load ${src}`)
-      );
+      image.onerror =
+        () =>
+          reject(
+            new Error(
+              `Could not load ${src}`
+            )
+          );
 
-    image.src = src;
+      image.src = src;
 
-  });
+    }
+  );
 }
 
 
 /* ==============================
-   FIND VISIBLE IMAGE BOUNDS
+   FIND VISIBLE PNG AREA
 ============================== */
 
 function findVisibleBounds(image) {
 
   const temp =
-    document.createElement("canvas");
+    document.createElement(
+      "canvas"
+    );
 
-  temp.width = image.width;
-  temp.height = image.height;
+  temp.width =
+    image.width;
+
+  temp.height =
+    image.height;
 
   const tempCtx =
     temp.getContext(
@@ -156,8 +172,11 @@ function findVisibleBounds(image) {
       image.height
     ).data;
 
-  let minX = image.width;
-  let minY = image.height;
+  let minX =
+    image.width;
+
+  let minY =
+    image.height;
 
   let maxX = 0;
   let maxY = 0;
@@ -187,7 +206,9 @@ function findVisibleBounds(image) {
           3
         ];
 
-      if (alpha > 10) {
+      if (
+        alpha > 10
+      ) {
 
         found = true;
 
@@ -253,6 +274,8 @@ function findVisibleBounds(image) {
 
 async function preload() {
 
+  /* LOAD BRACELETS FIRST */
+
   for (
     let i = 1;
     i <= 4;
@@ -285,38 +308,50 @@ async function preload() {
   }
 
 
-  await Promise.all(
-
-    CHARMS.map(
-      async charm => {
-
-        try {
-
-          charmImages[
-            charm.id
-          ] =
-            await loadImage(
-              charm.src
-            );
-
-        }
-
-        catch (error) {
-
-          console.warn(
-            "Charm missing:",
-            charm.src
-          );
-
-        }
-
-      }
-    )
-
-  );
-
+  /* SHOW BRACELET IMMEDIATELY */
 
   createCategories();
+
+  render();
+
+
+  /* LOAD CHARMS */
+
+  const charmPromises =
+    CHARMS.map(
+      charm => {
+
+        return loadImage(
+          charm.src
+        )
+          .then(
+            image => {
+
+              charmImages[
+                charm.id
+              ] = image;
+
+            }
+          )
+          .catch(
+            error => {
+
+              console.warn(
+                "Charm failed:",
+                charm.src
+              );
+
+            }
+          );
+
+      }
+    );
+
+
+  await Promise.allSettled(
+    charmPromises
+  );
+
 
   renderGrid();
 
@@ -330,6 +365,13 @@ async function preload() {
 
 function createCategories() {
 
+  categoryFilter.innerHTML =
+    `
+    <option value="all">
+      All categories
+    </option>
+    `;
+
   const categories =
     [
       ...new Set(
@@ -339,7 +381,6 @@ function createCategories() {
         )
       )
     ];
-
 
   categories.forEach(
     category => {
@@ -370,7 +411,9 @@ function createCategories() {
 ============================== */
 
 document
-  .querySelectorAll(".chain-card")
+  .querySelectorAll(
+    ".chain-card"
+  )
   .forEach(
     button => {
 
@@ -380,7 +423,8 @@ document
 
           currentBracelet =
             Number(
-              button.dataset.bracelet
+              button.dataset
+                .bracelet
             );
 
           document
@@ -388,15 +432,22 @@ document
               ".chain-card"
             )
             .forEach(
-              card =>
-                card.classList.remove(
-                  "active"
-                )
+              card => {
+
+                card
+                  .classList
+                  .remove(
+                    "active"
+                  );
+
+              }
             );
 
-          button.classList.add(
-            "active"
-          );
+          button
+            .classList
+            .add(
+              "active"
+            );
 
           selectedCharmIndex =
             -1;
@@ -434,7 +485,8 @@ function drawBracelet() {
   }
 
   const targetWidth =
-    canvas.width * 0.91;
+    canvas.width *
+    0.91;
 
   const scale =
     targetWidth /
@@ -476,7 +528,7 @@ function drawBracelet() {
 
 
 /* ==============================
-   AUTOMATIC CHARM POSITION
+   AUTOMATIC POSITION
 ============================== */
 
 function getPosition(
@@ -573,7 +625,9 @@ function drawCharm(
       item.id
     ];
 
-  if (!image) return;
+  if (!image) {
+    return;
+  }
 
   const boxSize =
     88;
@@ -600,7 +654,6 @@ function drawCharm(
 
   item.h =
     height;
-
 
   ctx.save();
 
@@ -630,8 +683,6 @@ function drawCharm(
 
   ctx.restore();
 
-
-  /* SELECTED CHARM */
 
   if (
     index ===
@@ -845,19 +896,23 @@ function renderGrid() {
     CHARMS.filter(
       charm => {
 
+        const imageLoaded =
+          Boolean(
+            charmImages[
+              charm.id
+            ]
+          );
+
         if (
-          !charmImages[
-            charm.id
-          ]
+          !imageLoaded
         ) {
-
           return false;
-
         }
 
         const categoryMatch =
 
-          category === "all"
+          category ===
+          "all"
 
           ||
 
@@ -892,8 +947,10 @@ function renderGrid() {
       }
     );
 
+
   charmGrid.innerHTML =
     "";
+
 
   filtered.forEach(
     charm => {
@@ -940,15 +997,19 @@ function renderGrid() {
 
       card.addEventListener(
         "click",
-        () =>
+        () => {
+
           addCharm(
             charm.id
-          )
+          );
+
+        }
       );
 
-      charmGrid.appendChild(
-        card
-      );
+      charmGrid
+        .appendChild(
+          card
+        );
 
     }
   );
@@ -982,7 +1043,9 @@ function updateBadges() {
             ".charm-badge"
           );
 
-        if (!badge) return;
+        if (!badge) {
+          return;
+        }
 
         badge.textContent =
           count;
@@ -1018,7 +1081,7 @@ categoryFilter
 
 
 /* ==============================
-   REMOVE
+   REMOVE BUTTON
 ============================== */
 
 function updateRemoveButton() {
@@ -1054,6 +1117,9 @@ removeBtn
       selectedCharmIndex =
         -1;
 
+      draggingIndex =
+        -1;
+
       arrangeCharms();
 
       render();
@@ -1078,6 +1144,9 @@ document
         [];
 
       selectedCharmIndex =
+        -1;
+
+      draggingIndex =
         -1;
 
       render();
@@ -1276,9 +1345,7 @@ function dragCharm(
     draggingIndex <
     0
   ) {
-
     return;
-
   }
 
   event.preventDefault();
@@ -1295,36 +1362,24 @@ function dragCharm(
 
   item.x =
     Math.max(
-
       45,
-
       Math.min(
-
         canvas.width -
         45,
-
         point.x -
         dragOffsetX
-
       )
-
     );
 
   item.y =
     Math.max(
-
       50,
-
       Math.min(
-
         canvas.height -
         45,
-
         point.y -
         dragOffsetY
-
       )
-
     );
 
   item.moved =
