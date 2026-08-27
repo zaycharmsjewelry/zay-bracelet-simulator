@@ -480,4 +480,33 @@ footer small {
   .gold-button {
     grid-column: 1 / -1;
   }
+
+}
+
+/* SOLD OUT CHARMS */
+
+.charm-card.sold-out {
+  opacity: 0.55;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.charm-card.sold-out img {
+  filter: grayscale(20%);
+}
+
+.charm-card.sold-out .sold-out-label {
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #8b6b45;
+  color: white;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  z-index: 5;
 }
