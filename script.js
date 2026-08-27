@@ -960,66 +960,80 @@ function renderGrid() {
 
 
   filtered.forEach(
-    charm => {
+  charm => {
 
-      const card =
-        document.createElement(
-          "button"
-        );
-
-      card.type =
-        "button";
-
-      card.className =
-        "charm-card";
-
-      card.dataset.id =
-        charm.id;
-
-      const price =
-        getCharmPrice(
-          charm
-        );
-
-      card.innerHTML = `
-
-        <img
-          src="${charm.src}"
-          alt="${charm.name}"
-        >
-
-        <span class="charm-name">
-          ${charm.name}
-        </span>
-
-        <span class="charm-price">
-          AED ${price}
-        </span>
-
-        <i class="charm-badge">
-          0
-        </i>
-
-      `;
-
-      card.addEventListener(
-        "click",
-        () => {
-
-          addCharm(
-            charm.id
-          );
-
-        }
+    const card =
+      document.createElement(
+        "button"
       );
 
-      charmGrid
-        .appendChild(
-          card
+    card.type =
+      "button";
+
+    card.className =
+      "charm-card";
+
+    card.dataset.id =
+      charm.id;
+
+    if (charm.soldOut) {
+      card.classList.add(
+        "sold-out"
+      );
+    }
+
+    const price =
+      getCharmPrice(
+        charm
+      );
+
+    card.innerHTML = `
+      <img
+        src="${charm.src}"
+        alt="${charm.name}"
+      >
+
+      <span class="charm-name">
+        ${charm.name}
+      </span>
+
+      <span class="charm-price">
+        AED ${price}
+      </span>
+
+      ${
+        charm.soldOut
+          ? `<span class="sold-out-label">SOLD OUT</span>`
+          : ""
+      }
+
+      <i class="charm-badge">
+        0
+      </i>
+    `;
+
+    card.addEventListener(
+      "click",
+      () => {
+
+        if (charm.soldOut) {
+          return;
+        }
+
+        addCharm(
+          charm.id
         );
 
-    }
-  );
+      }
+    );
+
+    charmGrid
+      .appendChild(
+        card
+      );
+
+  }
+);
 
   updateBadges();
 }
