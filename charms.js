@@ -214,7 +214,20 @@ for (let i = 1; i <= 7; i++) {
   );
 
 }
+/* =========================================
+   SOLD OUT CHARMS
+========================================= */
 
+const SOLD_OUT_CHARMS = new Set([
+  "sea-005",
+  "fruit-003"
+]);
+
+CHARMS.forEach(charm => {
+  if (SOLD_OUT_CHARMS.has(charm.id)) {
+    charm.soldOut = true;
+  }
+});
 
 /* =========================================
    CHECK
