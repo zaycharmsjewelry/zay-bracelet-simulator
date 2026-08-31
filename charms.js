@@ -220,7 +220,10 @@ for (let i = 1; i <= 7; i++) {
 
 const SOLD_OUT_CHARMS = new Set([
   "sea-005",
-  "fruit-003"
+  "fruit-003",
+  "kit-003",
+  "flower-046",
+  "sea-022"
 ]);
 
 CHARMS.forEach(charm => {
