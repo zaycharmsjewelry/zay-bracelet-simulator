@@ -221,8 +221,8 @@ for (let i = 1; i <= 7; i++) {
 const SOLD_OUT_CHARMS = new Set([
   "sea-005",
   "fruit-003",
-  "kit-003",
-  "flower-046",
+  "k-003",
+  "flo-046",
   "sea-022"
 ]);
 
