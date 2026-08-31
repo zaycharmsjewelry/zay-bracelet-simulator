@@ -218,18 +218,25 @@ for (let i = 1; i <= 7; i++) {
    SOLD OUT CHARMS
 ========================================= */
 
-const SOLD_OUT_CHARMS = new Set([
-  "sea-005",
-  "fruit-003",
-  "kit-003",
-  "flo-046",
-  "sea-022"
+const SOLD_OUT_FILES = new Set([
+  "C-SEA-005.png",
+  "C-FRU-003.png",
+  "C-K-003.png",
+  "C-FLO-046.png",
+  "C-SEA-022.png"
 ]);
 
 CHARMS.forEach(charm => {
-  if (SOLD_OUT_CHARMS.has(charm.id)) {
+
+  const fileName =
+    charm.src.split("/").pop();
+
+  if (
+    SOLD_OUT_FILES.has(fileName)
+  ) {
     charm.soldOut = true;
   }
+
 });
 
 /* =========================================
