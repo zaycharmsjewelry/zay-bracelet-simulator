@@ -221,7 +221,7 @@ for (let i = 1; i <= 7; i++) {
 const SOLD_OUT_FILES = new Set([
   "C-SEA-005.png",
   "C-FRU-003.png",
-  "C-K-002.png",
+  "C-K-003.png",
   "C-FLO-046.png",
   "C-SEA-022.png"
 ]);
