@@ -1,135 +1,184 @@
+/* =====================================================
+   ZAY CHARMS — BRACELET SIMULATOR
+   ===================================================== */
+
 * {
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 body {
-  margin: 0;
   background: #f8f4ed;
-  color: #302a25;
+  color: #332d28;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* =========================
+/* =====================================================
    HEADER
-========================= */
+   ===================================================== */
 
 .site-header {
+  width: 100%;
   text-align: center;
-  padding: 28px 20px 8px;
+  padding: 28px 20px 18px;
 }
 
 .logo {
+  display: block;
   width: 125px;
   height: auto;
-  display: block;
-  margin: 0 auto 6px;
+  margin: 0 auto 8px;
 }
 
 .tagline {
   margin: 0;
   font-size: 10px;
   letter-spacing: 3px;
-  color: #a08352;
-  font-weight: 500;
+  text-align: center;
+  color: #a48652;
 }
 
-/* =========================
-   MAIN
-========================= */
+/* =====================================================
+   MAIN CONTAINER
+   ===================================================== */
 
 .container {
-  width: min(1100px, calc(100% - 30px));
+  width: 100%;
+  max-width: 1120px;
   margin: 0 auto;
-  padding-bottom: 50px;
+  padding: 0 24px 60px;
 }
 
-/* =========================
+/* =====================================================
    INTRO
-========================= */
+   ===================================================== */
 
 .intro {
+  width: 100%;
   text-align: center;
-  margin: 18px 0 22px;
+  margin: 0 0 24px;
 }
 
 .intro h1 {
-  margin: 0;
+  margin: 0 0 8px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 28px;
   font-weight: 500;
   letter-spacing: 1.5px;
+  line-height: 1.2;
 }
 
 .intro p {
-  margin: 8px 0 0;
-  color: #7d746c;
+  margin: 0;
+  color: #81776e;
   font-size: 13px;
 }
 
-/* =========================
-   BRACELET PREVIEW
-========================= */
+/* =====================================================
+   BRACELET AREA
+   ===================================================== */
 
 .bracelet-section {
   width: 100%;
+  height: auto;
+  min-height: 360px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background: #fffdf9;
-  border: 1px solid #e8dfd3;
-  border-radius: 16px;
-  padding: 5px;
-  margin-bottom: 28px;
+
+  border: 1px solid #e6ddd0;
+  border-radius: 18px;
+
+  padding: 10px;
+
+  margin: 0 0 32px;
+
   overflow: hidden;
 }
 
 #braceletCanvas {
   display: block;
+
   width: 100%;
-  height: auto;
   max-width: 1000px;
+  height: auto;
+
   margin: 0 auto;
 }
 
-/* =========================
-   SECTION TITLES
-========================= */
+/* =====================================================
+   CHAINS SECTION
+   ===================================================== */
 
-.chains-section,
-.charms-section {
-  margin-top: 25px;
+.chains-section {
+  width: 100%;
+  margin: 0 0 34px;
 }
 
 .chains-section h2,
 .charms-section h2 {
+  margin: 0 0 18px;
+
   text-align: center;
-  margin: 0 0 16px;
+
   font-family: Georgia, "Times New Roman", serif;
+
   font-size: 18px;
   font-weight: 500;
+
   letter-spacing: 1.5px;
 }
 
-/* =========================
-   CHAINS
-========================= */
+/* =====================================================
+   CHAIN GRID
+   ===================================================== */
 
 .chain-grid {
+  width: 100%;
+
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  align-items: stretch;
 }
 
 .chain-card {
-  appearance: none;
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   border: 1px solid #e2d8ca;
+  border-radius: 15px;
+
   background: #fffdf9;
-  border-radius: 13px;
-  padding: 12px;
+
+  padding: 14px 12px 13px;
+
   cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .chain-card:hover {
@@ -137,54 +186,88 @@ body {
 }
 
 .chain-card.active {
-  border-color: #b4945c;
-  box-shadow: 0 4px 14px rgba(80, 60, 35, 0.08);
+  border-color: #b49358;
+
+  box-shadow:
+    0 5px 18px rgba(75, 55, 30, 0.10);
 }
 
 .chain-card img {
-  width: 100%;
-  height: 80px;
-  object-fit: contain;
   display: block;
-  margin-bottom: 8px;
+
+  width: 100%;
+  height: 90px;
+
+  object-fit: contain;
+
+  margin: 0 auto 9px;
 }
 
 .chain-name {
   display: block;
-  color: #403830;
+
+  width: 100%;
+
+  text-align: center;
+
   font-size: 12px;
   line-height: 1.3;
+
+  color: #403832;
 }
 
 .chain-price {
   display: block;
-  margin-top: 4px;
-  color: #9c7e4b;
+
+  margin-top: 5px;
+
+  text-align: center;
+
   font-size: 11px;
+
+  color: #9a7b48;
 }
 
-/* =========================
-   SEARCH + CATEGORY
-========================= */
+/* =====================================================
+   CHARMS SECTION
+   ===================================================== */
+
+.charms-section {
+  width: 100%;
+  margin: 0 0 30px;
+}
+
+/* =====================================================
+   FILTERS
+   ===================================================== */
 
 .filters {
   width: 100%;
-  max-width: 850px;
-  margin: 0 auto 18px;
+  max-width: 900px;
+
   display: flex;
-  gap: 10px;
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 0 auto 20px;
 }
 
 #search,
 #categoryFilter {
-  height: 42px;
-  border: 1px solid #ded4c6;
+  height: 44px;
+
+  border: 1px solid #ddd2c3;
   border-radius: 9px;
+
   background: #fffdf9;
-  color: #403830;
+
+  color: #403832;
+
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
-  padding: 0 12px;
+
+  padding: 0 13px;
 }
 
 #search {
@@ -193,64 +276,97 @@ body {
 }
 
 #categoryFilter {
-  width: 190px;
+  width: 210px;
+  flex-shrink: 0;
 }
 
 #search:focus,
 #categoryFilter:focus {
   outline: none;
-  border-color: #b4945c;
+  border-color: #b49358;
 }
 
-/* =========================
-   CHARMS
-========================= */
+/* =====================================================
+   CHARM GRID
+   ===================================================== */
 
 .charm-grid {
+  width: 100%;
+
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 10px;
+
+  grid-template-columns:
+    repeat(8, minmax(0, 1fr));
+
+  gap: 12px;
+
+  align-items: start;
 }
 
 .charm-card {
   position: relative;
-  appearance: none;
+
   width: 100%;
-  border: 1px solid #e8dfd3;
-  border-radius: 10px;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: 1px solid #e7ded2;
+  border-radius: 11px;
+
   background: #fffdf9;
+
   padding: 8px;
+
   cursor: pointer;
-  text-align: center;
+
+  font-family: Arial, Helvetica, sans-serif;
+
   transition:
-    transform 0.15s ease,
     border-color 0.15s ease,
+    transform 0.15s ease,
     box-shadow 0.15s ease;
 }
 
 .charm-card:hover {
   transform: translateY(-2px);
-  border-color: #b4945c;
-  box-shadow: 0 4px 12px rgba(80, 60, 35, 0.08);
+
+  border-color: #b49358;
+
+  box-shadow:
+    0 4px 12px rgba(70, 50, 30, 0.08);
 }
 
 .charm-card img {
   display: block;
+
   width: 100%;
+  height: auto;
+
   aspect-ratio: 1 / 1;
+
   object-fit: contain;
 }
 
 .charm-price {
   display: block;
-  margin-top: 5px;
-  color: #927548;
+
+  width: 100%;
+
+  margin-top: 6px;
+
+  text-align: center;
+
   font-size: 10px;
+
+  color: #927345;
 }
 
-/* =========================
+/* =====================================================
    SOLD OUT
-========================= */
+   ===================================================== */
 
 .charm-card.sold-out {
   opacity: 0.5;
@@ -259,54 +375,84 @@ body {
 
 .charm-card.sold-out:hover {
   transform: none;
-  border-color: #e8dfd3;
+
+  border-color: #e7ded2;
+
   box-shadow: none;
 }
 
 .charm-badge {
   position: absolute;
-  left: 5px;
-  right: 5px;
-  top: 5px;
+
+  top: 6px;
+  left: 6px;
+  right: 6px;
+
   padding: 4px 2px;
+
   border-radius: 5px;
+
   background: rgba(255, 253, 249, 0.94);
+
   color: #8d6262;
+
+  text-align: center;
+
   font-size: 8px;
-  letter-spacing: 0.8px;
+
   font-weight: 600;
+
+  letter-spacing: 0.8px;
 }
 
 .no-results {
   grid-column: 1 / -1;
+
+  width: 100%;
+
+  padding: 40px 10px;
+
   text-align: center;
-  padding: 35px 10px;
-  color: #8a8178;
+
+  color: #887e74;
+
   font-size: 13px;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* =====================================================
+   CONTROL BUTTONS
+   ===================================================== */
 
 .controls {
+  width: 100%;
+
   display: flex;
+
   justify-content: center;
+  align-items: center;
+
   gap: 10px;
-  margin: 28px 0 22px;
+
+  margin: 30px 0 25px;
 }
 
 .controls button {
   border: 0;
   border-radius: 8px;
-  background: #3c342e;
-  color: #fff;
-  padding: 11px 22px;
+
+  background: #3c342d;
+
+  color: white;
+
+  padding: 12px 24px;
+
   font-family: Arial, Helvetica, sans-serif;
+
   font-size: 10px;
-  letter-spacing: 1.5px;
+
+  letter-spacing: 1.4px;
+
   cursor: pointer;
-  transition: opacity 0.2s ease;
 }
 
 .controls button:hover {
@@ -314,42 +460,57 @@ body {
 }
 
 #saveBtn {
-  background: #a58855;
+  background: #a48753;
 }
 
-/* =========================
-   SUMMARY
-========================= */
+/* =====================================================
+   PRICE SUMMARY
+   ===================================================== */
 
 .summary {
-  max-width: 650px;
+  width: 100%;
+  max-width: 680px;
+
   margin: 0 auto;
-  padding: 20px 22px;
+
   background: #fffdf9;
-  border: 1px solid #e7ded2;
-  border-radius: 13px;
+
+  border: 1px solid #e6ddd1;
+  border-radius: 14px;
+
+  padding: 20px 24px;
 }
 
 .summary-row {
+  width: 100%;
+
   display: flex;
+
   justify-content: space-between;
   align-items: center;
+
+  gap: 20px;
+
   padding: 7px 0;
+
   font-size: 12px;
 }
 
 .summary-row span {
-  color: #7d746b;
+  color: #7e746b;
 }
 
 .summary-row strong {
-  color: #3b332d;
+  color: #39322c;
 }
 
 .summary-row.total {
-  border-top: 1px solid #e6ddd1;
-  margin-top: 7px;
-  padding-top: 13px;
+  border-top: 1px solid #e5dcd0;
+
+  margin-top: 8px;
+
+  padding-top: 14px;
+
   font-size: 15px;
 }
 
@@ -358,58 +519,86 @@ body {
 }
 
 .delivery-note {
+  margin: 15px 0 8px;
+
   text-align: center;
-  margin: 14px 0 8px;
-  color: #958b81;
+
+  color: #968b81;
+
   font-size: 10px;
 }
 
 .selected-list {
-  border-top: 1px solid #eee7df;
   margin: 10px 0 0;
+
   padding-top: 10px;
+
+  border-top: 1px solid #eee7df;
+
   text-align: center;
-  color: #91877d;
+
+  color: #8e847a;
+
   font-size: 10px;
+
   line-height: 1.6;
 }
 
-/* =========================
+/* =====================================================
    TABLET
-========================= */
+   ===================================================== */
 
 @media (max-width: 900px) {
 
   .container {
-    width: min(760px, calc(100% - 24px));
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .chain-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
   .charm-grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns:
+      repeat(6, minmax(0, 1fr));
   }
 
 }
 
-/* =========================
+/* =====================================================
    MOBILE
-========================= */
+   ===================================================== */
 
 @media (max-width: 600px) {
 
   .site-header {
-    padding-top: 20px;
+    padding: 20px 15px 12px;
   }
 
   .logo {
-    width: 110px;
+    width: 105px;
+  }
+
+  .tagline {
+    font-size: 9px;
+    letter-spacing: 2.5px;
   }
 
   .container {
-    width: calc(100% - 16px);
+    width: 100%;
+    padding:
+      0 10px
+      40px;
+  }
+
+  .intro {
+    margin-bottom: 18px;
   }
 
   .intro h1 {
-    font-size: 23px;
+    font-size: 22px;
   }
 
   .intro p {
@@ -417,33 +606,62 @@ body {
   }
 
   .bracelet-section {
-    border-radius: 12px;
+    min-height: 220px;
+    border-radius: 13px;
     padding: 2px;
+    margin-bottom: 24px;
+  }
+
+  .chains-section,
+  .charms-section {
+    margin-bottom: 25px;
+  }
+
+  .chains-section h2,
+  .charms-section h2 {
+    font-size: 16px;
+    margin-bottom: 14px;
   }
 
   .chain-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 9px;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
   }
 
   .chain-card {
-    padding: 9px;
+    padding: 10px 8px;
   }
 
   .chain-card img {
     height: 65px;
+    margin-bottom: 7px;
+  }
+
+  .chain-name {
+    font-size: 11px;
+  }
+
+  .chain-price {
+    font-size: 10px;
   }
 
   .filters {
     flex-direction: column;
+    gap: 8px;
   }
 
+  #search,
   #categoryFilter {
     width: 100%;
+    height: 42px;
   }
 
   .charm-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
     gap: 7px;
   }
 
@@ -460,7 +678,13 @@ body {
   }
 
   .controls button {
-    padding: 10px 15px;
+    padding:
+      11px 16px;
+  }
+
+  .summary {
+    padding:
+      17px;
   }
 
 }
