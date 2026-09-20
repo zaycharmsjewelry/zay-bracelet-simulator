@@ -655,11 +655,18 @@ body {
     height: 78px;
   }
 
-  .chain-card[data-bracelet="1"] img,
-  .chain-card[data-bracelet="2"] img {
-    width: 110%;
-    height: 90px;
-  }
+  /* Make Cable + Curb chains larger */
+.chain-card[data-bracelet="1"] img {
+  width: 125%;
+  height: 115px;
+  object-fit: contain;
+}
+
+.chain-card[data-bracelet="2"] img {
+  width: 130%;
+  height: 100px;
+  object-fit: contain;
+}
 
   .charm-grid {
     grid-template-columns:
