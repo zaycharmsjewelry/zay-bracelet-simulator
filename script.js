@@ -1,6 +1,6 @@
 /* =========================================
    ZAY CHARMS - BRACELET SIMULATOR
-   ========================================= */
+========================================= */
 
 
 /* =========================================
@@ -101,6 +101,22 @@ let dragging = false;
 
 
 /* =========================================
+   CHARM SIZE
+========================================= */
+
+/*
+   IMPORTANT:
+
+   This controls the size of charms
+   inside the bracelet visualization.
+
+   Smaller number = smaller charms.
+*/
+
+const CHARM_SIZE = 42;
+
+
+/* =========================================
    IMAGE LOADER
 ========================================= */
 
@@ -141,7 +157,6 @@ function loadBracelet() {
     braceletImage.onload = () => {
       drawCanvas();
     };
-
   }
 
   drawCanvas();
@@ -162,9 +177,7 @@ function drawCanvas() {
   );
 
 
-  /*
-    Canvas background
-  */
+  /* Background */
 
   ctx.fillStyle = "#faf7f2";
 
@@ -176,9 +189,9 @@ function drawCanvas() {
   );
 
 
-  /*
-    Draw bracelet
-  */
+  /* =====================================
+     DRAW BRACELET
+  ===================================== */
 
   if (
     braceletImage &&
@@ -186,11 +199,32 @@ function drawCanvas() {
     braceletImage.naturalWidth > 0
   ) {
 
-    const maxWidth =
-      canvas.width * 0.88;
+    /*
+      Make the bracelet substantially larger
+      inside the visualization.
 
-    const maxHeight =
-      canvas.height * 0.62;
+      Cable + Curb get extra size because
+      their source PNGs appear smaller.
+    */
+
+    let maxWidth =
+      canvas.width * 0.90;
+
+    let maxHeight =
+      canvas.height * 0.72;
+
+
+    if (
+      currentBracelet === 1 ||
+      currentBracelet === 2
+    ) {
+
+      maxWidth =
+        canvas.width * 0.98;
+
+      maxHeight =
+        canvas.height * 0.82;
+    }
 
 
     const scale =
@@ -224,9 +258,9 @@ function drawCanvas() {
   }
 
 
-  /*
-    Draw charms
-  */
+  /* =====================================
+     DRAW CHARMS
+  ===================================== */
 
   placedCharms.forEach(
     (item, index) => {
@@ -268,63 +302,20 @@ function drawCharm(
 
 
   /*
-    Charm size
+    NO SELECTION CIRCLE.
+
+    The selected charm is simply the charm
+    that will be moved or removed.
   */
 
-  const size = 70;
-
-
-  /*
-    Selected charm ring
-  */
-
-  if (index === selectedCharmIndex) {
-
-    ctx.beginPath();
-
-    ctx.arc(
-      item.x,
-      item.y,
-      size * 0.60,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.strokeStyle =
-      "#a18b74";
-
-    ctx.lineWidth = 2;
-
-    ctx.stroke();
-  }
-
-
-  /*
-    Charm image
-  */
 
   ctx.drawImage(
     img,
-    item.x - size / 2,
-    item.y - size / 2,
-    size,
-    size
+    item.x - CHARM_SIZE / 2,
+    item.y - CHARM_SIZE / 2,
+    CHARM_SIZE,
+    CHARM_SIZE
   );
-}
-
-
-/* =========================================
-   CHARM Y POSITION
-========================================= */
-
-function getCharmY() {
-
-  /*
-    Keep all charms on the
-    horizontal bracelet line.
-  */
-
-  return canvas.height / 2;
 }
 
 
@@ -344,28 +335,36 @@ function addCharm(charm) {
 
 
   /*
-    Put charms around the centre
-    of the bracelet.
+    Place new charms around the middle
+    of the visualization.
+
+    After adding it, the customer can
+    drag it ANYWHERE.
   */
 
   const centerX =
     canvas.width / 2;
 
-  const spacing = 78;
+  const centerY =
+    canvas.height / 2;
 
-  let x;
+
+  const spacing = 55;
+
+  let x =
+    centerX;
+
+  let y =
+    centerY;
 
 
-  if (placedCharms.length === 0) {
-
-    x = centerX;
-
-  } else {
+  if (placedCharms.length > 0) {
 
     const number =
       Math.ceil(
         placedCharms.length / 2
       );
+
 
     if (
       placedCharms.length % 2 === 1
@@ -385,22 +384,26 @@ function addCharm(charm) {
 
 
   /*
-    Keep charms inside the bracelet.
+    Keep the initial position inside
+    the visualization.
   */
-
-  const minimum =
-    canvas.width * 0.14;
-
-  const maximum =
-    canvas.width * 0.86;
-
 
   x =
     Math.max(
-      minimum,
+      CHARM_SIZE / 2,
       Math.min(
-        maximum,
+        canvas.width - CHARM_SIZE / 2,
         x
+      )
+    );
+
+
+  y =
+    Math.max(
+      CHARM_SIZE / 2,
+      Math.min(
+        canvas.height - CHARM_SIZE / 2,
+        y
       )
     );
 
@@ -411,7 +414,7 @@ function addCharm(charm) {
 
     x: x,
 
-    y: getCharmY()
+    y: y
 
   });
 
@@ -488,10 +491,6 @@ function selectChain(number) {
   currentBracelet = number;
 
 
-  /*
-    Active chain styling
-  */
-
   document
     .querySelectorAll(".chain-card")
     .forEach(card => {
@@ -539,8 +538,7 @@ function createCategories() {
     );
 
 
-  categoryFilter.innerHTML =
-    "";
+  categoryFilter.innerHTML = "";
 
 
   const allOption =
@@ -610,7 +608,6 @@ function renderCharmGrid() {
         }
 
         return true;
-
       }
     );
 
@@ -636,10 +633,6 @@ function renderCharmGrid() {
       }
 
 
-      /*
-        Charm image
-      */
-
       const img =
         document.createElement("img");
 
@@ -652,10 +645,6 @@ function renderCharmGrid() {
       img.loading =
         "lazy";
 
-
-      /*
-        Price
-      */
 
       const price =
         document.createElement("span");
@@ -672,10 +661,6 @@ function renderCharmGrid() {
       card.appendChild(price);
 
 
-      /*
-        Sold out badge
-      */
-
       if (charm.soldOut) {
 
         const badge =
@@ -690,13 +675,8 @@ function renderCharmGrid() {
         card.appendChild(
           badge
         );
-
       }
 
-
-      /*
-        Click
-      */
 
       card.addEventListener(
         "click",
@@ -731,10 +711,6 @@ function updateSummary() {
     BRACELETS[currentBracelet];
 
 
-  /*
-    Chain
-  */
-
   if (braceletPriceLabel) {
 
     braceletPriceLabel.textContent =
@@ -750,10 +726,6 @@ function updateSummary() {
 
   }
 
-
-  /*
-    Charm total
-  */
 
   const count =
     placedCharms.length;
@@ -793,10 +765,6 @@ function updateSummary() {
   }
 
 
-  /*
-    Grand total
-  */
-
   const total =
     bracelet.price +
     charmTotal;
@@ -809,10 +777,6 @@ function updateSummary() {
 
   }
 
-
-  /*
-    Selected charms
-  */
 
   if (selectedList) {
 
@@ -831,7 +795,6 @@ function updateSummary() {
         } selected.`;
 
     }
-
   }
 }
 
@@ -868,7 +831,6 @@ function getCanvasPosition(event) {
 
     clientY =
       event.clientY;
-
   }
 
 
@@ -891,6 +853,21 @@ function getCanvasPosition(event) {
 ========================================= */
 
 function findCharmAt(x, y) {
+
+  /*
+    Use the actual smaller charm size
+    for hit detection.
+
+    Slightly larger invisible hit area
+    makes dragging easier.
+  */
+
+  const hitRadius =
+    Math.max(
+      CHARM_SIZE * 0.65,
+      25
+    );
+
 
   for (
     let i =
@@ -919,7 +896,9 @@ function findCharmAt(x, y) {
       );
 
 
-    if (distance <= 42) {
+    if (
+      distance <= hitRadius
+    ) {
 
       return i;
 
@@ -958,7 +937,6 @@ function startDrag(event) {
     drawCanvas();
 
     return;
-
   }
 
 
@@ -967,6 +945,38 @@ function startDrag(event) {
 
 
   dragging = true;
+
+
+  /*
+    Bring selected charm to the front.
+  */
+
+  const selected =
+    placedCharms.splice(
+      selectedCharmIndex,
+      1
+    )[0];
+
+
+  placedCharms.push(
+    selected
+  );
+
+
+  selectedCharmIndex =
+    placedCharms.length - 1;
+
+
+  /*
+    Store the offset so the charm does
+    not jump when dragging begins.
+  */
+
+  selected.dragOffsetX =
+    position.x - selected.x;
+
+  selected.dragOffsetY =
+    position.y - selected.y;
 
 
   drawCanvas();
@@ -1003,34 +1013,49 @@ function drag(event) {
 
 
   /*
-    Move horizontally only.
+    FREE MOVEMENT.
+
+    The charm can now move:
+    LEFT
+    RIGHT
+    UP
+    DOWN
   */
 
   item.x =
-    position.x;
-
+    position.x -
+    (item.dragOffsetX || 0);
 
   item.y =
-    getCharmY();
+    position.y -
+    (item.dragOffsetY || 0);
 
 
   /*
-    Keep charm on bracelet.
+    Keep the charm inside the
+    visualization area.
   */
 
-  const minimum =
-    canvas.width * 0.12;
-
-  const maximum =
-    canvas.width * 0.88;
+  const half =
+    CHARM_SIZE / 2;
 
 
   item.x =
     Math.max(
-      minimum,
+      half,
       Math.min(
-        maximum,
+        canvas.width - half,
         item.x
+      )
+    );
+
+
+  item.y =
+    Math.max(
+      half,
+      Math.min(
+        canvas.height - half,
+        item.y
       )
     );
 
@@ -1045,6 +1070,21 @@ function drag(event) {
 
 function stopDrag() {
 
+  if (
+    selectedCharmIndex >= 0 &&
+    placedCharms[selectedCharmIndex]
+  ) {
+
+    delete placedCharms[
+      selectedCharmIndex
+    ].dragOffsetX;
+
+    delete placedCharms[
+      selectedCharmIndex
+    ].dragOffsetY;
+  }
+
+
   dragging = false;
 }
 
@@ -1054,11 +1094,6 @@ function stopDrag() {
 ========================================= */
 
 function saveDesign() {
-
-  /*
-    Save the bracelet canvas
-    as a PNG.
-  */
 
   const link =
     document.createElement("a");
@@ -1083,9 +1118,7 @@ function saveDesign() {
 ========================================= */
 
 
-/*
-  Chains
-*/
+/* Chains */
 
 if (chainGrid) {
 
@@ -1105,13 +1138,10 @@ if (chainGrid) {
       );
 
     });
-
 }
 
 
-/*
-  Category
-*/
+/* Category */
 
 if (categoryFilter) {
 
@@ -1119,13 +1149,10 @@ if (categoryFilter) {
     "change",
     renderCharmGrid
   );
-
 }
 
 
-/*
-  Buttons
-*/
+/* Buttons */
 
 if (removeBtn) {
 
@@ -1133,7 +1160,6 @@ if (removeBtn) {
     "click",
     removeSelectedCharm
   );
-
 }
 
 
@@ -1143,7 +1169,6 @@ if (clearBtn) {
     "click",
     clearDesign
   );
-
 }
 
 
@@ -1153,13 +1178,12 @@ if (saveBtn) {
     "click",
     saveDesign
   );
-
 }
 
 
-/*
-  Mouse
-*/
+/* =========================================
+   MOUSE
+========================================= */
 
 canvas.addEventListener(
   "mousedown",
@@ -1182,9 +1206,9 @@ canvas.addEventListener(
 );
 
 
-/*
-  Touch
-*/
+/* =========================================
+   TOUCH
+========================================= */
 
 canvas.addEventListener(
   "touchstart",
@@ -1216,10 +1240,6 @@ async function initialize() {
 
   try {
 
-    /*
-      Get charms from charms.js
-    */
-
     availableCharms =
       await CHARMS_READY;
 
@@ -1229,30 +1249,11 @@ async function initialize() {
     );
 
 
-    /*
-      Build category menu
-    */
-
     createCategories();
-
-
-    /*
-      Display charms
-    */
 
     renderCharmGrid();
 
-
-    /*
-      Load first bracelet
-    */
-
     loadBracelet();
-
-
-    /*
-      Update pricing
-    */
 
     updateSummary();
 
