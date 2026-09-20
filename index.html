@@ -1,31 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>ZAY Charms | Build Your Bracelet</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+  <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
-
-
-  <!-- =========================================
-       HEADER
-  ========================================== -->
 
   <header class="site-header">
 
@@ -35,30 +19,16 @@
       class="logo"
     >
 
-    <p class="tagline">
-      BUILD YOUR BRACELET
-    </p>
+    <p class="tagline">BUILD YOUR BRACELET</p>
 
   </header>
 
 
-
-  <!-- =========================================
-       MAIN BUILDER
-  ========================================== -->
-
   <main class="container">
-
-
-    <!-- =======================================
-         TITLE
-    ======================================== -->
 
     <section class="intro">
 
-      <h1>
-        BUILD YOUR BRACELET
-      </h1>
+      <h1>BUILD YOUR BRACELET</h1>
 
       <p>
         Choose your chain and create your own charm combination.
@@ -67,10 +37,7 @@
     </section>
 
 
-
-    <!-- =======================================
-         BRACELET CANVAS
-    ======================================== -->
+    <!-- BRACELET PREVIEW -->
 
     <section class="bracelet-section">
 
@@ -83,25 +50,13 @@
     </section>
 
 
-
-    <!-- =======================================
-         CHAIN SECTION
-    ======================================== -->
+    <!-- CHAINS -->
 
     <section class="chains-section">
 
-      <h2>
-        CHOOSE YOUR CHAIN
-      </h2>
+      <h2>CHOOSE YOUR CHAIN</h2>
 
-
-      <div
-        id="chainGrid"
-        class="chain-grid"
-      >
-
-
-        <!-- CHAIN 1 -->
+      <div id="chainGrid" class="chain-grid">
 
         <button
           type="button"
@@ -125,9 +80,6 @@
         </button>
 
 
-
-        <!-- CHAIN 2 -->
-
         <button
           type="button"
           class="chain-card"
@@ -149,9 +101,6 @@
 
         </button>
 
-
-
-        <!-- CHAIN 3 -->
 
         <button
           type="button"
@@ -175,9 +124,6 @@
         </button>
 
 
-
-        <!-- CHAIN 4 -->
-
         <button
           type="button"
           class="chain-card"
@@ -199,30 +145,19 @@
 
         </button>
 
-
       </div>
 
     </section>
 
 
-
-    <!-- =======================================
-         CHARMS SECTION
-    ======================================== -->
+    <!-- CHARMS -->
 
     <section class="charms-section">
 
+      <h2>CHOOSE YOUR CHARMS</h2>
 
-      <h2>
-        CHOOSE YOUR CHARMS
-      </h2>
-
-
-
-      <!-- SEARCH + CATEGORY -->
 
       <div class="filters">
-
 
         <input
           id="search"
@@ -232,9 +167,7 @@
         >
 
 
-        <select
-          id="categoryFilter"
-        >
+        <select id="categoryFilter">
 
           <option value="all">
             All Charms
@@ -242,34 +175,25 @@
 
         </select>
 
-
       </div>
 
-
-
-      <!-- CHARM GRID -->
 
       <div
         id="charmGrid"
         class="charm-grid"
       ></div>
 
-
     </section>
 
 
-
-    <!-- =======================================
-         CONTROLS
-    ======================================== -->
+    <!-- BUTTONS -->
 
     <section class="controls">
-
 
       <button
         id="removeBtn"
         type="button"
-      >
+        >
         REMOVE
       </button>
 
@@ -289,23 +213,16 @@
         SAVE DESIGN
       </button>
 
-
     </section>
 
 
-
-    <!-- =======================================
-         PRICE SUMMARY
-    ======================================== -->
+    <!-- SUMMARY -->
 
     <section class="summary">
 
-
       <div class="summary-row">
 
-        <span>
-          Chain
-        </span>
+        <span>Chain</span>
 
         <strong id="braceletPriceLabel">
           Cable Chain
@@ -314,19 +231,15 @@
       </div>
 
 
-
       <div class="summary-row">
 
-        <span>
-          Chain Price
-        </span>
+        <span>Chain Price</span>
 
         <strong id="braceletPrice">
           AED 15
         </strong>
 
       </div>
-
 
 
       <div class="summary-row">
@@ -342,12 +255,9 @@
       </div>
 
 
-
       <div class="summary-row total">
 
-        <span>
-          TOTAL
-        </span>
+        <span>TOTAL</span>
 
         <strong id="totalPrice">
           AED 15
@@ -356,11 +266,9 @@
       </div>
 
 
-
       <p class="delivery-note">
         Delivery charges are calculated separately.
       </p>
-
 
 
       <p
@@ -370,23 +278,15 @@
         No charms selected yet.
       </p>
 
-
     </section>
-
 
   </main>
 
 
-
-  <!-- =========================================
-       JAVASCRIPT
-  ========================================== -->
+  <!-- IMPORTANT: charms.js MUST load before script.js -->
 
   <script src="charms.js"></script>
-
   <script src="script.js"></script>
 
-
 </body>
-
 </html>
