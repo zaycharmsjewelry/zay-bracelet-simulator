@@ -3,13 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>ZAY | Build Your Bracelet</title>
+  <title>ZAY Charms - Build Your Bracelet</title>
 
   <link
     rel="stylesheet"
@@ -17,315 +16,222 @@
   >
 </head>
 
-
 <body>
 
-  <!-- HEADER -->
-  <header class="hero">
+  <!-- =========================
+       HEADER
+  ========================== -->
 
-    <div class="logo-side">
+  <header class="site-header">
 
-      <img
-        src="assets/logo.png"
-        alt="ZAY Charms & Jewelry"
-        class="logo"
-      >
+    <img
+      src="assets/logo.png"
+      alt="ZAY Charms"
+      class="logo"
+    >
 
-    </div>
-
-
-    <div class="hero-text">
-
-      <div class="ornament">
-        <span></span>
-        <b>♥</b>
-        <span></span>
-      </div>
-
-      <h1>
-        BUILD YOUR
-        <em>BRACELET</em>
-      </h1>
-
-      <p>
-        Create a bracelet as unique as your story.
-      </p>
-
-      <div class="ornament">
-        <span></span>
-        <b>✦</b>
-        <span></span>
-      </div>
-
-    </div>
+    <p class="tagline">
+      BUILD YOUR BRACELET
+    </p>
 
   </header>
 
 
-  <!-- MAIN SIMULATOR -->
-  <main class="simulator">
+  <!-- =========================
+       MAIN
+  ========================== -->
 
+  <main>
 
-    <!-- LEFT SIDE -->
-    <section class="builder-panel">
+    <!-- =========================
+         BRACELET BUILDER
+    ========================== -->
 
-      <div class="section-title">
+    <section class="builder-section">
 
-        <div class="step-number">
-          1
-        </div>
+      <div class="section-heading">
 
-        <div>
-          <h2>CHOOSE YOUR CHAIN</h2>
-          <p>Pick the style that speaks to you.</p>
-        </div>
+        <h1>
+          BUILD YOUR BRACELET
+        </h1>
 
-      </div>
-
-
-      <!-- CHAINS -->
-      <div class="chain-options">
-
-        <button
-          class="chain-card active"
-          data-bracelet="1"
-          type="button"
-        >
-
-          <span class="selected-check">✓</span>
-
-          <h3>CABLE CHAIN</h3>
-
-          <img
-            src="assets/bracelet-1.png"
-            alt="Cable Chain"
-          >
-
-          <strong>AED 15</strong>
-
-        </button>
-
-
-        <button
-          class="chain-card"
-          data-bracelet="2"
-          type="button"
-        >
-
-          <span class="selected-check">✓</span>
-
-          <h3>CURB CHAIN</h3>
-
-          <img
-            src="assets/bracelet-2.png"
-            alt="Curb Chain"
-          >
-
-          <strong>AED 18</strong>
-
-        </button>
-
-
-        <button
-          class="chain-card"
-          data-bracelet="3"
-          type="button"
-        >
-
-          <span class="selected-check">✓</span>
-
-          <h3>OVAL LINK CHAIN</h3>
-
-          <img
-            src="assets/bracelet-3.png"
-            alt="Oval Link Chain"
-          >
-
-          <strong>AED 22</strong>
-
-        </button>
-
-
-        <button
-          class="chain-card"
-          data-bracelet="4"
-          type="button"
-        >
-
-          <span class="selected-check">✓</span>
-
-          <h3>PAPERCLIP CHAIN</h3>
-
-          <img
-            src="assets/bracelet-4.png"
-            alt="Paperclip Chain"
-          >
-
-          <strong>AED 20</strong>
-
-        </button>
+        <p>
+          Choose your chain and add your favourite charms.
+        </p>
 
       </div>
 
 
-      <!-- BRACELET DESIGN -->
-      <div class="design-box">
+      <!-- =========================
+           BRACELET CANVAS
+      ========================== -->
+
+      <div class="bracelet-wrapper">
 
         <canvas
           id="braceletCanvas"
           width="1000"
-          height="390"
+          height="420"
         ></canvas>
-
-        <div class="drag-message">
-          Tap a charm to select it · Drag to reposition it
-        </div>
 
       </div>
 
 
-      <!-- BUTTONS -->
-      <div class="action-buttons">
+      <!-- =========================
+           CHAIN SELECTION
+      ========================== -->
+
+      <div class="chain-section">
+
+        <h2>
+          CHOOSE YOUR CHAIN
+        </h2>
+
+        <div
+          id="chainGrid"
+          class="chain-grid"
+        ></div>
+
+      </div>
+
+
+      <!-- =========================
+           CHARM SELECTION
+      ========================== -->
+
+      <div class="charms-section">
+
+        <h2>
+          CHOOSE YOUR CHARMS
+        </h2>
+
+
+        <!-- SEARCH + CATEGORY -->
+
+        <div class="filters">
+
+          <input
+            id="search"
+            type="search"
+            placeholder="Search charms..."
+            autocomplete="off"
+          >
+
+          <select
+            id="categoryFilter"
+          >
+
+            <option value="all">
+              All Charms
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- CHARM GRID -->
+
+        <div
+          id="charmGrid"
+          class="charm-grid"
+        ></div>
+
+      </div>
+
+
+      <!-- =========================
+           CONTROLS
+      ========================== -->
+
+      <div class="builder-controls">
 
         <button
           id="removeBtn"
           type="button"
-          disabled
         >
-          ✕ REMOVE
+          REMOVE
         </button>
 
         <button
           id="clearBtn"
           type="button"
         >
-          ♡ CLEAR
+          CLEAR
         </button>
 
         <button
           id="saveBtn"
-          class="gold-button"
           type="button"
         >
-          ↓ SAVE DESIGN
+          SAVE DESIGN
         </button>
 
       </div>
 
 
-      <!-- PRICE SUMMARY -->
-      <div class="price-box">
+      <!-- =========================
+           PRICE SUMMARY
+      ========================== -->
 
-        <div class="price-heading">
-          <span>YOUR ZAY CREATION</span>
-          <span>♥</span>
-        </div>
+      <div class="summary">
 
-        <div class="price-line">
+        <div class="summary-row">
 
-          <span id="braceletPriceLabel">
-            Cable Chain
+          <span>
+            Chain
           </span>
 
-          <strong id="braceletPrice">
+          <span id="chainPrice">
             AED 15
-          </strong>
+          </span>
 
         </div>
 
-        <div class="price-line">
 
-          <span id="charmCountLabel">
-            0 Charms
+        <div class="summary-row">
+
+          <span>
+            Charms
           </span>
 
-          <strong id="charmPrice">
+          <span id="charmsPrice">
             AED 0
-          </strong>
+          </span>
 
         </div>
 
-        <div class="price-divider"></div>
 
-        <div class="total-line">
+        <div class="summary-row total-row">
 
-          <span>TOTAL</span>
+          <span>
+            TOTAL
+          </span>
 
-          <strong id="totalPrice">
+          <span id="totalPrice">
             AED 15
-          </strong>
+          </span>
 
         </div>
+
 
         <p class="delivery-note">
           Delivery charges are calculated separately.
         </p>
 
-        <p
-          id="selectedList"
-          class="selected-list"
-        >
-          No charms selected yet.
-        </p>
-
-        <div class="made-by">
-          ♥ MADE BY YOU, WORN BY YOU. ♥
-        </div>
-
       </div>
-
-    </section>
-
-
-    <!-- RIGHT SIDE -->
-    <section class="charms-panel">
-
-      <div class="section-title">
-
-        <div class="step-number">
-          2
-        </div>
-
-        <div>
-          <h2>CHOOSE YOUR CHARMS</h2>
-          <p>Pick the ones that tell your story.</p>
-        </div>
-
-      </div>
-
-
-      <!-- CHARM GRID -->
-      <div
-        id="charmGrid"
-        class="charm-grid"
-      ></div>
 
     </section>
 
   </main>
 
 
-  <!-- FOOTER -->
-  <footer>
-
-    <div class="footer-decoration">
-      <span></span>
-      ✦
-      <span></span>
-    </div>
-
-    <p>
-      A little charm. A little piece of you.
-    </p>
-
-    <small>
-      ZAY · CHARMS & JEWELRY
-    </small>
-
-  </footer>
-
+  <!-- =========================
+       SCRIPT
+  ========================== -->
 
   <script src="charms.js"></script>
+
   <script src="script.js"></script>
 
 </body>
