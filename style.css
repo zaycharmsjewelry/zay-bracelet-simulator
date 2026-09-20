@@ -40,13 +40,10 @@ body {
 .tagline {
   display: block;
   margin: 0;
-
   font-size: 12px;
   line-height: 1.4;
-
   letter-spacing: 4px;
   font-weight: 600;
-
   color: #302a25;
 }
 
@@ -60,13 +57,11 @@ body {
   margin: 0 auto 50px;
 
   display: grid;
-
   grid-template-columns:
     minmax(0, 1fr)
     minmax(0, 1fr);
 
   gap: 26px;
-
   align-items: start;
 }
 
@@ -78,12 +73,9 @@ body {
 .design-side,
 .charms-side {
   background: #fffdf9;
-
   border: 1px solid #e7ded2;
   border-radius: 18px;
-
   padding: 28px;
-
   min-width: 0;
 }
 
@@ -98,11 +90,8 @@ body {
 
 .section-heading {
   display: flex;
-
   align-items: flex-start;
-
   gap: 12px;
-
   margin-bottom: 19px;
 }
 
@@ -113,7 +102,6 @@ body {
   height: 31px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -121,27 +109,20 @@ body {
   border-radius: 50%;
 
   font-size: 10px;
-
   letter-spacing: 1px;
 }
 
 .section-heading h2 {
   margin: 2px 0 5px;
-
   font-size: 16px;
-
   letter-spacing: 2px;
-
   font-weight: 600;
 }
 
 .section-heading p {
   margin: 0;
-
   font-size: 11px;
-
   line-height: 1.5;
-
   color: #85786c;
 }
 
@@ -152,31 +133,24 @@ body {
 
 .chain-grid {
   display: grid;
-
   grid-template-columns:
     repeat(4, minmax(0, 1fr));
-
   gap: 10px;
 }
 
-
 .chain-card {
   position: relative;
-
   appearance: none;
-
   width: 100%;
 
   background: #fffdf9;
 
   border: 1px solid #ddd2c5;
-
   border-radius: 13px;
 
   padding: 12px 8px 11px;
 
   cursor: pointer;
-
   text-align: center;
 
   transition:
@@ -187,13 +161,11 @@ body {
 
 .chain-card:hover {
   transform: translateY(-2px);
-
   border-color: #b9a28a;
 }
 
 .chain-card.active {
   border-color: #302a25;
-
   background: #f7f1e9;
 }
 
@@ -206,7 +178,6 @@ body {
   display: block;
 
   width: 100%;
-
   height: 92px;
 
   object-fit: contain;
@@ -215,19 +186,31 @@ body {
 }
 
 
-/*
-  Cable + Curb are visually thinner/smaller
-  source images, so give them extra visual size.
-*/
+/* CABLE CHAIN - BIGGER */
 
-.chain-card[data-bracelet="1"] img,
-.chain-card[data-bracelet="2"] img {
-  width: 112%;
-  height: 105px;
+.chain-card[data-bracelet="1"] img {
+  width: 135%;
+  height: 115px;
 
   max-width: none;
 
-  margin-left: -6%;
+  margin-left: -17.5%;
+
+  object-fit: contain;
+}
+
+
+/* CURB CHAIN - BIGGER */
+
+.chain-card[data-bracelet="2"] img {
+  width: 140%;
+  height: 110px;
+
+  max-width: none;
+
+  margin-left: -20%;
+
+  object-fit: contain;
 }
 
 
@@ -239,7 +222,6 @@ body {
   display: block;
 
   font-size: 10px;
-
   line-height: 1.3;
 
   margin-bottom: 4px;
@@ -251,7 +233,6 @@ body {
   display: block;
 
   font-size: 10px;
-
   font-weight: 600;
 
   color: #806d5a;
@@ -266,7 +247,6 @@ body {
   margin-top: 3px;
 }
 
-
 .design-box {
   width: 100%;
 
@@ -275,7 +255,6 @@ body {
   background: #faf7f2;
 
   border: 1px solid #e7ded2;
-
   border-radius: 14px;
 
   display: flex;
@@ -286,12 +265,10 @@ body {
   overflow: hidden;
 }
 
-
 #braceletCanvas {
   display: block;
 
   width: 100%;
-
   height: auto;
 
   max-width: 100%;
@@ -299,6 +276,8 @@ body {
   cursor: grab;
 
   touch-action: none;
+
+  user-select: none;
 }
 
 #braceletCanvas:active {
@@ -513,7 +492,7 @@ body {
 
 
 /* =========================================
-   CHARMS
+   CHARM CATALOG
 ========================================= */
 
 .charm-grid {
@@ -524,7 +503,6 @@ body {
 
   gap: 9px;
 }
-
 
 .charm-card {
   position: relative;
@@ -560,14 +538,12 @@ body {
 }
 
 
-/*
-  Smaller charm images
-*/
+/* SMALLER CATALOG CHARMS */
 
 .charm-card img {
   display: block;
 
-  width: 100%;
+  width: 78%;
 
   aspect-ratio: 1 / 1;
 
@@ -575,7 +551,6 @@ body {
 
   margin: 0 auto 4px;
 }
-
 
 .charm-price {
   display: block;
@@ -637,7 +612,6 @@ body {
 
   .builder {
     width: 95%;
-
     gap: 18px;
   }
 
@@ -655,22 +629,31 @@ body {
     height: 78px;
   }
 
-  /* Make Cable + Curb chains larger */
-.chain-card[data-bracelet="1"] img {
-  width: 125%;
-  height: 115px;
-  object-fit: contain;
-}
+  .chain-card[data-bracelet="1"] img {
+    width: 135%;
+    height: 105px;
 
-.chain-card[data-bracelet="2"] img {
-  width: 130%;
-  height: 100px;
-  object-fit: contain;
-}
+    max-width: none;
+
+    margin-left: -17.5%;
+  }
+
+  .chain-card[data-bracelet="2"] img {
+    width: 140%;
+    height: 100px;
+
+    max-width: none;
+
+    margin-left: -20%;
+  }
 
   .charm-grid {
     grid-template-columns:
       repeat(4, minmax(0, 1fr));
+  }
+
+  .charm-card img {
+    width: 72%;
   }
 }
 
@@ -687,25 +670,19 @@ body {
 
   .logo {
     width: 105px;
-
     margin-bottom: 7px;
   }
 
   .tagline {
     font-size: 10px;
-
     letter-spacing: 3px;
   }
 
-
   .builder {
     width: 100%;
-
     display: block;
-
     margin: 0;
   }
-
 
   .design-side,
   .charms-side {
@@ -717,23 +694,18 @@ body {
     padding: 20px 16px;
   }
 
-
   .design-side {
     border-bottom: 8px solid #f3ede5;
   }
-
 
   .section-block {
     margin-bottom: 24px;
   }
 
-
   .section-heading {
     gap: 10px;
-
     margin-bottom: 15px;
   }
-
 
   .step {
     width: 27px;
@@ -742,13 +714,10 @@ body {
     font-size: 9px;
   }
 
-
   .section-heading h2 {
     font-size: 14px;
-
     letter-spacing: 1.5px;
   }
-
 
   .section-heading p {
     font-size: 10px;
@@ -764,32 +733,36 @@ body {
     gap: 8px;
   }
 
-
   .chain-card {
     padding: 8px 6px 9px;
   }
 
-
   .chain-card img {
     height: 70px;
-
     margin-bottom: 5px;
   }
 
+  .chain-card[data-bracelet="1"] img {
+    width: 135%;
+    height: 92px;
 
-  .chain-card[data-bracelet="1"] img,
-  .chain-card[data-bracelet="2"] img {
-    width: 112%;
-    height: 82px;
+    max-width: none;
 
-    margin-left: -6%;
+    margin-left: -17.5%;
   }
 
+  .chain-card[data-bracelet="2"] img {
+    width: 140%;
+    height: 88px;
+
+    max-width: none;
+
+    margin-left: -20%;
+  }
 
   .chain-name {
     font-size: 9px;
   }
-
 
   .chain-price {
     font-size: 9px;
@@ -800,7 +773,6 @@ body {
 
   .design-box {
     min-height: 245px;
-
     border-radius: 12px;
   }
 
@@ -814,13 +786,10 @@ body {
     gap: 8px;
   }
 
-
   .action-buttons button {
     min-height: 42px;
-
     font-size: 8px;
   }
-
 
   .primary-button {
     grid-column: 1 / -1;
@@ -840,11 +809,9 @@ body {
     margin-bottom: 15px;
   }
 
-
   #categoryFilter {
     height: 44px;
   }
-
 
   .charm-grid {
     grid-template-columns:
@@ -853,23 +820,19 @@ body {
     gap: 7px;
   }
 
-
   .charm-card {
     padding: 6px;
-
     border-radius: 9px;
   }
 
-
   .charm-card img {
+    width: 68%;
     margin-bottom: 3px;
   }
-
 
   .charm-price {
     font-size: 8px;
   }
-
 }
 
 
@@ -885,7 +848,6 @@ body {
     padding-right: 12px;
   }
 
-
   .charm-grid {
     grid-template-columns:
       repeat(3, minmax(0, 1fr));
@@ -893,12 +855,25 @@ body {
     gap: 6px;
   }
 
+  .chain-card[data-bracelet="1"] img {
+    width: 135%;
+    height: 85px;
 
-  .chain-card[data-bracelet="1"] img,
-  .chain-card[data-bracelet="2"] img {
-    width: 115%;
-    height: 78px;
-    margin-left: -7.5%;
+    max-width: none;
+
+    margin-left: -17.5%;
   }
 
+  .chain-card[data-bracelet="2"] img {
+    width: 140%;
+    height: 82px;
+
+    max-width: none;
+
+    margin-left: -20%;
+  }
+
+  .charm-card img {
+    width: 64%;
+  }
 }
