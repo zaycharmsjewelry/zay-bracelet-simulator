@@ -1,248 +1,151 @@
 /* =========================================
-   ZAY CHARMS DATABASE
-========================================= */
+   ZAY CHARMS - AUTOMATIC CHARM LOADER
+   ========================================= */
 
-const CHARMS = [];
+const GITHUB_API_URL =
+  "https://api.github.com/repos/zaycharmsjewelry/zay-bracelet-simulator/contents/assets/charms";
 
+/*
+   PRICE RULES
 
-/* =========================================
-   HELPER
-========================================= */
+   The filename determines the price.
+*/
 
-function addCharm(id, name, category, filename) {
+const CHARM_PRICES = {
+  "bow": 6,
+  "characters": 6,
+  "flowers": 5,
+  "fly": 5,
+  "foods": 5,
+  "fruits": 5,
+  "heart": 6,
+  "letter1": 6,
+  "letter": 5,
+  "ocean": 6,
+  "pets": 6,
+  "random": 5,
+  "religion": 6,
+  "school": 6,
+  "travel": 5,
+  "veg": 5,
+  "vintage": 7
+};
 
-  CHARMS.push({
-    id,
-    name,
-    category,
-    src: `assets/charms/${filename}`
-  });
+/*
+   CATEGORY NAMES
 
-}
+   These are only used internally.
+   Customers will NOT see them.
+*/
 
+const CATEGORY_NAMES = {
+  "bow": "Bows",
+  "characters": "Characters",
+  "flowers": "Flowers",
+  "fly": "Fly",
+  "foods": "Foods",
+  "fruits": "Fruits",
+  "heart": "Hearts",
+  "letter1": "Letters",
+  "letter": "Letters",
+  "ocean": "Ocean",
+  "pets": "Pets",
+  "random": "Random",
+  "religion": "Religion",
+  "school": "School",
+  "travel": "Travel",
+  "veg": "Vegetables",
+  "vintage": "Vintage"
+};
 
-/* =========================================
-   LETTERS
-   C-A-001 → C-A-026
-========================================= */
+/*
+   IMPORTANT:
+   letter1 must be checked BEFORE letter.
+*/
 
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function getPrefix(fileName) {
+  const lower = fileName.toLowerCase();
 
-for (let i = 0; i < 26; i++) {
-
-  const number =
-    String(i + 1).padStart(3, "0");
-
-  addCharm(
-    `letter-${alphabet[i].toLowerCase()}`,
-    `Letter ${alphabet[i]}`,
-    "Letters",
-    `C-A-${number}.png`
+  const prefixes = Object.keys(CHARM_PRICES).sort(
+    (a, b) => b.length - a.length
   );
 
-}
-
-
-/* =========================================
-   ROUND LETTERS
-   C-AL-001 → C-AL-026
-========================================= */
-
-for (let i = 0; i < 26; i++) {
-
-  const number =
-    String(i + 1).padStart(3, "0");
-
-  addCharm(
-    `round-letter-${alphabet[i].toLowerCase()}`,
-    `Round Letter ${alphabet[i]}`,
-    "Round Letters",
-    `C-AL-${number}.png`
-  );
-
-}
-
-
-/* =========================================
-   TRAVEL
-   C-AIR-001
-========================================= */
-
-addCharm(
-  "airplane",
-  "Airplane",
-  "Travel",
-  "C-AIR-001.png"
-);
-
-
-/* =========================================
-   FLOWERS
-   C-FLO-001 → C-FLO-049
-========================================= */
-
-for (let i = 1; i <= 49; i++) {
-
-  const number =
-    String(i).padStart(3, "0");
-
-  addCharm(
-    `flower-${number}`,
-    `Flower ${i}`,
-    "Flowers",
-    `C-FLO-${number}.png`
-  );
-
-}
-
-
-/* =========================================
-   FRUITS
-   C-FRU-001 → C-FRU-023
-========================================= */
-
-for (let i = 1; i <= 23; i++) {
-
-  const number =
-    String(i).padStart(3, "0");
-
-  let name =
-    `Fruit ${i}`;
-
-  if (i === 23) {
-    name = "Cherry";
+  for (const prefix of prefixes) {
+    if (lower.startsWith(`${prefix}-`)) {
+      return prefix;
+    }
   }
 
-  addCharm(
-    `fruit-${number}`,
-    name,
-    "Fruits",
-    `C-FRU-${number}.png`
-  );
-
+  return null;
 }
 
+/*
+   Create one charm object from one PNG filename.
+*/
 
-/* =========================================
-   GRADUATION
-   C-GRA-001
-========================================= */
+function createCharm(fileName) {
+  const prefix = getPrefix(fileName);
 
-addCharm(
-  "graduation",
-  "Graduation",
-  "Graduation",
-  "C-GRA-001.png"
-);
-
-
-/* =========================================
-   CUTE CHARACTERS
-   C-K-001 → C-K-017
-========================================= */
-
-for (let i = 1; i <= 17; i++) {
-
-  const number =
-    String(i).padStart(3, "0");
-
-  addCharm(
-    `cute-${number}`,
-    `Cute Character ${i}`,
-    "Cute Characters",
-    `C-K-${number}.png`
-  );
-
-}
-
-
-/* =========================================
-   SEA
-   C-SEA-001 → C-SEA-022
-========================================= */
-
-for (let i = 1; i <= 22; i++) {
-
-  const number =
-    String(i).padStart(3, "0");
-
-  addCharm(
-    `sea-${number}`,
-    `Sea Charm ${i}`,
-    "Sea",
-    `C-SEA-${number}.png`
-  );
-
-}
-
-
-/* =========================================
-   VINTAGE FLORALS
-   C-V-001 → C-V-009
-========================================= */
-
-for (let i = 1; i <= 9; i++) {
-
-  const number =
-    String(i).padStart(3, "0");
-
-  addCharm(
-    `vintage-${number}`,
-    `Vintage Floral ${i}`,
-    "Vintage Florals",
-    `C-V-${number}.png`
-  );
-
-}
-
-
-/* =========================================
-   VEGETABLES
-   C-VEG-001 → C-VEG-007
-========================================= */
-
-for (let i = 1; i <= 7; i++) {
-
-  const number =
-    String(i).padStart(3, "0");
-
-  addCharm(
-    `vegetable-${number}`,
-    `Vegetable ${i}`,
-    "Vegetables",
-    `C-VEG-${number}.png`
-  );
-
-}
-/* =========================================
-   SOLD OUT CHARMS
-========================================= */
-
-const SOLD_OUT_FILES = new Set([
-  "C-SEA-005.png",
-  "C-FRU-003.png",
-  "C-K-003.png",
-  "C-FLO-046.png",
-  "C-SEA-022.png"
-]);
-
-CHARMS.forEach(charm => {
-
-  const fileName =
-    charm.src.split("/").pop();
-
-  if (
-    SOLD_OUT_FILES.has(fileName)
-  ) {
-    charm.soldOut = true;
+  if (!prefix) {
+    return null;
   }
 
-});
+  return {
+    id: fileName,
+    name: fileName,
+    src: `assets/charms/${fileName}`,
+    category: CATEGORY_NAMES[prefix],
+    price: CHARM_PRICES[prefix],
+    soldOut: false
+  };
+}
 
-/* =========================================
-   CHECK
-========================================= */
+/*
+   Load every PNG from the GitHub charms folder.
+*/
 
-console.log(
-  `ZAY Simulator loaded ${CHARMS.length} charms.`
-);
+async function loadCharms() {
+  try {
+    const response = await fetch(GITHUB_API_URL);
+
+    if (!response.ok) {
+      throw new Error(
+        `GitHub returned ${response.status} ${response.statusText}`
+      );
+    }
+
+    const files = await response.json();
+
+    const charms = files
+      .filter(file => file.type === "file")
+      .filter(file => file.name.toLowerCase().endsWith(".png"))
+      .map(file => createCharm(file.name))
+      .filter(Boolean);
+
+    /*
+       Sort charms alphabetically by filename.
+    */
+
+    charms.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, {
+        numeric: true,
+        sensitivity: "base"
+      })
+    );
+
+    console.log(`ZAY: ${charms.length} charms loaded.`);
+
+    return charms;
+
+  } catch (error) {
+    console.error("Could not load ZAY charms:", error);
+
+    return [];
+  }
+}
+
+/*
+   SCRIPT.JS will wait for this before starting.
+*/
+
+const CHARMS_READY = loadCharms();
