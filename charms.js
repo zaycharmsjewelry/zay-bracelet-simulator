@@ -1,88 +1,128 @@
 /* =========================================
    ZAY CHARMS - AUTOMATIC CHARM LOADER
-========================================= */
+   ========================================= */
+
 
 const GITHUB_API_URL =
   "https://api.github.com/repos/zaycharmsjewelry/zay-bracelet-simulator/contents/assets/charms";
 
 
 /* =========================================
-   PRICE RULES
-========================================= */
+   CHARM PRICES
+   ========================================= */
 
 const CHARM_PRICES = {
+
   bow: 6,
+
   characters: 6,
+
   flowers: 5,
+
   fly: 5,
+
   foods: 5,
+
   fruits: 5,
+
   heart: 6,
+
   letter1: 6,
+
   letter: 5,
+
   ocean: 6,
+
   pets: 6,
+
   random: 5,
+
   religion: 6,
+
   school: 6,
+
   travel: 5,
+
   veg: 5,
+
   vintage: 7
+
 };
 
 
 /* =========================================
    CATEGORY NAMES
-========================================= */
+   ========================================= */
 
 const CATEGORY_NAMES = {
+
   bow: "Bows",
+
   characters: "Characters",
+
   flowers: "Flowers",
+
   fly: "Fly",
+
   foods: "Foods",
+
   fruits: "Fruits",
+
   heart: "Hearts",
+
   letter1: "Letters",
+
   letter: "Letters",
+
   ocean: "Ocean",
+
   pets: "Pets",
+
   random: "Random",
+
   religion: "Religion",
+
   school: "School",
+
   travel: "Travel",
+
   veg: "Vegetables",
+
   vintage: "Vintage"
+
 };
 
 
 /* =========================================
-   FIND FILENAME PREFIX
-========================================= */
+   FIND CATEGORY PREFIX
+   ========================================= */
 
 function getPrefix(fileName) {
 
-  const lower =
-    fileName.toLowerCase();
+  const lower = fileName.toLowerCase();
+
 
   /*
-     Important:
-     letter1 must be checked before letter.
+    Longest prefixes first.
+
+    This is important because:
+
+    letter1-001.png
+    must be detected as letter1
+
+    rather than letter.
   */
 
   const prefixes =
     Object.keys(CHARM_PRICES).sort(
-      (a, b) =>
-        b.length - a.length
+      (a, b) => b.length - a.length
     );
 
 
   for (const prefix of prefixes) {
 
     if (
-      lower.startsWith(
-        `${prefix}-`
-      )
+      lower.startsWith(prefix + "-")
     ) {
 
       return prefix;
@@ -99,7 +139,7 @@ function getPrefix(fileName) {
 
 /* =========================================
    CREATE CHARM OBJECT
-========================================= */
+   ========================================= */
 
 function createCharm(fileName) {
 
@@ -138,16 +178,14 @@ function createCharm(fileName) {
 
 /* =========================================
    LOAD CHARMS FROM GITHUB
-========================================= */
+   ========================================= */
 
 async function loadCharms() {
 
   try {
 
     const response =
-      await fetch(
-        GITHUB_API_URL
-      );
+      await fetch(GITHUB_API_URL);
 
 
     if (!response.ok) {
@@ -163,30 +201,41 @@ async function loadCharms() {
       await response.json();
 
 
-    const charms =
-      files
+    const charms = files
 
-        .filter(
-          file =>
-            file.type === "file"
-        )
+      .filter(
+        file =>
+          file.type === "file"
+      )
 
-        .filter(
-          file =>
-            file.name
-              .toLowerCase()
-              .endsWith(".png")
-        )
+      .filter(
+        file =>
+          file.name
+            .toLowerCase()
+            .endsWith(".png")
+      )
 
-        .map(
-          file =>
-            createCharm(
-              file.name
-            )
-        )
+      .map(
+        file =>
+          createCharm(file.name)
+      )
 
-        .filter(Boolean);
+      .filter(Boolean);
 
+
+    /*
+      Sort charms naturally:
+
+      bow-1
+      bow-2
+      bow-10
+
+      instead of:
+
+      bow-1
+      bow-10
+      bow-2
+    */
 
     charms.sort(
       (a, b) =>
@@ -210,6 +259,7 @@ async function loadCharms() {
 
   }
 
+
   catch (error) {
 
     console.error(
@@ -226,8 +276,8 @@ async function loadCharms() {
 
 
 /* =========================================
-   START LOADING
-========================================= */
+   GLOBAL PROMISE
+   ========================================= */
 
 const CHARMS_READY =
   loadCharms();
