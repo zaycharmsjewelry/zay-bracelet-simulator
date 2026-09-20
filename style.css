@@ -1,558 +1,626 @@
-/* =====================================================
-   ZAY CHARMS — BRACELET SIMULATOR
-   ===================================================== */
+/* =========================================
+   ZAY CHARMS
+   BUILD YOUR BRACELET
+   RESPONSIVE DESIGN
+========================================= */
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: #f8f4ed;
-  color: #332d28;
+  margin: 0;
+  background: #f8f4ee;
+  color: #302a25;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* =====================================================
+
+/* =========================================
    HEADER
-   ===================================================== */
+========================================= */
 
 .site-header {
-  width: 100%;
   text-align: center;
-  padding: 28px 20px 18px;
+  padding: 30px 20px 24px;
+  background: #f8f4ee;
 }
 
 .logo {
   display: block;
   width: 125px;
+  max-width: 45vw;
   height: auto;
-  margin: 0 auto 8px;
+  margin: 0 auto 10px;
 }
 
 .tagline {
   margin: 0;
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-align: center;
-  color: #a48652;
+  font-size: 12px;
+  letter-spacing: 4px;
+  font-weight: 600;
 }
 
-/* =====================================================
-   MAIN CONTAINER
-   ===================================================== */
 
-.container {
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 24px 60px;
+/* =========================================
+   MAIN BUILDER
+========================================= */
+
+.builder {
+  width: min(1500px, 94%);
+  margin: 0 auto 50px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  gap: 28px;
+  align-items: start;
 }
 
-/* =====================================================
-   INTRO
-   ===================================================== */
 
-.intro {
-  width: 100%;
-  text-align: center;
-  margin: 0 0 24px;
+/* =========================================
+   LEFT / RIGHT SIDES
+========================================= */
+
+.design-side,
+.charms-side {
+  background: #fffdf9;
+  border: 1px solid #e7ded2;
+  border-radius: 18px;
+  padding: 28px;
 }
 
-.intro h1 {
-  margin: 0 0 8px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 28px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  line-height: 1.2;
+.design-side {
+  min-width: 0;
 }
 
-.intro p {
-  margin: 0;
-  color: #81776e;
-  font-size: 13px;
+.charms-side {
+  min-width: 0;
 }
 
-/* =====================================================
-   BRACELET AREA
-   ===================================================== */
 
-.bracelet-section {
-  width: 100%;
-  height: auto;
-  min-height: 360px;
+/* =========================================
+   SECTION HEADINGS
+========================================= */
+
+.section-block {
+  margin-bottom: 28px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-bottom: 20px;
+}
+
+.step {
+  flex: 0 0 auto;
+
+  width: 31px;
+  height: 31px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #fffdf9;
+  border: 1px solid #cbbba7;
+  border-radius: 50%;
 
-  border: 1px solid #e6ddd0;
-  border-radius: 18px;
-
-  padding: 10px;
-
-  margin: 0 0 32px;
-
-  overflow: hidden;
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
-#braceletCanvas {
-  display: block;
+.section-heading h2 {
+  margin: 1px 0 5px;
 
-  width: 100%;
-  max-width: 1000px;
-  height: auto;
-
-  margin: 0 auto;
+  font-size: 17px;
+  letter-spacing: 2px;
+  font-weight: 600;
 }
 
-/* =====================================================
-   CHAINS SECTION
-   ===================================================== */
+.section-heading p {
+  margin: 0;
 
-.chains-section {
-  width: 100%;
-  margin: 0 0 34px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #85786c;
 }
 
-.chains-section h2,
-.charms-section h2 {
-  margin: 0 0 18px;
 
-  text-align: center;
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 18px;
-  font-weight: 500;
-
-  letter-spacing: 1.5px;
-}
-
-/* =====================================================
+/* =========================================
    CHAIN GRID
-   ===================================================== */
+========================================= */
 
 .chain-grid {
-  width: 100%;
-
   display: grid;
 
   grid-template-columns:
     repeat(4, minmax(0, 1fr));
 
-  gap: 18px;
-
-  align-items: stretch;
+  gap: 10px;
 }
 
+
 .chain-card {
-  width: 100%;
-  min-width: 0;
+  position: relative;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid #e2d8ca;
-  border-radius: 15px;
+  appearance: none;
 
   background: #fffdf9;
 
-  padding: 14px 12px 13px;
+  border: 1px solid #ddd2c5;
+  border-radius: 13px;
+
+  padding: 13px 8px 12px;
 
   cursor: pointer;
 
-  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
 
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .chain-card:hover {
   transform: translateY(-2px);
+  border-color: #b9a28a;
 }
 
 .chain-card.active {
-  border-color: #b49358;
-
-  box-shadow:
-    0 5px 18px rgba(75, 55, 30, 0.10);
+  border-color: #302a25;
+  background: #f7f1e9;
 }
+
 
 .chain-card img {
   display: block;
 
   width: 100%;
-  height: 90px;
+  height: 75px;
 
   object-fit: contain;
 
-  margin: 0 auto 9px;
+  margin-bottom: 9px;
 }
+
 
 .chain-name {
   display: block;
 
-  width: 100%;
-
-  text-align: center;
-
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.3;
 
-  color: #403832;
+  margin-bottom: 5px;
+
+  color: #302a25;
 }
+
 
 .chain-price {
   display: block;
 
-  margin-top: 5px;
-
-  text-align: center;
-
   font-size: 11px;
+  font-weight: 600;
 
-  color: #9a7b48;
+  color: #806d5a;
 }
 
-/* =====================================================
-   CHARMS SECTION
-   ===================================================== */
 
-.charms-section {
-  width: 100%;
-  margin: 0 0 30px;
+/* =========================================
+   BRACELET PREVIEW
+========================================= */
+
+.preview-block {
+  margin-top: 4px;
 }
 
-/* =====================================================
-   FILTERS
-   ===================================================== */
 
-.filters {
-  width: 100%;
-  max-width: 900px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  margin: 0 auto 20px;
-}
-
-#search,
-#categoryFilter {
-  height: 44px;
-
-  border: 1px solid #ddd2c3;
-  border-radius: 9px;
-
-  background: #fffdf9;
-
-  color: #403832;
-
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-
-  padding: 0 13px;
-}
-
-#search {
-  flex: 1;
-  min-width: 0;
-}
-
-#categoryFilter {
-  width: 210px;
-  flex-shrink: 0;
-}
-
-#search:focus,
-#categoryFilter:focus {
-  outline: none;
-  border-color: #b49358;
-}
-
-/* =====================================================
-   CHARM GRID
-   ===================================================== */
-
-.charm-grid {
+.design-box {
   width: 100%;
 
-  display: grid;
+  min-height: 330px;
 
-  grid-template-columns:
-    repeat(8, minmax(0, 1fr));
-
-  gap: 12px;
-
-  align-items: start;
-}
-
-.charm-card {
-  position: relative;
-
-  width: 100%;
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: #faf7f2;
 
   border: 1px solid #e7ded2;
-  border-radius: 11px;
+  border-radius: 14px;
 
-  background: #fffdf9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  padding: 8px;
-
-  cursor: pointer;
-
-  font-family: Arial, Helvetica, sans-serif;
-
-  transition:
-    border-color 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+  overflow: hidden;
 }
 
-.charm-card:hover {
-  transform: translateY(-2px);
 
-  border-color: #b49358;
-
-  box-shadow:
-    0 4px 12px rgba(70, 50, 30, 0.08);
-}
-
-.charm-card img {
+#braceletCanvas {
   display: block;
 
   width: 100%;
   height: auto;
 
-  aspect-ratio: 1 / 1;
+  max-width: 100%;
 
-  object-fit: contain;
+  cursor: grab;
+  touch-action: none;
 }
 
-.charm-price {
+#braceletCanvas:active {
+  cursor: grabbing;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.action-buttons {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr 1.4fr;
+
+  gap: 10px;
+
+  margin-top: 13px;
+}
+
+
+.action-buttons button {
+  min-height: 44px;
+
+  border-radius: 10px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 1.5px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.secondary-button {
+  background: transparent;
+
+  border: 1px solid #cfc1b2;
+
+  color: #4a4037;
+}
+
+.secondary-button:hover {
+  background: #f4eee7;
+}
+
+
+.primary-button {
+  background: #302a25;
+
+  border: 1px solid #302a25;
+
+  color: #fff;
+}
+
+.primary-button:hover {
+  background: #4a4037;
+}
+
+
+/* =========================================
+   PRICE BOX
+========================================= */
+
+.price-box {
+  border-top: 1px solid #e3d9cd;
+
+  padding-top: 21px;
+
+  margin-top: 5px;
+}
+
+
+.price-heading {
+  margin-bottom: 15px;
+
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #8b7b6b;
+}
+
+
+.price-line {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 6px 0;
+
+  font-size: 12px;
+}
+
+
+.price-line span {
+  color: #776b60;
+}
+
+
+.price-line strong {
+  font-weight: 600;
+}
+
+
+.price-divider {
+  height: 1px;
+
+  background: #e3d9cd;
+
+  margin: 10px 0;
+}
+
+
+.total-line {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+
+.total-line span {
+  font-size: 13px;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+
+.total-line strong {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+.delivery-note {
+  margin: 11px 0 0;
+
+  font-size: 10px;
+
+  color: #9a8d81;
+}
+
+
+.selected-list {
+  margin: 10px 0 0;
+
+  font-size: 10px;
+  line-height: 1.5;
+
+  color: #8c7f72;
+}
+
+
+/* =========================================
+   CATEGORY
+========================================= */
+
+.category-wrapper {
+  margin-bottom: 20px;
+}
+
+
+.category-wrapper label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+
+  color: #8b7b6b;
+}
+
+
+#categoryFilter {
+  width: 100%;
+
+  height: 45px;
+
+  padding: 0 13px;
+
+  background: #faf7f2;
+
+  border: 1px solid #d9cdbf;
+
+  border-radius: 10px;
+
+  color: #40372f;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  outline: none;
+}
+
+
+#categoryFilter:focus {
+  border-color: #9f8c78;
+}
+
+
+/* =========================================
+   CHARM GRID
+========================================= */
+
+.charm-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+
+.charm-card {
+  position: relative;
+
+  background: #fffdf9;
+
+  border: 1px solid #e3d9cd;
+
+  border-radius: 12px;
+
+  padding: 9px;
+
+  cursor: pointer;
+
+  text-align: center;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.charm-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #b9a28a;
+
+  background: #faf6f0;
+}
+
+
+.charm-card:active {
+  transform: scale(0.97);
+}
+
+
+.charm-card img {
   display: block;
 
   width: 100%;
 
-  margin-top: 6px;
+  aspect-ratio: 1 / 1;
 
-  text-align: center;
+  object-fit: contain;
+
+  margin-bottom: 7px;
+}
+
+
+.charm-price {
+  display: block;
 
   font-size: 10px;
 
-  color: #927345;
+  font-weight: 600;
+
+  color: #806d5a;
 }
 
-/* =====================================================
+
+/* =========================================
    SOLD OUT
-   ===================================================== */
+========================================= */
 
 .charm-card.sold-out {
-  opacity: 0.5;
+  opacity: 0.48;
+
   cursor: not-allowed;
 }
+
 
 .charm-card.sold-out:hover {
   transform: none;
 
-  border-color: #e7ded2;
+  border-color: #e3d9cd;
 
-  box-shadow: none;
+  background: #fffdf9;
 }
+
 
 .charm-badge {
   position: absolute;
 
-  top: 6px;
-  left: 6px;
-  right: 6px;
+  top: 7px;
+  left: 7px;
+  right: 7px;
 
-  padding: 4px 2px;
+  padding: 5px 3px;
 
-  border-radius: 5px;
+  background: rgba(48, 42, 37, 0.88);
 
-  background: rgba(255, 253, 249, 0.94);
+  color: white;
 
-  color: #8d6262;
-
-  text-align: center;
+  border-radius: 6px;
 
   font-size: 8px;
 
-  font-weight: 600;
+  letter-spacing: 1px;
 
-  letter-spacing: 0.8px;
+  text-align: center;
 }
 
-.no-results {
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.charm-grid:empty::before {
+  content: "Loading charms...";
+
   grid-column: 1 / -1;
 
-  width: 100%;
+  display: block;
 
   padding: 40px 10px;
 
   text-align: center;
 
-  color: #887e74;
-
-  font-size: 13px;
-}
-
-/* =====================================================
-   CONTROL BUTTONS
-   ===================================================== */
-
-.controls {
-  width: 100%;
-
-  display: flex;
-
-  justify-content: center;
-  align-items: center;
-
-  gap: 10px;
-
-  margin: 30px 0 25px;
-}
-
-.controls button {
-  border: 0;
-  border-radius: 8px;
-
-  background: #3c342d;
-
-  color: white;
-
-  padding: 12px 24px;
-
-  font-family: Arial, Helvetica, sans-serif;
-
-  font-size: 10px;
-
-  letter-spacing: 1.4px;
-
-  cursor: pointer;
-}
-
-.controls button:hover {
-  opacity: 0.82;
-}
-
-#saveBtn {
-  background: #a48753;
-}
-
-/* =====================================================
-   PRICE SUMMARY
-   ===================================================== */
-
-.summary {
-  width: 100%;
-  max-width: 680px;
-
-  margin: 0 auto;
-
-  background: #fffdf9;
-
-  border: 1px solid #e6ddd1;
-  border-radius: 14px;
-
-  padding: 20px 24px;
-}
-
-.summary-row {
-  width: 100%;
-
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 20px;
-
-  padding: 7px 0;
+  color: #9a8d81;
 
   font-size: 12px;
 }
 
-.summary-row span {
-  color: #7e746b;
-}
 
-.summary-row strong {
-  color: #39322c;
-}
-
-.summary-row.total {
-  border-top: 1px solid #e5dcd0;
-
-  margin-top: 8px;
-
-  padding-top: 14px;
-
-  font-size: 15px;
-}
-
-.summary-row.total strong {
-  color: #9b7d4d;
-}
-
-.delivery-note {
-  margin: 15px 0 8px;
-
-  text-align: center;
-
-  color: #968b81;
-
-  font-size: 10px;
-}
-
-.selected-list {
-  margin: 10px 0 0;
-
-  padding-top: 10px;
-
-  border-top: 1px solid #eee7df;
-
-  text-align: center;
-
-  color: #8e847a;
-
-  font-size: 10px;
-
-  line-height: 1.6;
-}
-
-/* =====================================================
+/* =========================================
    TABLET
-   ===================================================== */
+========================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
 
-  .container {
-    padding-left: 18px;
-    padding-right: 18px;
+  .builder {
+    width: 95%;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    gap: 18px;
+  }
+
+  .design-side,
+  .charms-side {
+    padding: 20px;
   }
 
   .chain-grid {
@@ -562,129 +630,261 @@ body {
 
   .charm-grid {
     grid-template-columns:
-      repeat(6, minmax(0, 1fr));
+      repeat(3, minmax(0, 1fr));
   }
 
+  .chain-card img {
+    height: 65px;
+  }
 }
 
-/* =====================================================
-   MOBILE
-   ===================================================== */
 
-@media (max-width: 600px) {
+/* =========================================
+   PHONE
+========================================= */
+
+@media (max-width: 700px) {
+
+  body {
+    background: #f8f4ee;
+  }
+
 
   .site-header {
-    padding: 20px 15px 12px;
+    padding: 23px 16px 19px;
   }
+
 
   .logo {
     width: 105px;
+
+    margin-bottom: 8px;
   }
+
 
   .tagline {
-    font-size: 9px;
-    letter-spacing: 2.5px;
+    font-size: 10px;
+
+    letter-spacing: 3px;
   }
 
-  .container {
+
+  .builder {
     width: 100%;
-    padding:
-      0 10px
-      40px;
+
+    display: block;
+
+    margin: 0;
   }
 
-  .intro {
-    margin-bottom: 18px;
+
+  .design-side,
+  .charms-side {
+    border-radius: 0;
+
+    border-left: 0;
+    border-right: 0;
+
+    padding: 20px 16px;
   }
 
-  .intro h1 {
-    font-size: 22px;
+
+  .design-side {
+    border-bottom: 8px solid #f3ede5;
   }
 
-  .intro p {
-    font-size: 11px;
+
+  .charms-side {
+    margin-top: 0;
   }
 
-  .bracelet-section {
-    min-height: 220px;
-    border-radius: 13px;
-    padding: 2px;
-    margin-bottom: 24px;
-  }
 
-  .chains-section,
-  .charms-section {
+  .section-block {
     margin-bottom: 25px;
   }
 
-  .chains-section h2,
-  .charms-section h2 {
-    font-size: 16px;
-    margin-bottom: 14px;
+
+  .section-heading {
+    gap: 10px;
+
+    margin-bottom: 16px;
   }
+
+
+  .step {
+    width: 27px;
+    height: 27px;
+
+    font-size: 9px;
+  }
+
+
+  .section-heading h2 {
+    font-size: 14px;
+
+    letter-spacing: 1.5px;
+  }
+
+
+  .section-heading p {
+    font-size: 11px;
+  }
+
+
+  /* CHAINS */
 
   .chain-grid {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
 
-    gap: 10px;
+    gap: 9px;
   }
 
+
   .chain-card {
-    padding: 10px 8px;
+    padding: 10px 7px;
   }
+
 
   .chain-card img {
     height: 65px;
-    margin-bottom: 7px;
+
+    margin-bottom: 6px;
   }
 
+
   .chain-name {
-    font-size: 11px;
+    font-size: 10px;
   }
+
 
   .chain-price {
     font-size: 10px;
   }
 
-  .filters {
-    flex-direction: column;
+
+  /* BRACELET */
+
+  .design-box {
+    min-height: 245px;
+
+    border-radius: 12px;
+  }
+
+
+  #braceletCanvas {
+    width: 100%;
+  }
+
+
+  /* BUTTONS */
+
+  .action-buttons {
+    grid-template-columns:
+      1fr 1fr;
+
     gap: 8px;
   }
 
-  #search,
-  #categoryFilter {
-    width: 100%;
-    height: 42px;
+
+  .action-buttons button {
+    min-height: 43px;
+
+    font-size: 9px;
   }
+
+
+  .primary-button {
+    grid-column: 1 / -1;
+  }
+
+
+  /* PRICE */
+
+  .price-box {
+    padding-top: 18px;
+  }
+
+
+  .total-line strong {
+    font-size: 18px;
+  }
+
+
+  /* CHARMS */
+
+  .category-wrapper {
+    margin-bottom: 16px;
+  }
+
+
+  #categoryFilter {
+    height: 46px;
+
+    font-size: 12px;
+  }
+
 
   .charm-grid {
     grid-template-columns:
-      repeat(4, minmax(0, 1fr));
+      repeat(3, minmax(0, 1fr));
 
-    gap: 7px;
+    gap: 8px;
   }
+
 
   .charm-card {
-    padding: 6px;
+    padding: 8px;
+
+    border-radius: 10px;
   }
+
+
+  .charm-card img {
+    margin-bottom: 5px;
+  }
+
 
   .charm-price {
     font-size: 9px;
   }
 
-  .controls {
-    flex-wrap: wrap;
+}
+
+
+/* =========================================
+   SMALL PHONE
+========================================= */
+
+@media (max-width: 390px) {
+
+  .design-side,
+  .charms-side {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
-  .controls button {
-    padding:
-      11px 16px;
+
+  .charm-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 6px;
   }
 
-  .summary {
-    padding:
-      17px;
+
+  .chain-card img {
+    height: 58px;
+  }
+
+
+  .section-heading h2 {
+    font-size: 13px;
+  }
+
+
+  .section-heading p {
+    font-size: 10px;
   }
 
 }
