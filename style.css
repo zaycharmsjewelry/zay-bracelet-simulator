@@ -13,9 +13,15 @@ html {
 
 body {
   margin: 0;
+
   background: #f8f4ee;
+
   color: #302a25;
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 
@@ -25,26 +31,62 @@ body {
 
 .site-header {
   text-align: center;
-  padding: 28px 20px 22px;
+
+  padding:
+    28px
+    20px
+    24px;
+
   background: #f8f4ee;
 }
 
+
 .logo {
   display: block;
-  width: 125px;
+
+  width: 112px;
+
   max-width: 45vw;
+
   height: auto;
-  margin: 0 auto 9px;
+
+  margin:
+    0
+    auto
+    9px;
 }
+
+
+.brand-name {
+  margin:
+    0
+    0
+    6px;
+
+  font-size: 11px;
+
+  letter-spacing: 3px;
+
+  font-weight: 600;
+
+  color: #302a25;
+}
+
 
 .tagline {
   display: block;
+
   margin: 0;
-  font-size: 12px;
+
+  font-size: 11px;
+
   line-height: 1.4;
+
   letter-spacing: 4px;
+
   font-weight: 600;
-  color: #302a25;
+
+  color: #806d5a;
 }
 
 
@@ -53,15 +95,25 @@ body {
 ========================================= */
 
 .builder {
-  width: min(1500px, 94%);
-  margin: 0 auto 50px;
+  width:
+    min(
+      1500px,
+      94%
+    );
+
+  margin:
+    0
+    auto
+    55px;
 
   display: grid;
+
   grid-template-columns:
     minmax(0, 1fr)
     minmax(0, 1fr);
 
   gap: 26px;
+
   align-items: start;
 }
 
@@ -72,58 +124,115 @@ body {
 
 .design-side,
 .charms-side {
-  background: #fffdf9;
-  border: 1px solid #e7ded2;
-  border-radius: 18px;
-  padding: 28px;
-  min-width: 0;
+
+  background:
+    #fffdf9;
+
+  border:
+    1px solid
+    #e7ded2;
+
+  border-radius:
+    18px;
+
+  padding:
+    28px;
+
+  min-width:
+    0;
 }
 
 
 /* =========================================
-   SECTION HEADINGS
+   SECTION
 ========================================= */
 
 .section-block {
-  margin-bottom: 28px;
+  margin-bottom:
+    28px;
 }
+
 
 .section-heading {
+
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 19px;
+
+  align-items:
+    flex-start;
+
+  gap:
+    12px;
+
+  margin-bottom:
+    19px;
 }
+
 
 .step {
-  flex: 0 0 auto;
 
-  width: 31px;
-  height: 31px;
+  flex:
+    0 0 auto;
+
+  width:
+    31px;
+
+  height:
+    31px;
 
   display: flex;
-  align-items: center;
-  justify-content: center;
 
-  border: 1px solid #cbbba7;
-  border-radius: 50%;
+  align-items:
+    center;
 
-  font-size: 10px;
-  letter-spacing: 1px;
+  justify-content:
+    center;
+
+  border:
+    1px solid
+    #cbbba7;
+
+  border-radius:
+    50%;
+
+  font-size:
+    10px;
+
+  letter-spacing:
+    1px;
 }
+
 
 .section-heading h2 {
-  margin: 2px 0 5px;
-  font-size: 16px;
-  letter-spacing: 2px;
-  font-weight: 600;
+
+  margin:
+    2px
+    0
+    5px;
+
+  font-size:
+    16px;
+
+  letter-spacing:
+    2px;
+
+  font-weight:
+    600;
 }
 
+
 .section-heading p {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.5;
-  color: #85786c;
+
+  margin:
+    0;
+
+  font-size:
+    11px;
+
+  line-height:
+    1.5;
+
+  color:
+    #85786c;
 }
 
 
@@ -132,41 +241,84 @@ body {
 ========================================= */
 
 .chain-grid {
+
   display: grid;
+
   grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-  gap: 10px;
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    10px;
 }
+
 
 .chain-card {
-  position: relative;
-  appearance: none;
-  width: 100%;
 
-  background: #fffdf9;
+  position:
+    relative;
 
-  border: 1px solid #ddd2c5;
-  border-radius: 13px;
+  appearance:
+    none;
 
-  padding: 12px 8px 11px;
+  width:
+    100%;
 
-  cursor: pointer;
-  text-align: center;
+  background:
+    #fffdf9;
+
+  border:
+    1px solid
+    #ddd2c5;
+
+  border-radius:
+    13px;
+
+  padding:
+    10px
+    7px
+    11px;
+
+  cursor:
+    pointer;
+
+  text-align:
+    center;
 
   transition:
-    border-color 0.2s ease,
-    transform 0.2s ease,
-    background 0.2s ease;
+    border-color
+    0.2s
+    ease,
+
+    transform
+    0.2s
+    ease,
+
+    background
+    0.2s
+    ease;
 }
+
 
 .chain-card:hover {
-  transform: translateY(-2px);
-  border-color: #b9a28a;
+
+  transform:
+    translateY(-2px);
+
+  border-color:
+    #b9a28a;
 }
 
+
 .chain-card.active {
-  border-color: #302a25;
-  background: #f7f1e9;
+
+  border-color:
+    #302a25;
+
+  background:
+    #f7f1e9;
 }
 
 
@@ -175,42 +327,44 @@ body {
 ========================================= */
 
 .chain-card img {
-  display: block;
 
-  width: 100%;
-  height: 92px;
+  display:
+    block;
 
-  object-fit: contain;
+  width:
+    100%;
 
-  margin: 0 auto 8px;
+  height:
+    100px;
+
+  object-fit:
+    contain;
+
+  margin:
+    0
+    auto
+    7px;
 }
 
 
-/* CABLE CHAIN - BIGGER */
+/*
+   Cable + Curb are visually thinner
+   in their source PNGs.
+
+   This enlarges only the cards.
+*/
 
 .chain-card[data-bracelet="1"] img {
-  width: 135%;
-  height: 115px;
 
-  max-width: none;
-
-  margin-left: -17.5%;
-
-  object-fit: contain;
+  transform:
+    scale(1.22);
 }
 
 
-/* CURB CHAIN - BIGGER */
-
 .chain-card[data-bracelet="2"] img {
-  width: 140%;
-  height: 110px;
 
-  max-width: none;
-
-  margin-left: -20%;
-
-  object-fit: contain;
+  transform:
+    scale(1.22);
 }
 
 
@@ -219,23 +373,37 @@ body {
 ========================================= */
 
 .chain-name {
-  display: block;
 
-  font-size: 10px;
-  line-height: 1.3;
+  display:
+    block;
 
-  margin-bottom: 4px;
+  font-size:
+    10px;
 
-  color: #302a25;
+  line-height:
+    1.3;
+
+  margin-bottom:
+    4px;
+
+  color:
+    #302a25;
 }
 
+
 .chain-price {
-  display: block;
 
-  font-size: 10px;
-  font-weight: 600;
+  display:
+    block;
 
-  color: #806d5a;
+  font-size:
+    10px;
+
+  font-weight:
+    600;
+
+  color:
+    #806d5a;
 }
 
 
@@ -244,44 +412,61 @@ body {
 ========================================= */
 
 .preview-block {
-  margin-top: 3px;
+
+  margin-top:
+    3px;
 }
+
 
 .design-box {
-  width: 100%;
 
-  min-height: 330px;
+  width:
+    100%;
 
-  background: #faf7f2;
+  height:
+    520px;
 
-  border: 1px solid #e7ded2;
-  border-radius: 14px;
+  background:
+    #faf7f2;
 
-  display: flex;
+  border:
+    1px solid
+    #e7ded2;
 
-  align-items: center;
-  justify-content: center;
+  border-radius:
+    14px;
 
-  overflow: hidden;
+  display:
+    block;
+
+  overflow:
+    hidden;
 }
+
 
 #braceletCanvas {
-  display: block;
 
-  width: 100%;
-  height: auto;
+  display:
+    block;
 
-  max-width: 100%;
+  width:
+    100%;
 
-  cursor: grab;
+  height:
+    100%;
 
-  touch-action: none;
+  cursor:
+    grab;
 
-  user-select: none;
+  touch-action:
+    none;
 }
 
+
 #braceletCanvas:active {
-  cursor: grabbing;
+
+  cursor:
+    grabbing;
 }
 
 
@@ -290,52 +475,77 @@ body {
 ========================================= */
 
 .action-buttons {
-  display: grid;
+
+  display:
+    grid;
 
   grid-template-columns:
-    1fr 1fr 1.4fr;
+    1fr
+    1fr
+    1.4fr;
 
-  gap: 9px;
+  gap:
+    9px;
 
-  margin-top: 12px;
+  margin-top:
+    12px;
 }
+
 
 .action-buttons button {
-  min-height: 43px;
 
-  border-radius: 10px;
+  min-height:
+    43px;
 
-  font-size: 9px;
+  border-radius:
+    10px;
 
-  font-weight: 600;
+  font-size:
+    9px;
 
-  letter-spacing: 1.5px;
+  font-weight:
+    600;
 
-  cursor: pointer;
+  letter-spacing:
+    1.5px;
+
+  cursor:
+    pointer;
 }
+
 
 .secondary-button {
-  background: transparent;
 
-  border: 1px solid #cfc1b2;
+  background:
+    transparent;
 
-  color: #4a4037;
+  border:
+    1px solid
+    #cfc1b2;
+
+  color:
+    #4a4037;
 }
+
 
 .secondary-button:hover {
-  background: #f4eee7;
+
+  background:
+    #f4eee7;
 }
+
 
 .primary-button {
-  background: #302a25;
 
-  border: 1px solid #302a25;
+  background:
+    #302a25;
 
-  color: #fff;
-}
+  border:
+    1px solid
+    #302a25;
 
-.primary-button:hover {
-  background: #4a4037;
+  color:
+    #fff;
 }
 
 
@@ -344,103 +554,162 @@ body {
 ========================================= */
 
 .price-box {
-  border-top: 1px solid #e3d9cd;
 
-  padding-top: 20px;
+  border-top:
+    1px solid
+    #e3d9cd;
 
-  margin-top: 5px;
+  padding-top:
+    20px;
+
+  margin-top:
+    5px;
 }
+
 
 .price-heading {
-  margin-bottom: 13px;
 
-  font-size: 10px;
+  margin-bottom:
+    13px;
 
-  letter-spacing: 2px;
+  font-size:
+    10px;
 
-  color: #8b7b6b;
+  letter-spacing:
+    2px;
+
+  color:
+    #8b7b6b;
 }
+
 
 .price-line {
-  display: flex;
 
-  align-items: center;
-  justify-content: space-between;
+  display:
+    flex;
 
-  gap: 15px;
+  align-items:
+    center;
 
-  padding: 5px 0;
+  justify-content:
+    space-between;
 
-  font-size: 12px;
+  gap:
+    15px;
+
+  padding:
+    5px
+    0;
+
+  font-size:
+    12px;
 }
+
 
 .price-line span {
-  color: #776b60;
+
+  color:
+    #776b60;
 }
+
 
 .price-line strong {
-  font-weight: 600;
+
+  font-weight:
+    600;
 }
+
 
 .price-divider {
-  height: 1px;
 
-  background: #e3d9cd;
+  height:
+    1px;
 
-  margin: 9px 0;
+  background:
+    #e3d9cd;
+
+  margin:
+    9px
+    0;
 }
+
 
 .total-line {
-  display: flex;
 
-  align-items: center;
-  justify-content: space-between;
+  display:
+    flex;
 
-  gap: 15px;
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    15px;
 }
+
 
 .total-line span {
-  font-size: 13px;
 
-  letter-spacing: 2px;
+  font-size:
+    13px;
 
-  font-weight: 600;
+  letter-spacing:
+    2px;
+
+  font-weight:
+    600;
 }
 
-.total-line strong {
-  font-size: 20px;
 
-  font-weight: 600;
+.total-line strong {
+
+  font-size:
+    20px;
+
+  font-weight:
+    600;
 }
 
 
 /* =========================================
-   DELIVERY NOTE
+   DELIVERY
 ========================================= */
 
 .delivery-note {
-  margin: 11px 0 0;
 
-  font-size: 10px;
+  margin:
+    11px
+    0
+    0;
 
-  line-height: 1.5;
+  font-size:
+    10px;
 
-  color: #918477;
+  line-height:
+    1.6;
+
+  color:
+    #918477;
 }
 
 
-/* =========================================
-   SELECTED LIST
-========================================= */
-
 .selected-list {
-  margin: 9px 0 0;
 
-  font-size: 10px;
+  margin:
+    9px
+    0
+    0;
 
-  line-height: 1.5;
+  font-size:
+    10px;
 
-  color: #8c7f72;
+  line-height:
+    1.5;
+
+  color:
+    #8c7f72;
 }
 
 
@@ -449,117 +718,195 @@ body {
 ========================================= */
 
 .category-wrapper {
-  margin-bottom: 17px;
+
+  margin-bottom:
+    17px;
 }
+
 
 .category-wrapper label {
-  display: block;
 
-  margin-bottom: 7px;
+  display:
+    block;
 
-  font-size: 9px;
+  margin-bottom:
+    7px;
 
-  letter-spacing: 2px;
+  font-size:
+    9px;
 
-  color: #8b7b6b;
+  letter-spacing:
+    2px;
+
+  color:
+    #8b7b6b;
 }
+
 
 #categoryFilter {
-  width: 100%;
 
-  height: 44px;
+  width:
+    100%;
 
-  padding: 0 13px;
+  height:
+    44px;
 
-  background: #faf7f2;
+  padding:
+    0
+    13px;
 
-  border: 1px solid #d9cdbf;
+  background:
+    #faf7f2;
 
-  border-radius: 10px;
+  border:
+    1px solid
+    #d9cdbf;
 
-  color: #40372f;
+  border-radius:
+    10px;
 
-  font-size: 12px;
+  color:
+    #40372f;
 
-  cursor: pointer;
+  font-size:
+    12px;
 
-  outline: none;
+  cursor:
+    pointer;
+
+  outline:
+    none;
 }
 
+
 #categoryFilter:focus {
-  border-color: #9f8c78;
+
+  border-color:
+    #9f8c78;
 }
 
 
 /* =========================================
-   CHARM CATALOG
+   CHARM GRID
 ========================================= */
 
 .charm-grid {
-  display: grid;
+
+  display:
+    grid;
 
   grid-template-columns:
-    repeat(5, minmax(0, 1fr));
+    repeat(
+      5,
+      minmax(0, 1fr)
+    );
 
-  gap: 9px;
+  gap:
+    9px;
 }
+
 
 .charm-card {
-  position: relative;
 
-  background: #fffdf9;
+  position:
+    relative;
 
-  border: 1px solid #e3d9cd;
+  appearance:
+    none;
 
-  border-radius: 11px;
+  background:
+    #fffdf9;
 
-  padding: 7px;
+  border:
+    1px solid
+    #e3d9cd;
 
-  cursor: pointer;
+  border-radius:
+    11px;
 
-  text-align: center;
+  padding:
+    7px;
+
+  cursor:
+    pointer;
+
+  text-align:
+    center;
 
   transition:
-    border-color 0.2s ease,
-    transform 0.2s ease,
-    background 0.2s ease;
+    border-color
+    0.2s
+    ease,
+
+    transform
+    0.2s
+    ease,
+
+    background
+    0.2s
+    ease;
 }
+
 
 .charm-card:hover {
-  transform: translateY(-2px);
 
-  border-color: #b9a28a;
+  transform:
+    translateY(-2px);
 
-  background: #faf6f0;
+  border-color:
+    #b9a28a;
+
+  background:
+    #faf6f0;
 }
+
 
 .charm-card:active {
-  transform: scale(0.97);
+
+  transform:
+    scale(0.97);
 }
 
 
-/* SMALLER CATALOG CHARMS */
+/* Catalog images */
 
 .charm-card img {
-  display: block;
 
-  width: 78%;
+  display:
+    block;
 
-  aspect-ratio: 1 / 1;
+  width:
+    100%;
 
-  object-fit: contain;
+  height:
+    78px;
 
-  margin: 0 auto 4px;
+  aspect-ratio:
+    1 / 1;
+
+  object-fit:
+    contain;
+
+  margin:
+    0
+    auto
+    4px;
 }
 
+
 .charm-price {
-  display: block;
 
-  font-size: 9px;
+  display:
+    block;
 
-  font-weight: 600;
+  font-size:
+    9px;
 
-  color: #806d5a;
+  font-weight:
+    600;
+
+  color:
+    #806d5a;
 }
 
 
@@ -568,312 +915,48 @@ body {
 ========================================= */
 
 .charm-card.sold-out {
-  opacity: 0.48;
 
-  cursor: not-allowed;
+  opacity:
+    0.5;
+
+  cursor:
+    not-allowed;
 }
 
-.charm-card.sold-out:hover {
-  transform: none;
-
-  border-color: #e3d9cd;
-
-  background: #fffdf9;
-}
 
 .charm-badge {
-  position: absolute;
 
-  top: 6px;
-  left: 6px;
-  right: 6px;
+  position:
+    absolute;
 
-  padding: 4px 2px;
+  left:
+    50%;
 
-  background: rgba(48, 42, 37, 0.88);
+  bottom:
+    28px;
 
-  color: white;
+  transform:
+    translateX(-50%);
 
-  border-radius: 5px;
+  padding:
+    4px
+    6px;
 
-  font-size: 7px;
+  background:
+    #302a25;
 
-  letter-spacing: 1px;
+  color:
+    #fff;
 
-  text-align: center;
-}
+  border-radius:
+    5px;
 
+  font-size:
+    7px;
 
-/* =========================================
-   TABLET
-========================================= */
+  letter-spacing:
+    1px;
 
-@media (max-width: 1050px) {
-
-  .builder {
-    width: 95%;
-    gap: 18px;
-  }
-
-  .design-side,
-  .charms-side {
-    padding: 20px;
-  }
-
-  .chain-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .chain-card img {
-    height: 78px;
-  }
-
-  .chain-card[data-bracelet="1"] img {
-    width: 135%;
-    height: 105px;
-
-    max-width: none;
-
-    margin-left: -17.5%;
-  }
-
-  .chain-card[data-bracelet="2"] img {
-    width: 140%;
-    height: 100px;
-
-    max-width: none;
-
-    margin-left: -20%;
-  }
-
-  .charm-grid {
-    grid-template-columns:
-      repeat(4, minmax(0, 1fr));
-  }
-
-  .charm-card img {
-    width: 72%;
-  }
-}
-
-
-/* =========================================
-   PHONE
-========================================= */
-
-@media (max-width: 700px) {
-
-  .site-header {
-    padding: 22px 16px 18px;
-  }
-
-  .logo {
-    width: 105px;
-    margin-bottom: 7px;
-  }
-
-  .tagline {
-    font-size: 10px;
-    letter-spacing: 3px;
-  }
-
-  .builder {
-    width: 100%;
-    display: block;
-    margin: 0;
-  }
-
-  .design-side,
-  .charms-side {
-    border-radius: 0;
-
-    border-left: 0;
-    border-right: 0;
-
-    padding: 20px 16px;
-  }
-
-  .design-side {
-    border-bottom: 8px solid #f3ede5;
-  }
-
-  .section-block {
-    margin-bottom: 24px;
-  }
-
-  .section-heading {
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-
-  .step {
-    width: 27px;
-    height: 27px;
-
-    font-size: 9px;
-  }
-
-  .section-heading h2 {
-    font-size: 14px;
-    letter-spacing: 1.5px;
-  }
-
-  .section-heading p {
-    font-size: 10px;
-  }
-
-
-  /* CHAINS */
-
-  .chain-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
-    gap: 8px;
-  }
-
-  .chain-card {
-    padding: 8px 6px 9px;
-  }
-
-  .chain-card img {
-    height: 70px;
-    margin-bottom: 5px;
-  }
-
-  .chain-card[data-bracelet="1"] img {
-    width: 135%;
-    height: 92px;
-
-    max-width: none;
-
-    margin-left: -17.5%;
-  }
-
-  .chain-card[data-bracelet="2"] img {
-    width: 140%;
-    height: 88px;
-
-    max-width: none;
-
-    margin-left: -20%;
-  }
-
-  .chain-name {
-    font-size: 9px;
-  }
-
-  .chain-price {
-    font-size: 9px;
-  }
-
-
-  /* BRACELET */
-
-  .design-box {
-    min-height: 245px;
-    border-radius: 12px;
-  }
-
-
-  /* BUTTONS */
-
-  .action-buttons {
-    grid-template-columns:
-      1fr 1fr;
-
-    gap: 8px;
-  }
-
-  .action-buttons button {
-    min-height: 42px;
-    font-size: 8px;
-  }
-
-  .primary-button {
-    grid-column: 1 / -1;
-  }
-
-
-  /* PRICE */
-
-  .total-line strong {
-    font-size: 18px;
-  }
-
-
-  /* CHARMS */
-
-  .category-wrapper {
-    margin-bottom: 15px;
-  }
-
-  #categoryFilter {
-    height: 44px;
-  }
-
-  .charm-grid {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-
-    gap: 7px;
-  }
-
-  .charm-card {
-    padding: 6px;
-    border-radius: 9px;
-  }
-
-  .charm-card img {
-    width: 68%;
-    margin-bottom: 3px;
-  }
-
-  .charm-price {
-    font-size: 8px;
-  }
-}
-
-
-/* =========================================
-   SMALL PHONE
-========================================= */
-
-@media (max-width: 390px) {
-
-  .design-side,
-  .charms-side {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .charm-grid {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-
-    gap: 6px;
-  }
-
-  .chain-card[data-bracelet="1"] img {
-    width: 135%;
-    height: 85px;
-
-    max-width: none;
-
-    margin-left: -17.5%;
-  }
-
-  .chain-card[data-bracelet="2"] img {
-    width: 140%;
-    height: 82px;
-
-    max-width: none;
-
-    margin-left: -20%;
-  }
-
-  .charm-card img {
-    width: 64%;
-  }
+  white-space:
+    nowrap;
 }
