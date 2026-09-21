@@ -1,8 +1,28 @@
 const CHAINS = [
-  { id: "cable", name: "Cable chain", price: 15, image: "assets/bracelet-1.png" },
-  { id: "curb", name: "Curb chain", price: 18, image: "assets/bracelet-2.png" },
-  { id: "oval", name: "Oval link chain", price: 22, image: "assets/bracelet-3.png" },
-  { id: "paperclip", name: "Paperclip chain", price: 20, image: "assets/bracelet-4.png" }
+  {
+    id: "cable",
+    name: "Cable chain",
+    price: 15,
+    image: "assets/bracelet-1.png"
+  },
+  {
+    id: "curb",
+    name: "Curb chain",
+    price: 18,
+    image: "assets/bracelet-2.png"
+  },
+  {
+    id: "oval",
+    name: "Oval link chain",
+    price: 22,
+    image: "assets/bracelet-3.png"
+  },
+  {
+    id: "paperclip",
+    name: "Paperclip chain",
+    price: 20,
+    image: "assets/bracelet-4.png"
+  }
 ];
 
 const categories = [
@@ -27,7 +47,17 @@ const categories = [
 
 const MAX_CHARMS = 12;
 
-let activeCategory = 0;
+const charmData = categories.map(
+  ([name, prefix, start, end, price]) => ({
+    name,
+    prefix,
+    start,
+    end,
+    price
+  })
+);
+
+let activeCategory = "all";
 let selectedChain = null;
 let selectedId = null;
 let design = [];
@@ -40,16 +70,24 @@ function charmPath(charm) {
   return `assets/charms/${charm.prefix}-${pad(charm.number)}.png`;
 }
 
+function charmName(charm) {
+  return `${charm.category} ${charm.prefix}-${pad(charm.number)}`;
+}
+
 function renderChains() {
-  $("chain-list").innerHTML = CHAINS.map((chain) => `
-    <button class="chain-card"
-      aria-pressed="${selectedChain?.id === chain.id}"
-      data-chain="${chain.id}">
-      <img class="chain-${chain.id}" src="${chain.image}" alt="${chain.name}">
-      <span>${chain.name}</span>
-      <b>${money(chain.price)}</b>
-    </button>
-  `).join("");
+  $("chain-list").innerHTML = CHAINS.map(
+    (chain) => `
+      <button class="chain-card"
+        aria-pressed="${selectedChain?.id === chain.id}"
+        data-chain="${chain.id}">
+        <img class="chain-${chain.id}"
+          src="${chain.image}"
+          alt="${chain.name}">
+        <span>${chain.name}</span>
+        <b>${money(chain.price)}</b>
+      </button>
+    `
+  ).join("");
 
   document.querySelectorAll("[data-chain]").forEach((button) => {
     button.onclick = () => selectChain(button.dataset.chain);
@@ -62,6 +100,7 @@ function selectChain(id) {
   $("bracelet-image").src = selectedChain.image;
   $("bracelet-image").className = `chain-${selectedChain.id}`;
   $("bracelet-image").style.display = "block";
+
   $("choose-chain-message").style.display = "none";
   $("save-button").disabled = false;
 
@@ -69,63 +108,88 @@ function selectChain(id) {
   renderSummary();
 }
 
-function renderCategories() {
-  $("category-select").innerHTML = categories.map((category, index) => `
-    <option value="${index}" ${index === activeCategory ? "selected" : ""}>
-      ${category[0]}
-    </option>
-  `).join("");
+function renderTabs() {
+  $("category-select").innerHTML =
+    `<option value="all" ${activeCategory === "all" ? "selected" : ""}>
+      All charms
+    </option>` +
+    charmData.map(
+      (category, index) => `
+        <option value="${index}" ${
+          index === activeCategory ? "selected" : ""
+        }>
+          ${category.name}
+        </option>
+      `
+    ).join("");
 
   $("category-select").onchange = (event) => {
-    activeCategory = Number(event.target.value);
+    activeCategory =
+      event.target.value === "all"
+        ? "all"
+        : Number(event.target.value);
+
     renderCharms();
   };
 }
 
 function renderCharms() {
-  const [categoryName, prefix, first, last, price] = categories[activeCategory];
+  const visibleCategories =
+    activeCategory === "all"
+      ? charmData.map((category, index) => ({ category, index }))
+      : [{ category: charmData[activeCategory], index: activeCategory }];
 
-  $("charm-list").innerHTML = Array.from(
-    { length: last - first + 1 },
-    (_, index) => {
-      const number = first + index;
-      const charm = { categoryName, prefix, number, price };
+  $("charm-list").innerHTML = visibleCategories.flatMap(
+    ({ category, index }) =>
+      Array.from(
+        { length: category.end - category.start + 1 },
+        (_, itemIndex) => {
+          const charm = {
+            ...category,
+            category: category.name,
+            number: category.start + itemIndex
+          };
 
-      return `
-        <button class="charm-button"
-          data-number="${number}"
-          aria-label="Add charm for ${money(price)}">
-          <img src="${charmPath(charm)}" alt="">
-          <span>${money(price)}</span>
-        </button>
-      `;
-    }
+          return `
+            <button class="charm-button"
+              data-category="${index}"
+              data-number="${charm.number}"
+              aria-label="Add ${category.name}, ${money(category.price)}">
+              <img src="${charmPath(charm)}" alt="" loading="lazy">
+              <span>${money(category.price)}</span>
+            </button>
+          `;
+        }
+      )
   ).join("");
 
   document.querySelectorAll(".charm-button").forEach((button) => {
-    button.onclick = () => addCharm(Number(button.dataset.number));
+    button.onclick = () =>
+      addCharm(
+        Number(button.dataset.category),
+        Number(button.dataset.number)
+      );
   });
 }
 
-function addCharm(number) {
+function addCharm(categoryIndex, number) {
   if (!selectedChain) {
     alert("Please choose a chain first.");
     return;
   }
 
   if (design.length >= MAX_CHARMS) {
-    alert("You can add up to 12 charms.");
+    alert(`You can add up to ${MAX_CHARMS} charms.`);
     return;
   }
 
-  const [categoryName, prefix, , , price] = categories[activeCategory];
+  const source = charmData[categoryIndex];
   const index = design.length;
 
   design.push({
-    categoryName,
-    prefix,
+    ...source,
+    category: source.name,
     number,
-    price,
     id: crypto.randomUUID(),
     x: 20 + (index % 5) * 15,
     y: 50
@@ -138,19 +202,33 @@ function addCharm(number) {
 }
 
 function renderPlaced() {
-  $("placed-charms").innerHTML = design.map((charm) => `
-    <button class="placed-charm ${charm.id === selectedId ? "selected" : ""}"
-      data-id="${charm.id}"
-      style="left:${charm.x}%; top:${charm.y}%">
-      <img src="${charmPath(charm)}" alt="">
-    </button>
-  `).join("");
+  $("placed-charms").innerHTML = design.map(
+    (charm) => `
+      <button class="placed-charm ${
+        charm.id === selectedId ? "selected" : ""
+      }"
+        data-id="${charm.id}"
+        style="left:${charm.x}%; top:${charm.y}%"
+        aria-label="${charmName(charm)}">
+        <img src="${charmPath(charm)}" alt="">
+      </button>
+    `
+  ).join("");
 
   document.querySelectorAll(".placed-charm").forEach((element) => {
+    element.addEventListener("click", () => {
+      selectedId = element.dataset.id;
+      renderPlaced();
+    });
+
     element.addEventListener("pointerdown", startDrag);
   });
 
   $("remove-button").disabled = !selectedId;
+
+  $("selection-status").textContent = selectedId
+    ? "Charm selected. You can drag it or remove it."
+    : "Select a charm on the bracelet to remove it.";
 }
 
 function startDrag(event) {
@@ -164,6 +242,7 @@ function startDrag(event) {
   });
 
   $("remove-button").disabled = false;
+
   $("selection-status").textContent =
     "Charm selected. You can drag it or remove it.";
 
@@ -210,13 +289,14 @@ function renderSummary() {
   }
 
   const grouped = design.reduce((all, charm) => {
-    const key = `${charm.categoryName}-${charm.prefix}-${charm.number}`;
+    const key = `${charm.category}-${charm.prefix}-${charm.number}`;
 
     if (!all[key]) {
       all[key] = { ...charm, count: 0 };
     }
 
     all[key].count += 1;
+
     return all;
   }, {});
 
@@ -224,7 +304,7 @@ function renderSummary() {
     items.push(`
       <div class="summary-line">
         <span>
-          ${charm.categoryName}
+          ${charm.category}
           <small>${charm.prefix}-${pad(charm.number)} × ${charm.count}</small>
         </span>
         <b>${money(charm.price * charm.count)}</b>
@@ -259,6 +339,7 @@ $("remove-button").onclick = () => {
 function loadImage(source) {
   return new Promise((resolve, reject) => {
     const image = new Image();
+
     image.onload = () => resolve(image);
     image.onerror = reject;
     image.src = source;
@@ -284,17 +365,17 @@ $("save-button").onclick = async () => {
 
     try {
       const logo = await loadImage("assets/logo.png");
-      const scale = Math.min(240 / logo.width, 75 / logo.height);
+      const logoScale = Math.min(240 / logo.width, 75 / logo.height);
 
       context.drawImage(
         logo,
-        (1080 - logo.width * scale) / 2,
+        (1080 - logo.width * logoScale) / 2,
         30,
-        logo.width * scale,
-        logo.height * scale
+        logo.width * logoScale,
+        logo.height * logoScale
       );
     } catch {
-      /* The download still works if the logo cannot load. */
+      /* Continue even if the logo cannot load. */
     }
 
     context.fillStyle = "#bf8b2c";
@@ -310,21 +391,29 @@ $("save-button").onclick = async () => {
     context.fillRect(50, 230, 980, 520);
 
     const chainImage = await loadImage(selectedChain.image);
-    const chainScale = Math.min(900 / chainImage.width, 420 / chainImage.height);
+
+    const chainScale = Math.min(
+      900 / chainImage.width,
+      420 / chainImage.height
+    );
+
     const chainWidth = chainImage.width * chainScale;
     const chainHeight = chainImage.height * chainScale;
 
     const chainWidthMultiplier =
-  selectedChain.id === "cable" ? 1.75 :
-  selectedChain.id === "curb" ? 1.3 : 1;
+      selectedChain.id === "cable"
+        ? 2.1
+        : selectedChain.id === "curb"
+          ? 1.45
+          : 1;
 
-context.drawImage(
-  chainImage,
-  (1080 - chainWidth * chainWidthMultiplier) / 2,
-  280 + (420 - chainHeight) / 2,
-  chainWidth * chainWidthMultiplier,
-  chainHeight
-);
+    context.drawImage(
+      chainImage,
+      (1080 - chainWidth * chainWidthMultiplier) / 2,
+      280 + (420 - chainHeight) / 2,
+      chainWidth * chainWidthMultiplier,
+      chainHeight
+    );
 
     for (const charm of design) {
       const image = await loadImage(charmPath(charm));
@@ -363,7 +452,7 @@ context.drawImage(
     drawLine(selectedChain.name, money(selectedChain.price));
 
     const grouped = design.reduce((all, charm) => {
-      const key = `${charm.categoryName}-${charm.prefix}-${charm.number}`;
+      const key = `${charm.category}-${charm.prefix}-${charm.number}`;
 
       if (!all[key]) {
         all[key] = { ...charm, count: 0 };
@@ -375,7 +464,7 @@ context.drawImage(
 
     Object.values(grouped).forEach((charm) => {
       drawLine(
-        `${charm.categoryName} ${charm.prefix}-${pad(charm.number)} × ${charm.count}`,
+        `${charm.category} ${charm.prefix}-${pad(charm.number)} × ${charm.count}`,
         money(charm.price * charm.count)
       );
     });
@@ -405,6 +494,7 @@ context.drawImage(
     context.textAlign = "left";
     context.font = "22px sans-serif";
     context.fillStyle = "#77654f";
+
     context.fillText(
       "Delivery cost will be calculated separately as per the address.",
       70,
@@ -412,11 +502,15 @@ context.drawImage(
     );
 
     const link = document.createElement("a");
+
     link.download = "my-charm-bracelet-design.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
   } catch (error) {
-    alert("Some images could not be found. Please check your assets folder.");
+    alert(
+      "Some images could not be found. Please check your assets folder."
+    );
+
     console.error(error);
   } finally {
     button.textContent = "Save design image";
@@ -425,7 +519,7 @@ context.drawImage(
 };
 
 renderChains();
-renderCategories();
+renderTabs();
 renderCharms();
 renderPlaced();
 renderSummary();
