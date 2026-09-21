@@ -379,4 +379,24 @@ footer {
     width: 58px;
     height: 58px;
   }
+
+  /* Softer section headings */
+.section-heading h2 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Make Cable and Curb visually as long as Oval Link */
+.chain-card img.chain-cable,
+#bracelet-image.chain-cable {
+  transform: scaleX(2.1) !important;
+}
+
+.chain-card img.chain-curb,
+#bracelet-image.chain-curb {
+  transform: scaleX(1.45) !important;
+}
 }
