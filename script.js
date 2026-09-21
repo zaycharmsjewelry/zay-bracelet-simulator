@@ -1,338 +1,233 @@
 /* =========================================
-   ZAY CHARMS - BRACELET SIMULATOR
-========================================= */
+   ZAY BRACELET SIMULATOR
+   ========================================= */
 
+const canvas = document.getElementById("braceletCanvas");
+const ctx = canvas.getContext("2d");
 
-/* =========================================
-   BRACELET DATA
-========================================= */
-
-const BRACELETS = {
-
-  1: {
-    name: "Cable Chain",
-    price: 15,
-    src: "assets/bracelet-1.png"
-  },
-
-  2: {
-    name: "Curb Chain",
-    price: 18,
-    src: "assets/bracelet-2.png"
-  },
-
-  3: {
-    name: "Oval Link Chain",
-    price: 22,
-    src: "assets/bracelet-3.png"
-  },
-
-  4: {
-    name: "Paperclip Chain",
-    price: 20,
-    src: "assets/bracelet-4.png"
-  }
-
+const BRACELET_PRICES = {
+  1: 15,
+  2: 18,
+  3: 22,
+  4: 20
 };
 
+const BRACELET_NAMES = {
+  1: "Cable Chain",
+  2: "Curb Chain",
+  3: "Oval Link Chain",
+  4: "Paperclip Chain"
+};
 
 /* =========================================
-   ELEMENTS
-========================================= */
+   CHARM DISPLAY SETTINGS
+   ========================================= */
 
-const canvas =
-  document.getElementById(
-    "braceletCanvas"
-  );
+const CHARM_SIZE = 64;
+const INITIAL_SPACING = 125;
 
-const ctx =
-  canvas.getContext("2d");
-
-
-const charmGrid =
-  document.getElementById(
-    "charmGrid"
-  );
-
-
-const categoryFilter =
-  document.getElementById(
-    "categoryFilter"
-  );
-
-
-const chainGrid =
-  document.getElementById(
-    "chainGrid"
-  );
-
-
-const removeBtn =
-  document.getElementById(
-    "removeBtn"
-  );
-
-
-const clearBtn =
-  document.getElementById(
-    "clearBtn"
-  );
-
-
-const saveBtn =
-  document.getElementById(
-    "saveBtn"
-  );
-
-
-const braceletPriceLabel =
-  document.getElementById(
-    "braceletPriceLabel"
-  );
-
-
-const braceletPrice =
-  document.getElementById(
-    "braceletPrice"
-  );
-
-
-const charmCountLabel =
-  document.getElementById(
-    "charmCountLabel"
-  );
-
-
-const charmPrice =
-  document.getElementById(
-    "charmPrice"
-  );
-
-
-const totalPrice =
-  document.getElementById(
-    "totalPrice"
-  );
-
-
-const selectedList =
-  document.getElementById(
-    "selectedList"
-  );
-
-
-/* =========================================
-   SETTINGS
-========================================= */
-
-
-/*
-   THIS controls the actual size of charms
-   inside the bracelet visualization.
-
-   38px = small/delicate.
-*/
-
-const CHARM_SIZE = 52;
-
-
-/*
-   Distance between charms when they
-   initially appear in a line.
-*/
-
-const INITIAL_SPACING = 58;
-
-
-/*
-   Invisible click/drag area.
-
-   Slightly bigger than the charm itself
-   so the customer can grab it easily.
-*/
-
-const CHARM_HIT_RADIUS = 25;
-
-
-/* =========================================
-   STATE
-========================================= */
-
-let currentBracelet = 1;
-
+let selectedBracelet = 1;
+let selectedCharmIndex = null;
+let placedCharms = [];
 let availableCharms = [];
 
-let placedCharms = [];
-
-let selectedCharmIndex = -1;
-
-let braceletImage = null;
-
-let imageCache = {};
-
 let dragging = false;
-
 let dragOffsetX = 0;
-
 let dragOffsetY = 0;
 
+/*
+   Stores the visible/non-transparent area
+   of each PNG so transparent padding does
+   not make charms look tiny.
+*/
+const cropCache = new Map();
+
 
 /* =========================================
-   IMAGE LOADER
-========================================= */
+   LOAD IMAGE
+   ========================================= */
 
-function getImage(src) {
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
 
-  if (imageCache[src]) {
+    img.onload = () => resolve(img);
+    img.onerror = reject;
 
-    return imageCache[src];
-
-  }
-
-
-  const img =
-    new Image();
-
-
-  img.src =
-    src;
-
-
-  imageCache[src] =
-    img;
-
-
-  return img;
+    img.src = src;
+  });
 }
 
 
 /* =========================================
-   LOAD BRACELET
-========================================= */
+   FIND REAL PNG CONTENT
+   ========================================= */
 
-function loadBracelet() {
+function getVisibleBounds(img) {
 
-  const bracelet =
-    BRACELETS[
-      currentBracelet
-    ];
-
-
-  braceletImage =
-    getImage(
-      bracelet.src
-    );
-
-
-  if (
-    braceletImage.complete
-  ) {
-
-    drawCanvas();
-
-  } else {
-
-    braceletImage.onload =
-      () => {
-
-        drawCanvas();
-
-      };
-
+  if (cropCache.has(img.src)) {
+    return cropCache.get(img.src);
   }
 
+  const tempCanvas = document.createElement("canvas");
+  const tempCtx = tempCanvas.getContext("2d");
 
-  drawCanvas();
-}
+  tempCanvas.width = img.naturalWidth;
+  tempCanvas.height = img.naturalHeight;
 
+  tempCtx.clearRect(
+    0,
+    0,
+    tempCanvas.width,
+    tempCanvas.height
+  );
 
-/* =========================================
-   BRACELET SIZE
-========================================= */
+  tempCtx.drawImage(
+    img,
+    0,
+    0,
+    tempCanvas.width,
+    tempCanvas.height
+  );
 
-function getBraceletDrawSize() {
+  const imageData = tempCtx.getImageData(
+    0,
+    0,
+    tempCanvas.width,
+    tempCanvas.height
+  );
 
-  if (
-    !braceletImage ||
-    !braceletImage.naturalWidth
-  ) {
+  const data = imageData.data;
 
-    return null;
+  let minX = tempCanvas.width;
+  let minY = tempCanvas.height;
+  let maxX = -1;
+  let maxY = -1;
 
+  for (let y = 0; y < tempCanvas.height; y++) {
+
+    for (let x = 0; x < tempCanvas.width; x++) {
+
+      const alpha =
+        data[(y * tempCanvas.width + x) * 4 + 3];
+
+      if (alpha > 10) {
+
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+
+      }
+    }
   }
-
 
   /*
-     Normal chains.
+     If the image is completely transparent,
+     fall back to the entire image.
   */
+  if (maxX === -1) {
 
-  let maxWidth =
-    canvas.width *
-    0.84;
+    const fallback = {
+      x: 0,
+      y: 0,
+      width: img.naturalWidth,
+      height: img.naturalHeight
+    };
 
+    cropCache.set(img.src, fallback);
 
-  let maxHeight =
-    canvas.height *
-    0.62;
-
-
-  /*
-     Cable + Curb are given
-     substantially more space.
-  */
-
-  if (
-    currentBracelet === 1 ||
-    currentBracelet === 2
-  ) {
-
-    maxWidth =
-      canvas.width *
-      0.97;
-
-
-    maxHeight =
-      canvas.height *
-      0.78;
-
+    return fallback;
   }
 
+  /*
+     Small breathing room around the actual charm.
+  */
+  const padding = 2;
 
-  const scale =
-    Math.min(
+  minX = Math.max(0, minX - padding);
+  minY = Math.max(0, minY - padding);
+  maxX = Math.min(
+    tempCanvas.width - 1,
+    maxX + padding
+  );
+  maxY = Math.min(
+    tempCanvas.height - 1,
+    maxY + padding
+  );
 
-      maxWidth /
-        braceletImage.naturalWidth,
-
-      maxHeight /
-        braceletImage.naturalHeight
-
-    );
-
-
-  return {
-
-    width:
-      braceletImage.naturalWidth *
-      scale,
-
-    height:
-      braceletImage.naturalHeight *
-      scale
-
+  const bounds = {
+    x: minX,
+    y: minY,
+    width: maxX - minX + 1,
+    height: maxY - minY + 1
   };
 
+  cropCache.set(img.src, bounds);
+
+  return bounds;
 }
 
 
 /* =========================================
-   DRAW CANVAS
-========================================= */
+   DRAW CHARM
+   ========================================= */
 
-function drawCanvas() {
+function drawCharm(item, index) {
+
+  if (!item.img) return;
+
+  const img = item.img;
+
+  if (!img.complete || img.naturalWidth === 0) {
+    return;
+  }
+
+  const bounds = getVisibleBounds(img);
+
+  const sourceWidth = bounds.width;
+  const sourceHeight = bounds.height;
+
+  /*
+     Fit the REAL visible charm inside
+     CHARM_SIZE x CHARM_SIZE.
+  */
+  const scale = Math.min(
+    CHARM_SIZE / sourceWidth,
+    CHARM_SIZE / sourceHeight
+  );
+
+  const drawWidth = sourceWidth * scale;
+  const drawHeight = sourceHeight * scale;
+
+  const drawX =
+    item.x - drawWidth / 2;
+
+  const drawY =
+    item.y - drawHeight / 2;
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  ctx.drawImage(
+    img,
+    bounds.x,
+    bounds.y,
+    bounds.width,
+    bounds.height,
+    drawX,
+    drawY,
+    drawWidth,
+    drawHeight
+  );
+}
 
 
-  /* Clear */
+/* =========================================
+   DRAW BRACELET
+   ========================================= */
+
+async function drawCanvas() {
 
   ctx.clearRect(
     0,
@@ -341,1445 +236,827 @@ function drawCanvas() {
     canvas.height
   );
 
+  const braceletSrc =
+    `assets/bracelet-${selectedBracelet}.png`;
 
-  /* Background */
+  try {
 
-  ctx.fillStyle =
-    "#faf7f2";
+    const braceletImg =
+      await loadImage(braceletSrc);
 
+    const naturalWidth =
+      braceletImg.naturalWidth;
 
-  ctx.fillRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
+    const naturalHeight =
+      braceletImg.naturalHeight;
 
+    let maxWidth =
+      canvas.width * 0.94;
 
-  /* =====================================
-     DRAW BRACELET
-  ===================================== */
+    let maxHeight =
+      canvas.height * 0.70;
 
-  if (
+    /*
+       Cable + Curb should appear larger.
+    */
+    if (
+      selectedBracelet === 1 ||
+      selectedBracelet === 2
+    ) {
 
-    braceletImage &&
+      maxWidth =
+        canvas.width * 0.98;
 
-    braceletImage.complete &&
-
-    braceletImage.naturalWidth > 0
-
-  ) {
-
-
-    const size =
-      getBraceletDrawSize();
-
-
-    const x =
-      (
-        canvas.width -
-        size.width
-      ) / 2;
-
-
-    const y =
-      (
-        canvas.height -
-        size.height
-      ) / 2;
-ctx.imageSmoothingEnabled = true;
-ctx.imageSmoothingQuality = "high";
-
-ctx.drawImage(
-  img,
-  item.x - CHARM_SIZE / 2,
-  item.y - CHARM_SIZE / 2,
-  CHARM_SIZE,
-  CHARM_SIZE
-);
-
-
-  /* =====================================
-     DRAW CHARMS
-  ===================================== */
-
-  placedCharms.forEach(
-
-    (item, index) => {
-
-      drawCharm(
-        item,
-        index
-      );
-
+      maxHeight =
+        canvas.height * 0.78;
     }
 
-  );
-
-}
-
-
-/* =========================================
-   DRAW CHARM
-========================================= */
-
-function drawCharm(
-  item,
-  index
-) {
-
-
-  const img =
-    getImage(
-      item.charm.src
+    const scale = Math.min(
+      maxWidth / naturalWidth,
+      maxHeight / naturalHeight
     );
 
+    const width =
+      naturalWidth * scale;
 
-  if (
+    const height =
+      naturalHeight * scale;
 
-    !img.complete ||
+    const x =
+      (canvas.width - width) / 2;
 
-    img.naturalWidth === 0
+    const y =
+      (canvas.height - height) / 2;
 
-  ) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
+    ctx.drawImage(
+      braceletImg,
+      x,
+      y,
+      width,
+      height
+    );
 
-    img.onload =
-      () => {
+  } catch (error) {
 
-        drawCanvas();
-
-      };
-
-
-    return;
-
+    console.error(
+      "Could not load bracelet:",
+      error
+    );
   }
 
-
   /*
-     IMPORTANT:
-
-     There is NO selection circle.
-
-     The selected charm is simply
-     the charm that REMOVE acts on.
+     Draw charms AFTER bracelet.
   */
-
-
-  ctx.drawImage(
-
-    img,
-
-    item.x -
-      CHARM_SIZE / 2,
-
-    item.y -
-      CHARM_SIZE / 2,
-
-    CHARM_SIZE,
-
-    CHARM_SIZE
-
-  );
-
+  placedCharms.forEach((item, index) => {
+    drawCharm(item, index);
+  });
 }
 
 
 /* =========================================
-   INITIAL CHARM POSITION
-========================================= */
+   GET AVAILABLE CHARM
+   ========================================= */
 
-function getInitialPosition(
-  index
-) {
+function findAvailableCharm(id) {
 
-
-  const centerX =
-    canvas.width / 2;
-
-
-  const centerY =
-    canvas.height / 2;
-
-
-  /*
-     First charm:
-     center
-
-     Second:
-     left
-
-     Third:
-     right
-
-     Fourth:
-     further left
-
-     Fifth:
-     further right
-  */
-
-  const side =
-    index % 2 === 0
-      ? 1
-      : -1;
-
-
-  const distance =
-    Math.ceil(
-      index / 2
-    ) *
-    INITIAL_SPACING;
-
-
-  return {
-
-    x:
-      centerX +
-      side *
-      distance,
-
-    y:
-      centerY
-
-  };
-
+  return availableCharms.find(
+    charm => charm.id === id
+  );
 }
 
 
 /* =========================================
    ADD CHARM
-========================================= */
+   ========================================= */
 
-function addCharm(
-  charm
-) {
+async function addCharm(charm) {
 
-
-  if (!charm) {
-
-    return;
-
-  }
-
-
-  if (charm.soldOut) {
-
-    return;
-
-  }
-
+  const img = await loadImage(charm.src);
 
   /*
-     New charms initially appear
-     in a neat line.
-  */
+     Calculate starting position.
 
-  const position =
-    getInitialPosition(
-      placedCharms.length
+     Charms are spread across the bracelet
+     rather than stacked together.
+  */
+  const index =
+    placedCharms.length;
+
+  const centerX =
+    canvas.width / 2;
+
+  const totalWidth =
+    Math.max(
+      0,
+      (index + 1) * INITIAL_SPACING
     );
 
+  let startX;
 
-  const half =
-    CHARM_SIZE / 2;
+  if (index === 0) {
 
+    startX = centerX;
 
-  const item = {
+  } else {
 
-    charm:
-      charm,
+    const existingCount =
+      placedCharms.length;
 
-    x:
-      Math.max(
+    const groupWidth =
+      existingCount * INITIAL_SPACING;
 
-        half,
+    const firstX =
+      centerX - groupWidth / 2;
 
-        Math.min(
+    /*
+       Re-space all existing charms
+       whenever a new one is added.
+    */
+    placedCharms.forEach((item, i) => {
 
-          canvas.width -
-            half,
+      item.x =
+        centerX -
+        ((existingCount) * INITIAL_SPACING) / 2 +
+        i * INITIAL_SPACING +
+        INITIAL_SPACING / 2;
 
-          position.x
+    });
 
-        )
+    startX =
+      centerX -
+      ((existingCount + 1) * INITIAL_SPACING) / 2 +
+      existingCount * INITIAL_SPACING +
+      INITIAL_SPACING / 2;
+  }
 
-      ),
+  /*
+     Put charms slightly below the
+     center of the bracelet.
+  */
+  const startY =
+    canvas.height / 2 + 45;
 
-    y:
-      Math.max(
-
-        half,
-
-        Math.min(
-
-          canvas.height -
-            half,
-
-          position.y
-
-        )
-
-      )
-
-  };
-
-
-  placedCharms.push(
-    item
-  );
-
+  placedCharms.push({
+    charm,
+    img,
+    x: startX,
+    y: startY
+  });
 
   selectedCharmIndex =
     placedCharms.length - 1;
 
-
-  updateSummary();
-
+  updatePrice();
   drawCanvas();
-
 }
 
 
 /* =========================================
-   REMOVE
-========================================= */
+   FIND CHARM AT POSITION
+   ========================================= */
 
-function removeSelectedCharm() {
+function findCharmAt(x, y) {
 
-
-  if (
-
-    selectedCharmIndex < 0 ||
-
-    selectedCharmIndex >=
-      placedCharms.length
-
+  /*
+     Check from topmost charm backwards.
+  */
+  for (
+    let i = placedCharms.length - 1;
+    i >= 0;
+    i--
   ) {
 
-    return;
-
-  }
-
-
-  placedCharms.splice(
-
-    selectedCharmIndex,
-
-    1
-
-  );
-
-
-  selectedCharmIndex =
-    -1;
-
-
-  updateSummary();
-
-  drawCanvas();
-
-}
-
-
-/* =========================================
-   CLEAR
-========================================= */
-
-function clearDesign() {
-
-
-  placedCharms = [];
-
-
-  selectedCharmIndex =
-    -1;
-
-
-  updateSummary();
-
-  drawCanvas();
-
-}
-
-
-/* =========================================
-   CHAIN SELECTION
-========================================= */
-
-function selectChain(
-  number
-) {
-
-
-  number =
-    Number(number);
-
-
-  if (
-    !BRACELETS[number]
-  ) {
-
-    return;
-
-  }
-
-
-  currentBracelet =
-    number;
-
-
-  document
-    .querySelectorAll(
-      ".chain-card"
-    )
-    .forEach(
-      card => {
-
-        const cardNumber =
-          Number(
-            card.dataset
-              .bracelet
-          );
-
-
-        card.classList.toggle(
-
-          "active",
-
-          cardNumber ===
-            number
-
-        );
-
-      }
-    );
-
-
-  loadBracelet();
-
-  updateSummary();
-
-}
-
-
-/* =========================================
-   CATEGORIES
-========================================= */
-
-function createCategories() {
-
-
-  if (
-    !categoryFilter
-  ) {
-
-    return;
-
-  }
-
-
-  const categories = [
-
-    ...new Set(
-
-      availableCharms.map(
-
-        charm =>
-          charm.category
-
-      )
-
-    )
-
-  ].sort(
-
-    (a, b) =>
-      a.localeCompare(b)
-
-  );
-
-
-  categoryFilter.innerHTML =
-    "";
-
-
-  const allOption =
-    document.createElement(
-      "option"
-    );
-
-
-  allOption.value =
-    "all";
-
-
-  allOption.textContent =
-    "All Charms";
-
-
-  categoryFilter.appendChild(
-    allOption
-  );
-
-
-  categories.forEach(
-
-    category => {
-
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-
-      option.value =
-        category;
-
-
-      option.textContent =
-        category;
-
-
-      categoryFilter.appendChild(
-        option
+    const item =
+      placedCharms[i];
+
+    const distance =
+      Math.sqrt(
+        Math.pow(x - item.x, 2) +
+        Math.pow(y - item.y, 2)
       );
 
+    /*
+       Larger click area than the visual
+       charm itself, making mobile easier.
+    */
+    if (distance <= CHARM_SIZE * 0.75) {
+      return i;
     }
-
-  );
-
-}
-
-
-/* =========================================
-   RENDER CHARMS
-========================================= */
-
-function renderCharmGrid() {
-
-
-  if (!charmGrid) {
-
-    return;
-
   }
 
-
-  const selectedCategory =
-    categoryFilter
-      ? categoryFilter.value
-      : "all";
-
-
-  charmGrid.innerHTML =
-    "";
-
-
-  const filtered =
-    availableCharms.filter(
-
-      charm => {
-
-        if (
-
-          selectedCategory !==
-            "all" &&
-
-          charm.category !==
-            selectedCategory
-
-        ) {
-
-          return false;
-
-        }
-
-
-        return true;
-
-      }
-
-    );
-
-
-  filtered.forEach(
-
-    charm => {
-
-
-      const card =
-        document.createElement(
-          "button"
-        );
-
-
-      card.type =
-        "button";
-
-
-      card.className =
-        "charm-card";
-
-
-      if (
-        charm.soldOut
-      ) {
-
-        card.classList.add(
-          "sold-out"
-        );
-
-      }
-
-
-      /* IMAGE */
-
-      const img =
-        document.createElement(
-          "img"
-        );
-
-
-      img.src =
-        charm.src;
-
-
-      img.alt =
-        "Charm";
-
-
-      img.loading =
-        "lazy";
-
-
-      /* PRICE */
-
-      const price =
-        document.createElement(
-          "span"
-        );
-
-
-      price.className =
-        "charm-price";
-
-
-      price.textContent =
-        `AED ${charm.price}`;
-
-
-      card.appendChild(
-        img
-      );
-
-
-      card.appendChild(
-        price
-      );
-
-
-      /* SOLD OUT */
-
-      if (
-        charm.soldOut
-      ) {
-
-
-        const badge =
-          document.createElement(
-            "span"
-          );
-
-
-        badge.className =
-          "charm-badge";
-
-
-        badge.textContent =
-          "SOLD OUT";
-
-
-        card.appendChild(
-          badge
-        );
-
-      }
-
-
-      /* CLICK */
-
-      card.addEventListener(
-
-        "click",
-
-        () => {
-
-
-          if (
-            charm.soldOut
-          ) {
-
-            return;
-
-          }
-
-
-          addCharm(
-            charm
-          );
-
-        }
-
-      );
-
-
-      charmGrid.appendChild(
-        card
-      );
-
-    }
-
-  );
-
-}
-
-
-/* =========================================
-   SUMMARY / PRICING
-========================================= */
-
-function updateSummary() {
-
-
-  const bracelet =
-    BRACELETS[
-      currentBracelet
-    ];
-
-
-  const count =
-    placedCharms.length;
-
-
-  const charmTotal =
-    placedCharms.reduce(
-
-      (
-        total,
-        item
-      ) => {
-
-        return (
-
-          total +
-          Number(
-            item.charm.price
-          )
-
-        );
-
-      },
-
-      0
-
-    );
-
-
-  /* Chain */
-
-  braceletPriceLabel.textContent =
-    bracelet.name;
-
-
-  braceletPrice.textContent =
-    `AED ${bracelet.price}`;
-
-
-  /* Charms */
-
-  charmCountLabel.textContent =
-
-    `${count} ${
-      count === 1
-        ? "Charm"
-        : "Charms"
-    }`;
-
-
-  charmPrice.textContent =
-    `AED ${charmTotal}`;
-
-
-  /* Total */
-
-  totalPrice.textContent =
-
-    `AED ${
-      bracelet.price +
-      charmTotal
-    }`;
-
-
-  /* Selected */
-
-  if (
-    count === 0
-  ) {
-
-    selectedList.textContent =
-      "No charms selected yet.";
-
-  } else {
-
-    selectedList.textContent =
-
-      `${count} charm${
-        count === 1
-          ? ""
-          : "s"
-      } selected.`;
-
-  }
-
+  return null;
 }
 
 
 /* =========================================
    CANVAS POSITION
-========================================= */
+   ========================================= */
 
-function getCanvasPosition(
-  event
-) {
-
+function getCanvasPosition(event) {
 
   const rect =
     canvas.getBoundingClientRect();
 
+  const scaleX =
+    canvas.width / rect.width;
 
-  return {
+  const scaleY =
+    canvas.height / rect.height;
 
-    x:
+  let clientX;
+  let clientY;
 
-      (
-        event.clientX -
-        rect.left
-      ) *
+  if (event.touches && event.touches.length) {
 
-      (
-        canvas.width /
-        rect.width
-      ),
+    clientX =
+      event.touches[0].clientX;
 
+    clientY =
+      event.touches[0].clientY;
 
-    y:
+  } else {
 
-      (
-        event.clientY -
-        rect.top
-      ) *
+    clientX =
+      event.clientX;
 
-      (
-        canvas.height /
-        rect.height
-      )
-
-  };
-
-}
-
-
-/* =========================================
-   FIND CHARM
-========================================= */
-
-function findCharmAt(
-  x,
-  y
-) {
-
-
-  /*
-     Search from top to bottom
-     so the top charm is selected.
-  */
-
-  for (
-
-    let i =
-      placedCharms.length - 1;
-
-    i >= 0;
-
-    i--
-
-  ) {
-
-
-    const item =
-      placedCharms[i];
-
-
-    const dx =
-      x -
-      item.x;
-
-
-    const dy =
-      y -
-      item.y;
-
-
-    const distance =
-      Math.sqrt(
-
-        dx * dx +
-        dy * dy
-
-      );
-
-
-    if (
-
-      distance <=
-      CHARM_HIT_RADIUS
-
-    ) {
-
-      return i;
-
-    }
-
+    clientY =
+      event.clientY;
   }
 
+  return {
+    x:
+      (clientX - rect.left) * scaleX,
 
-  return -1;
-
+    y:
+      (clientY - rect.top) * scaleY
+  };
 }
 
 
 /* =========================================
-   START DRAG
-========================================= */
+   MOUSE DOWN
+   ========================================= */
 
-function startDrag(
-  event
-) {
+canvas.addEventListener(
+  "mousedown",
+  function(event) {
+
+    const pos =
+      getCanvasPosition(event);
+
+    const index =
+      findCharmAt(
+        pos.x,
+        pos.y
+      );
+
+    if (index === null) {
+
+      selectedCharmIndex = null;
+      return;
+    }
+
+    selectedCharmIndex = index;
+
+    const item =
+      placedCharms[index];
+
+    dragOffsetX =
+      pos.x - item.x;
+
+    dragOffsetY =
+      pos.y - item.y;
+
+    dragging = true;
+
+    event.preventDefault();
+  }
+);
 
 
-  event.preventDefault();
+/* =========================================
+   MOUSE MOVE
+   ========================================= */
+
+canvas.addEventListener(
+  "mousemove",
+  function(event) {
+
+    if (!dragging) return;
+
+    if (
+      selectedCharmIndex === null
+    ) {
+      return;
+    }
+
+    const pos =
+      getCanvasPosition(event);
+
+    const item =
+      placedCharms[
+        selectedCharmIndex
+      ];
+
+    /*
+       Completely free movement.
+       No line.
+       No snapping.
+    */
+    item.x =
+      pos.x - dragOffsetX;
+
+    item.y =
+      pos.y - dragOffsetY;
+
+    /*
+       Keep charm inside canvas.
+    */
+    const margin =
+      CHARM_SIZE / 2;
+
+    item.x =
+      Math.max(
+        margin,
+        Math.min(
+          canvas.width - margin,
+          item.x
+        )
+      );
+
+    item.y =
+      Math.max(
+        margin,
+        Math.min(
+          canvas.height - margin,
+          item.y
+        )
+      );
+
+    drawCanvas();
+  }
+);
 
 
-  const position =
-    getCanvasPosition(
-      event
-    );
+/* =========================================
+   MOUSE UP
+   ========================================= */
+
+window.addEventListener(
+  "mouseup",
+  function() {
+
+    dragging = false;
+  }
+);
 
 
-  const index =
-    findCharmAt(
+/* =========================================
+   TOUCH START
+   ========================================= */
 
-      position.x,
+canvas.addEventListener(
+  "touchstart",
+  function(event) {
 
-      position.y
+    const pos =
+      getCanvasPosition(event);
 
-    );
+    const index =
+      findCharmAt(
+        pos.x,
+        pos.y
+      );
 
-
-  /*
-     Clicked empty space.
-  */
-
-  if (
-    index === -1
-  ) {
+    if (index === null) {
+      return;
+    }
 
     selectedCharmIndex =
-      -1;
+      index;
 
+    const item =
+      placedCharms[index];
+
+    dragOffsetX =
+      pos.x - item.x;
+
+    dragOffsetY =
+      pos.y - item.y;
+
+    dragging = true;
+
+    event.preventDefault();
+  },
+  { passive: false }
+);
+
+
+/* =========================================
+   TOUCH MOVE
+   ========================================= */
+
+canvas.addEventListener(
+  "touchmove",
+  function(event) {
+
+    if (!dragging) return;
+
+    if (
+      selectedCharmIndex === null
+    ) {
+      return;
+    }
+
+    const pos =
+      getCanvasPosition(event);
+
+    const item =
+      placedCharms[
+        selectedCharmIndex
+      ];
+
+    item.x =
+      pos.x - dragOffsetX;
+
+    item.y =
+      pos.y - dragOffsetY;
+
+    const margin =
+      CHARM_SIZE / 2;
+
+    item.x =
+      Math.max(
+        margin,
+        Math.min(
+          canvas.width - margin,
+          item.x
+        )
+      );
+
+    item.y =
+      Math.max(
+        margin,
+        Math.min(
+          canvas.height - margin,
+          item.y
+        )
+      );
 
     drawCanvas();
 
-    return;
+    event.preventDefault();
+  },
+  { passive: false }
+);
 
+
+/* =========================================
+   TOUCH END
+   ========================================= */
+
+canvas.addEventListener(
+  "touchend",
+  function() {
+
+    dragging = false;
+  }
+);
+
+
+/* =========================================
+   REMOVE SELECTED CHARM
+   ========================================= */
+
+function removeSelectedCharm() {
+
+  if (
+    selectedCharmIndex === null
+  ) {
+    return;
   }
 
-
-  /*
-     Select charm.
-  */
-
-  selectedCharmIndex =
-    index;
-
-
-  dragging =
-    true;
-
-
-  /*
-     Remember exactly where
-     the customer grabbed it.
-  */
-
-  dragOffsetX =
-
-    position.x -
-    placedCharms[index].x;
-
-
-  dragOffsetY =
-
-    position.y -
-    placedCharms[index].y;
-
-
-  /*
-     Bring selected charm
-     to the front.
-  */
-
-  const selected =
-    placedCharms.splice(
-
-      index,
-
-      1
-
-    )[0];
-
-
-  placedCharms.push(
-    selected
+  placedCharms.splice(
+    selectedCharmIndex,
+    1
   );
 
+  selectedCharmIndex = null;
 
-  selectedCharmIndex =
-    placedCharms.length - 1;
-
-
+  updatePrice();
   drawCanvas();
-
 }
 
 
 /* =========================================
-   DRAG
-========================================= */
+   CLEAR DESIGN
+   ========================================= */
 
-function drag(
-  event
-) {
+function clearDesign() {
 
+  placedCharms = [];
+  selectedCharmIndex = null;
 
-  if (!dragging) {
-
-    return;
-
-  }
+  updatePrice();
+  drawCanvas();
+}
 
 
-  event.preventDefault();
+/* =========================================
+   UPDATE PRICE
+   ========================================= */
 
+function updatePrice() {
 
-  const position =
-    getCanvasPosition(
-      event
-    );
-
-
-  const item =
-    placedCharms[
-      selectedCharmIndex
+  let total =
+    BRACELET_PRICES[
+      selectedBracelet
     ];
 
+  placedCharms.forEach(item => {
 
-  if (!item) {
+    total +=
+      Number(item.charm.price);
+  });
 
-    return;
+  const priceElement =
+    document.getElementById(
+      "totalPrice"
+    );
 
+  if (priceElement) {
+
+    priceElement.textContent =
+      `AED ${total}`;
   }
-
-
-  /*
-     FREE MOVEMENT.
-
-     No horizontal restriction.
-     No bracelet-line restriction.
-     No snapping.
-  */
-
-  item.x =
-
-    position.x -
-    dragOffsetX;
-
-
-  item.y =
-
-    position.y -
-    dragOffsetY;
-
-
-  /*
-     Only restriction:
-
-     Keep the charm inside
-     the visualization box.
-  */
-
-  const half =
-    CHARM_SIZE / 2;
-
-
-  item.x =
-    Math.max(
-
-      half,
-
-      Math.min(
-
-        canvas.width -
-          half,
-
-        item.x
-
-      )
-
-    );
-
-
-  item.y =
-    Math.max(
-
-      half,
-
-      Math.min(
-
-        canvas.height -
-          half,
-
-        item.y
-
-      )
-
-    );
-
-
-  drawCanvas();
-
-}
-
-
-/* =========================================
-   STOP DRAG
-========================================= */
-
-function stopDrag() {
-
-  dragging =
-    false;
-
 }
 
 
 /* =========================================
    SAVE DESIGN
-========================================= */
+   ========================================= */
 
 function saveDesign() {
 
-
   const link =
-    document.createElement(
-      "a"
-    );
-
+    document.createElement("a");
 
   link.download =
-    "ZAY-bracelet-design.png";
-
+    "ZAY-my-bracelet.png";
 
   link.href =
-    canvas.toDataURL(
-      "image/png"
-    );
-
+    canvas.toDataURL("image/png");
 
   link.click();
-
 }
 
 
 /* =========================================
-   CHAIN EVENTS
-========================================= */
+   CHAIN SELECTION
+   ========================================= */
 
-if (chainGrid) {
+function setupChains() {
 
-
-  chainGrid
-    .querySelectorAll(
+  const chainCards =
+    document.querySelectorAll(
       ".chain-card"
-    )
-    .forEach(
+    );
 
-      card => {
+  chainCards.forEach(card => {
 
+    card.addEventListener(
+      "click",
+      function() {
 
-        card.addEventListener(
+        selectedBracelet =
+          Number(
+            card.dataset.bracelet
+          );
 
-          "click",
-
-          () => {
-
-
-            selectChain(
-
-              card.dataset
-                .bracelet
-
-            );
-
-          }
-
+        chainCards.forEach(c =>
+          c.classList.remove(
+            "selected"
+          )
         );
 
+        card.classList.add(
+          "selected"
+        );
+
+        updatePrice();
+        drawCanvas();
       }
+    );
+  });
 
+  const firstCard =
+    document.querySelector(
+      '.chain-card[data-bracelet="1"]'
     );
 
+  if (firstCard) {
+    firstCard.classList.add(
+      "selected"
+    );
+  }
 }
 
 
 /* =========================================
-   CATEGORY EVENT
-========================================= */
+   CATEGORY FILTER
+   ========================================= */
 
-if (
-  categoryFilter
-) {
+function setupCategories() {
 
+  const select =
+    document.getElementById(
+      "categorySelect"
+    );
 
-  categoryFilter.addEventListener(
+  if (!select) return;
 
+  const categories =
+    [
+      ...new Set(
+        availableCharms.map(
+          charm => charm.category
+        )
+      )
+    ].sort();
+
+  select.innerHTML =
+    `<option value="all">All Charms</option>`;
+
+  categories.forEach(category => {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      category;
+
+    option.textContent =
+      category;
+
+    select.appendChild(
+      option
+    );
+  });
+
+  select.addEventListener(
     "change",
+    function() {
 
-    renderCharmGrid
-
-  );
-
-}
-
-
-/* =========================================
-   BUTTON EVENTS
-========================================= */
-
-if (
-  removeBtn
-) {
-
-  removeBtn.addEventListener(
-
-    "click",
-
-    removeSelectedCharm
-
-  );
-
-}
-
-
-if (
-  clearBtn
-) {
-
-  clearBtn.addEventListener(
-
-    "click",
-
-    clearDesign
-
-  );
-
-}
-
-
-if (
-  saveBtn
-) {
-
-  saveBtn.addEventListener(
-
-    "click",
-
-    saveDesign
-
-  );
-
-}
-
-
-/* =========================================
-   MOUSE / POINTER
-========================================= */
-
-/*
-   Pointer events work for mouse and
-   make the dragging system much simpler.
-*/
-
-canvas.addEventListener(
-
-  "pointerdown",
-
-  event => {
-
-
-    canvas.setPointerCapture(
-      event.pointerId
-    );
-
-
-    startDrag(
-      event
-    );
-
-  }
-
-);
-
-
-canvas.addEventListener(
-
-  "pointermove",
-
-  event => {
-
-
-    if (
-      dragging
-    ) {
-
-      drag(
-        event
+      renderCharmGrid(
+        select.value
       );
-
     }
-
-  }
-
-);
+  );
+}
 
 
-canvas.addEventListener(
+/* =========================================
+   RENDER CHARM GRID
+   ========================================= */
 
-  "pointerup",
+function renderCharmGrid(
+  category = "all"
+) {
 
-  event => {
+  const grid =
+    document.getElementById(
+      "charmGrid"
+    );
 
+  if (!grid) return;
 
-    stopDrag();
+  grid.innerHTML = "";
 
+  const charms =
+    availableCharms.filter(
+      charm =>
+        category === "all" ||
+        charm.category === category
+    );
 
-    try {
+  charms.forEach(charm => {
 
-      canvas.releasePointerCapture(
-        event.pointerId
+    const card =
+      document.createElement(
+        "button"
       );
 
-    } catch (
-      error
-    ) {}
+    card.className =
+      "charm-card";
 
+    card.type =
+      "button";
+
+    card.innerHTML = `
+      <img
+        src="${charm.src}"
+        alt=""
+      >
+      <span class="charm-price">
+        AED ${charm.price}
+      </span>
+    `;
+
+    card.addEventListener(
+      "click",
+      function() {
+
+        addCharm(charm);
+      }
+    );
+
+    grid.appendChild(card);
+  });
+}
+
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+function setupButtons() {
+
+  const removeButton =
+    document.getElementById(
+      "removeCharm"
+    );
+
+  const clearButton =
+    document.getElementById(
+      "clearDesign"
+    );
+
+  const saveButton =
+    document.getElementById(
+      "saveDesign"
+    );
+
+  if (removeButton) {
+
+    removeButton.addEventListener(
+      "click",
+      removeSelectedCharm
+    );
   }
 
-);
+  if (clearButton) {
 
+    clearButton.addEventListener(
+      "click",
+      clearDesign
+    );
+  }
 
-canvas.addEventListener(
+  if (saveButton) {
 
-  "pointercancel",
-
-  stopDrag
-
-);
+    saveButton.addEventListener(
+      "click",
+      saveDesign
+    );
+  }
+}
 
 
 /* =========================================
    INITIALIZE
-========================================= */
+   ========================================= */
 
 async function initialize() {
 
-
   try {
-
-
-    /*
-       Get all charms from charms.js.
-    */
 
     availableCharms =
       await CHARMS_READY;
 
-
     console.log(
-
-      `ZAY: ${
-        availableCharms.length
-      } charms loaded.`
-
+      `ZAY: ${availableCharms.length} charms loaded.`
     );
 
-
-    /*
-       Category menu.
-    */
-
-    createCategories();
-
-
-    /*
-       Charm catalog.
-    */
-
+    setupChains();
+    setupCategories();
     renderCharmGrid();
+    setupButtons();
 
+    updatePrice();
+    drawCanvas();
 
-    /*
-       First chain.
-    */
-
-    loadBracelet();
-
-
-    /*
-       Pricing.
-    */
-
-    updateSummary();
-
-
-  } catch (
-    error
-  ) {
-
+  } catch (error) {
 
     console.error(
-
-      "ZAY simulator failed to initialize:",
-
+      "ZAY initialization error:",
       error
-
     );
-
   }
-
 }
 
 
