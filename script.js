@@ -1,1063 +1,426 @@
-/* =========================================
-   ZAY BRACELET SIMULATOR
-   ========================================= */
+const CHAINS = [
+  { id: "cable", name: "Cable chain", price: 15, image: "assets/bracelet-1.png" },
+  { id: "curb", name: "Curb chain", price: 18, image: "assets/bracelet-2.png" },
+  { id: "oval", name: "Oval link chain", price: 22, image: "assets/bracelet-3.png" },
+  { id: "paperclip", name: "Paperclip chain", price: 20, image: "assets/bracelet-4.png" }
+];
 
-const canvas = document.getElementById("braceletCanvas");
-const ctx = canvas.getContext("2d");
+const categories = [
+  ["Bows", "bow", 1, 7, 5],
+  ["Characters", "characters", 1, 18, 6],
+  ["Flowers", "flowers", 1, 68, 5],
+  ["Fly", "fly", 1, 2, 5],
+  ["Foods", "foods", 1, 6, 5],
+  ["Fruits", "fruits", 1, 24, 5],
+  ["Hearts", "heart", 1, 20, 5],
+  ["Letter style 1", "letter", 1, 26, 5],
+  ["Letter style 2", "letter1", 1, 26, 6],
+  ["Ocean", "ocean", 1, 34, 5],
+  ["Pets", "pets", 1, 4, 5],
+  ["Random", "random", 1, 19, 5],
+  ["Religion", "religion", 1, 5, 6],
+  ["School", "school", 1, 1, 5],
+  ["Travel", "travel", 1, 2, 5],
+  ["Vegetables", "veg", 1, 7, 5],
+  ["Vintage flowers", "vintage", 1, 9, 7]
+];
 
-const BRACELET_PRICES = {
-  1: 15,
-  2: 18,
-  3: 22,
-  4: 20
-};
+const MAX_CHARMS = 12;
 
-const BRACELET_NAMES = {
-  1: "Cable Chain",
-  2: "Curb Chain",
-  3: "Oval Link Chain",
-  4: "Paperclip Chain"
-};
+let activeCategory = 0;
+let selectedChain = null;
+let selectedId = null;
+let design = [];
 
-/* =========================================
-   CHARM DISPLAY SETTINGS
-   ========================================= */
+const $ = (id) => document.getElementById(id);
+const money = (number) => `${number} AED`;
+const pad = (number) => String(number).padStart(3, "0");
 
-const CHARM_SIZE = 64;
-const INITIAL_SPACING = 125;
+function charmPath(charm) {
+  return `assets/charms/${charm.prefix}-${pad(charm.number)}.png`;
+}
 
-let selectedBracelet = 1;
-let selectedCharmIndex = null;
-let placedCharms = [];
-let availableCharms = [];
+function renderChains() {
+  $("chain-list").innerHTML = CHAINS.map((chain) => `
+    <button class="chain-card"
+      aria-pressed="${selectedChain?.id === chain.id}"
+      data-chain="${chain.id}">
+      <img src="${chain.image}" alt="${chain.name}">
+      <span>${chain.name}</span>
+      <b>${money(chain.price)}</b>
+    </button>
+  `).join("");
 
-let dragging = false;
-let dragOffsetX = 0;
-let dragOffsetY = 0;
-
-/*
-   Stores the visible/non-transparent area
-   of each PNG so transparent padding does
-   not make charms look tiny.
-*/
-const cropCache = new Map();
-
-
-/* =========================================
-   LOAD IMAGE
-   ========================================= */
-
-function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-
-    img.src = src;
+  document.querySelectorAll("[data-chain]").forEach((button) => {
+    button.onclick = () => selectChain(button.dataset.chain);
   });
 }
 
+function selectChain(id) {
+  selectedChain = CHAINS.find((chain) => chain.id === id);
 
-/* =========================================
-   FIND REAL PNG CONTENT
-   ========================================= */
+  $("bracelet-image").src = selectedChain.image;
+  $("bracelet-image").style.display = "block";
+  $("choose-chain-message").style.display = "none";
+  $("save-button").disabled = false;
 
-function getVisibleBounds(img) {
-
-  if (cropCache.has(img.src)) {
-    return cropCache.get(img.src);
-  }
-
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
-
-  tempCanvas.width = img.naturalWidth;
-  tempCanvas.height = img.naturalHeight;
-
-  tempCtx.clearRect(
-    0,
-    0,
-    tempCanvas.width,
-    tempCanvas.height
-  );
-
-  tempCtx.drawImage(
-    img,
-    0,
-    0,
-    tempCanvas.width,
-    tempCanvas.height
-  );
-
-  const imageData = tempCtx.getImageData(
-    0,
-    0,
-    tempCanvas.width,
-    tempCanvas.height
-  );
-
-  const data = imageData.data;
-
-  let minX = tempCanvas.width;
-  let minY = tempCanvas.height;
-  let maxX = -1;
-  let maxY = -1;
-
-  for (let y = 0; y < tempCanvas.height; y++) {
-
-    for (let x = 0; x < tempCanvas.width; x++) {
-
-      const alpha =
-        data[(y * tempCanvas.width + x) * 4 + 3];
-
-      if (alpha > 10) {
-
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-
-      }
-    }
-  }
-
-  /*
-     If the image is completely transparent,
-     fall back to the entire image.
-  */
-  if (maxX === -1) {
-
-    const fallback = {
-      x: 0,
-      y: 0,
-      width: img.naturalWidth,
-      height: img.naturalHeight
-    };
-
-    cropCache.set(img.src, fallback);
-
-    return fallback;
-  }
-
-  /*
-     Small breathing room around the actual charm.
-  */
-  const padding = 2;
-
-  minX = Math.max(0, minX - padding);
-  minY = Math.max(0, minY - padding);
-  maxX = Math.min(
-    tempCanvas.width - 1,
-    maxX + padding
-  );
-  maxY = Math.min(
-    tempCanvas.height - 1,
-    maxY + padding
-  );
-
-  const bounds = {
-    x: minX,
-    y: minY,
-    width: maxX - minX + 1,
-    height: maxY - minY + 1
-  };
-
-  cropCache.set(img.src, bounds);
-
-  return bounds;
+  renderChains();
+  renderSummary();
 }
 
+function renderCategories() {
+  $("category-select").innerHTML = categories.map((category, index) => `
+    <option value="${index}" ${index === activeCategory ? "selected" : ""}>
+      ${category[0]}
+    </option>
+  `).join("");
 
-/* =========================================
-   DRAW CHARM
-   ========================================= */
+  $("category-select").onchange = (event) => {
+    activeCategory = Number(event.target.value);
+    renderCharms();
+  };
+}
 
-function drawCharm(item, index) {
+function renderCharms() {
+  const [categoryName, prefix, first, last, price] = categories[activeCategory];
 
-  if (!item.img) return;
+  $("charm-list").innerHTML = Array.from(
+    { length: last - first + 1 },
+    (_, index) => {
+      const number = first + index;
+      const charm = { categoryName, prefix, number, price };
 
-  const img = item.img;
+      return `
+        <button class="charm-button"
+          data-number="${number}"
+          aria-label="Add charm for ${money(price)}">
+          <img src="${charmPath(charm)}" alt="">
+          <span>${money(price)}</span>
+        </button>
+      `;
+    }
+  ).join("");
 
-  if (!img.complete || img.naturalWidth === 0) {
+  document.querySelectorAll(".charm-button").forEach((button) => {
+    button.onclick = () => addCharm(Number(button.dataset.number));
+  });
+}
+
+function addCharm(number) {
+  if (!selectedChain) {
+    alert("Please choose a chain first.");
     return;
   }
 
-  const bounds = getVisibleBounds(img);
-
-  const sourceWidth = bounds.width;
-  const sourceHeight = bounds.height;
-
-  /*
-     Fit the REAL visible charm inside
-     CHARM_SIZE x CHARM_SIZE.
-  */
-  const scale = Math.min(
-    CHARM_SIZE / sourceWidth,
-    CHARM_SIZE / sourceHeight
-  );
-
-  const drawWidth = sourceWidth * scale;
-  const drawHeight = sourceHeight * scale;
-
-  const drawX =
-    item.x - drawWidth / 2;
-
-  const drawY =
-    item.y - drawHeight / 2;
-
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
-  ctx.drawImage(
-    img,
-    bounds.x,
-    bounds.y,
-    bounds.width,
-    bounds.height,
-    drawX,
-    drawY,
-    drawWidth,
-    drawHeight
-  );
-}
-
-
-/* =========================================
-   DRAW BRACELET
-   ========================================= */
-
-async function drawCanvas() {
-
-  ctx.clearRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  const braceletSrc =
-    `assets/bracelet-${selectedBracelet}.png`;
-
-  try {
-
-    const braceletImg =
-      await loadImage(braceletSrc);
-
-    const naturalWidth =
-      braceletImg.naturalWidth;
-
-    const naturalHeight =
-      braceletImg.naturalHeight;
-
-    let maxWidth =
-      canvas.width * 0.94;
-
-    let maxHeight =
-      canvas.height * 0.70;
-
-    /*
-       Cable + Curb should appear larger.
-    */
-    if (
-      selectedBracelet === 1 ||
-      selectedBracelet === 2
-    ) {
-
-      maxWidth =
-        canvas.width * 0.98;
-
-      maxHeight =
-        canvas.height * 0.78;
-    }
-
-    const scale = Math.min(
-      maxWidth / naturalWidth,
-      maxHeight / naturalHeight
-    );
-
-    const width =
-      naturalWidth * scale;
-
-    const height =
-      naturalHeight * scale;
-
-    const x =
-      (canvas.width - width) / 2;
-
-    const y =
-      (canvas.height - height) / 2;
-
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-
-    ctx.drawImage(
-      braceletImg,
-      x,
-      y,
-      width,
-      height
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Could not load bracelet:",
-      error
-    );
+  if (design.length >= MAX_CHARMS) {
+    alert("You can add up to 12 charms.");
+    return;
   }
 
-  /*
-     Draw charms AFTER bracelet.
-  */
-  placedCharms.forEach((item, index) => {
-    drawCharm(item, index);
+  const [categoryName, prefix, , , price] = categories[activeCategory];
+  const index = design.length;
+
+  design.push({
+    categoryName,
+    prefix,
+    number,
+    price,
+    id: crypto.randomUUID(),
+    x: 20 + (index % 5) * 15,
+    y: 50
+  });
+
+  selectedId = design[design.length - 1].id;
+
+  renderPlaced();
+  renderSummary();
+}
+
+function renderPlaced() {
+  $("placed-charms").innerHTML = design.map((charm) => `
+    <button class="placed-charm ${charm.id === selectedId ? "selected" : ""}"
+      data-id="${charm.id}"
+      style="left:${charm.x}%; top:${charm.y}%">
+      <img src="${charmPath(charm)}" alt="">
+    </button>
+  `).join("");
+
+  document.querySelectorAll(".placed-charm").forEach((element) => {
+    element.addEventListener("pointerdown", startDrag);
+  });
+
+  $("remove-button").disabled = !selectedId;
+}
+
+function startDrag(event) {
+  const element = event.currentTarget;
+  const id = element.dataset.id;
+
+  selectedId = id;
+
+  document.querySelectorAll(".placed-charm").forEach((item) => {
+    item.classList.toggle("selected", item.dataset.id === id);
+  });
+
+  $("remove-button").disabled = false;
+  $("selection-status").textContent =
+    "Charm selected. You can drag it or remove it.";
+
+  element.setPointerCapture(event.pointerId);
+
+  const move = (moveEvent) => {
+    const box = $("bracelet-stage").getBoundingClientRect();
+    const charm = design.find((item) => item.id === id);
+
+    charm.x = Math.max(
+      4,
+      Math.min(96, ((moveEvent.clientX - box.left) / box.width) * 100)
+    );
+
+    charm.y = Math.max(
+      10,
+      Math.min(90, ((moveEvent.clientY - box.top) / box.height) * 100)
+    );
+
+    element.style.left = `${charm.x}%`;
+    element.style.top = `${charm.y}%`;
+  };
+
+  const end = () => {
+    element.removeEventListener("pointermove", move);
+    element.removeEventListener("pointerup", end);
+    renderPlaced();
+  };
+
+  element.addEventListener("pointermove", move);
+  element.addEventListener("pointerup", end);
+}
+
+function renderSummary() {
+  const items = [];
+
+  if (selectedChain) {
+    items.push(`
+      <div class="summary-line">
+        <span>${selectedChain.name} <small>Chain</small></span>
+        <b>${money(selectedChain.price)}</b>
+      </div>
+    `);
+  }
+
+  const grouped = design.reduce((all, charm) => {
+    const key = `${charm.categoryName}-${charm.prefix}-${charm.number}`;
+
+    if (!all[key]) {
+      all[key] = { ...charm, count: 0 };
+    }
+
+    all[key].count += 1;
+    return all;
+  }, {});
+
+  Object.values(grouped).forEach((charm) => {
+    items.push(`
+      <div class="summary-line">
+        <span>
+          ${charm.categoryName}
+          <small>${charm.prefix}-${pad(charm.number)} × ${charm.count}</small>
+        </span>
+        <b>${money(charm.price * charm.count)}</b>
+      </div>
+    `);
+  });
+
+  $("summary-items").innerHTML = items.length
+    ? items.join("")
+    : `<p class="empty-note">Choose a chain to see your total.</p>`;
+
+  const total =
+    (selectedChain?.price || 0) +
+    design.reduce((sum, charm) => sum + charm.price, 0);
+
+  $("total-price").textContent = money(total);
+}
+
+$("remove-button").onclick = () => {
+  if (!selectedId) return;
+
+  design = design.filter((charm) => charm.id !== selectedId);
+  selectedId = null;
+
+  $("selection-status").textContent =
+    "Select a charm on the bracelet to remove it.";
+
+  renderPlaced();
+  renderSummary();
+};
+
+function loadImage(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = source;
   });
 }
 
+$("save-button").onclick = async () => {
+  if (!selectedChain) return;
 
-/* =========================================
-   GET AVAILABLE CHARM
-   ========================================= */
+  const button = $("save-button");
+  button.textContent = "Creating image…";
+  button.disabled = true;
 
-function findAvailableCharm(id) {
+  try {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
-  return availableCharms.find(
-    charm => charm.id === id
-  );
-}
+    canvas.width = 1080;
+    canvas.height = 1850;
 
+    context.fillStyle = "#fffaf0";
+    context.fillRect(0, 0, 1080, 1850);
 
-/* =========================================
-   ADD CHARM
-   ========================================= */
+    try {
+      const logo = await loadImage("assets/logo.png");
+      const scale = Math.min(240 / logo.width, 75 / logo.height);
 
-async function addCharm(charm) {
+      context.drawImage(
+        logo,
+        (1080 - logo.width * scale) / 2,
+        30,
+        logo.width * scale,
+        logo.height * scale
+      );
+    } catch {
+      /* The download still works if the logo cannot load. */
+    }
 
-  const img = await loadImage(charm.src);
+    context.fillStyle = "#bf8b2c";
+    context.font = "bold 28px sans-serif";
+    context.textAlign = "center";
+    context.fillText("YOUR CHARM BRACELET DESIGN", 540, 140);
 
-  /*
-     Calculate starting position.
+    context.fillStyle = "#35291f";
+    context.font = "bold 49px Georgia";
+    context.fillText("Made especially for you", 540, 195);
 
-     Charms are spread across the bracelet
-     rather than stacked together.
-  */
-  const index =
-    placedCharms.length;
+    context.fillStyle = "#fffdf8";
+    context.fillRect(50, 230, 980, 520);
 
-  const centerX =
-    canvas.width / 2;
+    const chainImage = await loadImage(selectedChain.image);
+    const chainScale = Math.min(900 / chainImage.width, 420 / chainImage.height);
+    const chainWidth = chainImage.width * chainScale;
+    const chainHeight = chainImage.height * chainScale;
 
-  const totalWidth =
-    Math.max(
-      0,
-      (index + 1) * INITIAL_SPACING
+    context.drawImage(
+      chainImage,
+      (1080 - chainWidth) / 2,
+      280 + (420 - chainHeight) / 2,
+      chainWidth,
+      chainHeight
     );
 
-  let startX;
+    for (const charm of design) {
+      const image = await loadImage(charmPath(charm));
+      const size = 100;
 
-  if (index === 0) {
+      context.drawImage(
+        image,
+        (charm.x / 100) * 980 + 50 - size / 2,
+        (charm.y / 100) * 520 + 230 - size / 2,
+        size,
+        size
+      );
+    }
 
-    startX = centerX;
+    let y = 825;
 
-  } else {
+    context.textAlign = "left";
+    context.fillStyle = "#35291f";
+    context.font = "bold 30px sans-serif";
+    context.fillText("Design summary", 70, y);
 
-    const existingCount =
-      placedCharms.length;
+    y += 55;
+    context.font = "25px sans-serif";
 
-    const groupWidth =
-      existingCount * INITIAL_SPACING;
+    function drawLine(left, right) {
+      context.fillStyle = "#584837";
+      context.textAlign = "left";
+      context.fillText(left, 70, y);
 
-    const firstX =
-      centerX - groupWidth / 2;
+      context.textAlign = "right";
+      context.fillText(right, 1010, y);
 
-    /*
-       Re-space all existing charms
-       whenever a new one is added.
-    */
-    placedCharms.forEach((item, i) => {
+      y += 43;
+    }
 
-      item.x =
-        centerX -
-        ((existingCount) * INITIAL_SPACING) / 2 +
-        i * INITIAL_SPACING +
-        INITIAL_SPACING / 2;
+    drawLine(selectedChain.name, money(selectedChain.price));
 
+    const grouped = design.reduce((all, charm) => {
+      const key = `${charm.categoryName}-${charm.prefix}-${charm.number}`;
+
+      if (!all[key]) {
+        all[key] = { ...charm, count: 0 };
+      }
+
+      all[key].count += 1;
+      return all;
+    }, {});
+
+    Object.values(grouped).forEach((charm) => {
+      drawLine(
+        `${charm.categoryName} ${charm.prefix}-${pad(charm.number)} × ${charm.count}`,
+        money(charm.price * charm.count)
+      );
     });
 
-    startX =
-      centerX -
-      ((existingCount + 1) * INITIAL_SPACING) / 2 +
-      existingCount * INITIAL_SPACING +
-      INITIAL_SPACING / 2;
-  }
-
-  /*
-     Put charms slightly below the
-     center of the bracelet.
-  */
-  const startY =
-    canvas.height / 2 + 45;
-
-  placedCharms.push({
-    charm,
-    img,
-    x: startX,
-    y: startY
-  });
-
-  selectedCharmIndex =
-    placedCharms.length - 1;
-
-  updatePrice();
-  drawCanvas();
-}
-
-
-/* =========================================
-   FIND CHARM AT POSITION
-   ========================================= */
-
-function findCharmAt(x, y) {
-
-  /*
-     Check from topmost charm backwards.
-  */
-  for (
-    let i = placedCharms.length - 1;
-    i >= 0;
-    i--
-  ) {
-
-    const item =
-      placedCharms[i];
-
-    const distance =
-      Math.sqrt(
-        Math.pow(x - item.x, 2) +
-        Math.pow(y - item.y, 2)
-      );
-
-    /*
-       Larger click area than the visual
-       charm itself, making mobile easier.
-    */
-    if (distance <= CHARM_SIZE * 0.75) {
-      return i;
-    }
-  }
-
-  return null;
-}
-
-
-/* =========================================
-   CANVAS POSITION
-   ========================================= */
-
-function getCanvasPosition(event) {
-
-  const rect =
-    canvas.getBoundingClientRect();
-
-  const scaleX =
-    canvas.width / rect.width;
-
-  const scaleY =
-    canvas.height / rect.height;
-
-  let clientX;
-  let clientY;
-
-  if (event.touches && event.touches.length) {
-
-    clientX =
-      event.touches[0].clientX;
-
-    clientY =
-      event.touches[0].clientY;
-
-  } else {
-
-    clientX =
-      event.clientX;
-
-    clientY =
-      event.clientY;
-  }
-
-  return {
-    x:
-      (clientX - rect.left) * scaleX,
-
-    y:
-      (clientY - rect.top) * scaleY
-  };
-}
-
-
-/* =========================================
-   MOUSE DOWN
-   ========================================= */
-
-canvas.addEventListener(
-  "mousedown",
-  function(event) {
-
-    const pos =
-      getCanvasPosition(event);
-
-    const index =
-      findCharmAt(
-        pos.x,
-        pos.y
-      );
-
-    if (index === null) {
-
-      selectedCharmIndex = null;
-      return;
-    }
-
-    selectedCharmIndex = index;
-
-    const item =
-      placedCharms[index];
-
-    dragOffsetX =
-      pos.x - item.x;
-
-    dragOffsetY =
-      pos.y - item.y;
-
-    dragging = true;
-
-    event.preventDefault();
-  }
-);
-
-
-/* =========================================
-   MOUSE MOVE
-   ========================================= */
-
-canvas.addEventListener(
-  "mousemove",
-  function(event) {
-
-    if (!dragging) return;
-
-    if (
-      selectedCharmIndex === null
-    ) {
-      return;
-    }
-
-    const pos =
-      getCanvasPosition(event);
-
-    const item =
-      placedCharms[
-        selectedCharmIndex
-      ];
-
-    /*
-       Completely free movement.
-       No line.
-       No snapping.
-    */
-    item.x =
-      pos.x - dragOffsetX;
-
-    item.y =
-      pos.y - dragOffsetY;
-
-    /*
-       Keep charm inside canvas.
-    */
-    const margin =
-      CHARM_SIZE / 2;
-
-    item.x =
-      Math.max(
-        margin,
-        Math.min(
-          canvas.width - margin,
-          item.x
-        )
-      );
-
-    item.y =
-      Math.max(
-        margin,
-        Math.min(
-          canvas.height - margin,
-          item.y
-        )
-      );
-
-    drawCanvas();
-  }
-);
-
-
-/* =========================================
-   MOUSE UP
-   ========================================= */
-
-window.addEventListener(
-  "mouseup",
-  function() {
-
-    dragging = false;
-  }
-);
-
-
-/* =========================================
-   TOUCH START
-   ========================================= */
-
-canvas.addEventListener(
-  "touchstart",
-  function(event) {
-
-    const pos =
-      getCanvasPosition(event);
-
-    const index =
-      findCharmAt(
-        pos.x,
-        pos.y
-      );
-
-    if (index === null) {
-      return;
-    }
-
-    selectedCharmIndex =
-      index;
-
-    const item =
-      placedCharms[index];
-
-    dragOffsetX =
-      pos.x - item.x;
-
-    dragOffsetY =
-      pos.y - item.y;
-
-    dragging = true;
-
-    event.preventDefault();
-  },
-  { passive: false }
-);
-
-
-/* =========================================
-   TOUCH MOVE
-   ========================================= */
-
-canvas.addEventListener(
-  "touchmove",
-  function(event) {
-
-    if (!dragging) return;
-
-    if (
-      selectedCharmIndex === null
-    ) {
-      return;
-    }
-
-    const pos =
-      getCanvasPosition(event);
-
-    const item =
-      placedCharms[
-        selectedCharmIndex
-      ];
-
-    item.x =
-      pos.x - dragOffsetX;
-
-    item.y =
-      pos.y - dragOffsetY;
-
-    const margin =
-      CHARM_SIZE / 2;
-
-    item.x =
-      Math.max(
-        margin,
-        Math.min(
-          canvas.width - margin,
-          item.x
-        )
-      );
-
-    item.y =
-      Math.max(
-        margin,
-        Math.min(
-          canvas.height - margin,
-          item.y
-        )
-      );
-
-    drawCanvas();
-
-    event.preventDefault();
-  },
-  { passive: false }
-);
-
-
-/* =========================================
-   TOUCH END
-   ========================================= */
-
-canvas.addEventListener(
-  "touchend",
-  function() {
-
-    dragging = false;
-  }
-);
-
-
-/* =========================================
-   REMOVE SELECTED CHARM
-   ========================================= */
-
-function removeSelectedCharm() {
-
-  if (
-    selectedCharmIndex === null
-  ) {
-    return;
-  }
-
-  placedCharms.splice(
-    selectedCharmIndex,
-    1
-  );
-
-  selectedCharmIndex = null;
-
-  updatePrice();
-  drawCanvas();
-}
-
-
-/* =========================================
-   CLEAR DESIGN
-   ========================================= */
-
-function clearDesign() {
-
-  placedCharms = [];
-  selectedCharmIndex = null;
-
-  updatePrice();
-  drawCanvas();
-}
-
-
-/* =========================================
-   UPDATE PRICE
-   ========================================= */
-
-function updatePrice() {
-
-  let total =
-    BRACELET_PRICES[
-      selectedBracelet
-    ];
-
-  placedCharms.forEach(item => {
-
-    total +=
-      Number(item.charm.price);
-  });
-
-  const priceElement =
-    document.getElementById(
-      "totalPrice"
+    const total =
+      selectedChain.price +
+      design.reduce((sum, charm) => sum + charm.price, 0);
+
+    y += 15;
+
+    context.strokeStyle = "#e8d8b7";
+    context.beginPath();
+    context.moveTo(70, y);
+    context.lineTo(1010, y);
+    context.stroke();
+
+    y += 55;
+
+    context.fillStyle = "#6c1f32";
+    context.font = "bold 36px sans-serif";
+    context.textAlign = "left";
+    context.fillText("Total", 70, y);
+
+    context.textAlign = "right";
+    context.fillText(money(total), 1010, y);
+
+    context.textAlign = "left";
+    context.font = "22px sans-serif";
+    context.fillStyle = "#77654f";
+    context.fillText(
+      "Delivery cost will be calculated separately as per the address.",
+      70,
+      y + 65
     );
 
-  if (priceElement) {
-
-    priceElement.textContent =
-      `AED ${total}`;
-  }
-}
-
-
-/* =========================================
-   SAVE DESIGN
-   ========================================= */
-
-function saveDesign() {
-
-  const link =
-    document.createElement("a");
-
-  link.download =
-    "ZAY-my-bracelet.png";
-
-  link.href =
-    canvas.toDataURL("image/png");
-
-  link.click();
-}
-
-
-/* =========================================
-   CHAIN SELECTION
-   ========================================= */
-
-function setupChains() {
-
-  const chainCards =
-    document.querySelectorAll(
-      ".chain-card"
-    );
-
-  chainCards.forEach(card => {
-
-    card.addEventListener(
-      "click",
-      function() {
-
-        selectedBracelet =
-          Number(
-            card.dataset.bracelet
-          );
-
-        chainCards.forEach(c =>
-          c.classList.remove(
-            "selected"
-          )
-        );
-
-        card.classList.add(
-          "selected"
-        );
-
-        updatePrice();
-        drawCanvas();
-      }
-    );
-  });
-
-  const firstCard =
-    document.querySelector(
-      '.chain-card[data-bracelet="1"]'
-    );
-
-  if (firstCard) {
-    firstCard.classList.add(
-      "selected"
-    );
-  }
-}
-
-
-/* =========================================
-   CATEGORY FILTER
-   ========================================= */
-
-function setupCategories() {
-
-  const select =
-    document.getElementById(
-      "categorySelect"
-    );
-
-  if (!select) return;
-
-  const categories =
-    [
-      ...new Set(
-        availableCharms.map(
-          charm => charm.category
-        )
-      )
-    ].sort();
-
-  select.innerHTML =
-    `<option value="all">All Charms</option>`;
-
-  categories.forEach(category => {
-
-    const option =
-      document.createElement(
-        "option"
-      );
-
-    option.value =
-      category;
-
-    option.textContent =
-      category;
-
-    select.appendChild(
-      option
-    );
-  });
-
-  select.addEventListener(
-    "change",
-    function() {
-
-      renderCharmGrid(
-        select.value
-      );
-    }
-  );
-}
-
-
-/* =========================================
-   RENDER CHARM GRID
-   ========================================= */
-
-function renderCharmGrid(
-  category = "all"
-) {
-
-  const grid =
-    document.getElementById(
-      "charmGrid"
-    );
-
-  if (!grid) return;
-
-  grid.innerHTML = "";
-
-  const charms =
-    availableCharms.filter(
-      charm =>
-        category === "all" ||
-        charm.category === category
-    );
-
-  charms.forEach(charm => {
-
-    const card =
-      document.createElement(
-        "button"
-      );
-
-    card.className =
-      "charm-card";
-
-    card.type =
-      "button";
-
-    card.innerHTML = `
-      <img
-        src="${charm.src}"
-        alt=""
-      >
-      <span class="charm-price">
-        AED ${charm.price}
-      </span>
-    `;
-
-    card.addEventListener(
-      "click",
-      function() {
-
-        addCharm(charm);
-      }
-    );
-
-    grid.appendChild(card);
-  });
-}
-
-
-/* =========================================
-   BUTTONS
-   ========================================= */
-
-function setupButtons() {
-
-  const removeButton =
-    document.getElementById(
-      "removeCharm"
-    );
-
-  const clearButton =
-    document.getElementById(
-      "clearDesign"
-    );
-
-  const saveButton =
-    document.getElementById(
-      "saveDesign"
-    );
-
-  if (removeButton) {
-
-    removeButton.addEventListener(
-      "click",
-      removeSelectedCharm
-    );
-  }
-
-  if (clearButton) {
-
-    clearButton.addEventListener(
-      "click",
-      clearDesign
-    );
-  }
-
-  if (saveButton) {
-
-    saveButton.addEventListener(
-      "click",
-      saveDesign
-    );
-  }
-}
-
-
-/* =========================================
-   INITIALIZE
-   ========================================= */
-
-async function initialize() {
-
-  try {
-
-    availableCharms =
-      await CHARMS_READY;
-
-    console.log(
-      `ZAY: ${availableCharms.length} charms loaded.`
-    );
-
-    setupChains();
-    setupCategories();
-    renderCharmGrid();
-    setupButtons();
-
-    updatePrice();
-    drawCanvas();
-
+    const link = document.createElement("a");
+    link.download = "my-charm-bracelet-design.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
   } catch (error) {
-
-    console.error(
-      "ZAY initialization error:",
-      error
-    );
+    alert("Some images could not be found. Please check your assets folder.");
+    console.error(error);
+  } finally {
+    button.textContent = "Save design image";
+    button.disabled = false;
   }
-}
+};
 
-
-initialize();
+renderChains();
+renderCategories();
+renderCharms();
+renderPlaced();
+renderSummary();
