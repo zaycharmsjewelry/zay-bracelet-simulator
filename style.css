@@ -122,15 +122,6 @@ main {
   object-fit: contain;
 }
 
-.chain-card img.chain-cable,
-#bracelet-image.chain-cable {
-  transform: scaleX(2.1) !important;
-}
-
-.chain-card img.chain-curb,
-#bracelet-image.chain-curb {
-  transform: scaleX(1.45) !important;
-}
 
 .chain-card span {
   display: block;
