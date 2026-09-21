@@ -11,47 +11,85 @@
 
 <body>
 
-  <!-- HEADER -->
+  <!-- =====================================
+       HEADER
+  ====================================== -->
+
   <header class="site-header">
+
     <img
       src="assets/logo.png"
       alt="ZAY Charms Jewelry"
       class="logo"
     >
 
-    <p class="tagline">BUILD YOUR BRACELET</p>
+    <p class="brand-name">
+      ZAY CHARMS JEWELRY
+    </p>
+
+    <p class="tagline">
+      BUILD YOUR BRACELET
+    </p>
+
   </header>
 
 
-  <!-- MAIN -->
+  <!-- =====================================
+       MAIN
+  ====================================== -->
+
   <main class="builder">
+
 
     <!-- =====================================
          LEFT SIDE
-         CHAIN + BRACELET + PRICE
+         CHAINS + VISUALIZATION + PRICE
     ====================================== -->
+
     <section class="design-side">
 
-      <!-- CHAIN SELECTION -->
+
+      <!-- ===================================
+           CHAIN SELECTION
+      ==================================== -->
+
       <div class="section-block">
 
         <div class="section-heading">
-          <span class="step">01</span>
+
+          <span class="step">
+            01
+          </span>
 
           <div>
-            <h2>CHOOSE YOUR CHAIN</h2>
-            <p>Select the chain you want to build on.</p>
+
+            <h2>
+              CHOOSE YOUR CHAIN
+            </h2>
+
+            <p>
+              Select the chain you want to build on.
+            </p>
+
           </div>
+
         </div>
 
 
-        <div id="chainGrid" class="chain-grid">
+        <div
+          id="chainGrid"
+          class="chain-grid"
+        >
+
+
+          <!-- CABLE -->
 
           <button
             type="button"
             class="chain-card active"
             data-bracelet="1"
           >
+
             <img
               src="assets/bracelet-1.png"
               alt="Cable Chain"
@@ -64,14 +102,18 @@
             <span class="chain-price">
               AED 15
             </span>
+
           </button>
 
+
+          <!-- CURB -->
 
           <button
             type="button"
             class="chain-card"
             data-bracelet="2"
           >
+
             <img
               src="assets/bracelet-2.png"
               alt="Curb Chain"
@@ -84,14 +126,18 @@
             <span class="chain-price">
               AED 18
             </span>
+
           </button>
 
+
+          <!-- OVAL -->
 
           <button
             type="button"
             class="chain-card"
             data-bracelet="3"
           >
+
             <img
               src="assets/bracelet-3.png"
               alt="Oval Link Chain"
@@ -104,14 +150,18 @@
             <span class="chain-price">
               AED 22
             </span>
+
           </button>
 
+
+          <!-- PAPERCLIP -->
 
           <button
             type="button"
             class="chain-card"
             data-bracelet="4"
           >
+
             <img
               src="assets/bracelet-4.png"
               alt="Paperclip Chain"
@@ -124,23 +174,39 @@
             <span class="chain-price">
               AED 20
             </span>
+
           </button>
+
 
         </div>
 
       </div>
 
 
-      <!-- BRACELET PREVIEW -->
+      <!-- ===================================
+           BRACELET VISUALIZATION
+      ==================================== -->
+
       <div class="section-block preview-block">
 
         <div class="section-heading">
-          <span class="step">02</span>
+
+          <span class="step">
+            02
+          </span>
 
           <div>
-            <h2>YOUR BRACELET</h2>
-            <p>Tap a charm to select it, then drag to adjust.</p>
+
+            <h2>
+              YOUR BRACELET
+            </h2>
+
+            <p>
+              Click a charm to add it, then drag it anywhere you like.
+            </p>
+
           </div>
+
         </div>
 
 
@@ -148,12 +214,14 @@
 
           <canvas
             id="braceletCanvas"
-            width="1000"
-            height="420"
+            width="1100"
+            height="520"
           ></canvas>
 
         </div>
 
+
+        <!-- BUTTONS -->
 
         <div class="action-buttons">
 
@@ -165,6 +233,7 @@
             REMOVE
           </button>
 
+
           <button
             id="clearBtn"
             type="button"
@@ -172,6 +241,7 @@
           >
             CLEAR
           </button>
+
 
           <button
             id="saveBtn"
@@ -186,31 +256,45 @@
       </div>
 
 
-      <!-- PRICE -->
+      <!-- ===================================
+           PRICE
+      ==================================== -->
+
       <div class="price-box">
 
         <div class="price-heading">
-          <span>YOUR DESIGN</span>
+          YOUR DESIGN
         </div>
 
 
         <div class="price-line">
-          <span>Chain</span>
+
+          <span>
+            Chain
+          </span>
+
           <strong id="braceletPriceLabel">
             Cable Chain
           </strong>
+
         </div>
 
 
         <div class="price-line">
-          <span>Chain Price</span>
+
+          <span>
+            Chain Price
+          </span>
+
           <strong id="braceletPrice">
             AED 15
           </strong>
+
         </div>
 
 
         <div class="price-line">
+
           <span id="charmCountLabel">
             0 Charms
           </span>
@@ -218,6 +302,7 @@
           <strong id="charmPrice">
             AED 0
           </strong>
+
         </div>
 
 
@@ -225,17 +310,22 @@
 
 
         <div class="total-line">
-          <span>TOTAL</span>
+
+          <span>
+            TOTAL
+          </span>
 
           <strong id="totalPrice">
             AED 15
           </strong>
+
         </div>
 
 
-       <p class="delivery-note">
-  Delivery charges will be calculated later based on your delivery address.
-</p>
+        <p class="delivery-note">
+          Delivery cost is added later based on your delivery address.
+          This total is for the chain and charms only.
+        </p>
 
 
         <p
@@ -245,7 +335,9 @@
           No charms selected yet.
         </p>
 
+
       </div>
+
 
     </section>
 
@@ -255,28 +347,45 @@
          RIGHT SIDE
          CHARMS
     ====================================== -->
+
     <section class="charms-side">
+
 
       <div class="section-heading">
 
-        <span class="step">03</span>
+        <span class="step">
+          03
+        </span>
 
         <div>
-          <h2>CHOOSE YOUR CHARMS</h2>
-          <p>Pick your favourites to create your story.</p>
+
+          <h2>
+            CHOOSE YOUR CHARMS
+          </h2>
+
+          <p>
+            Pick your favourites to create your story.
+          </p>
+
         </div>
 
       </div>
 
 
-      <!-- CATEGORY -->
+      <!-- ===================================
+           CATEGORY
+      ==================================== -->
+
       <div class="category-wrapper">
 
         <label for="categoryFilter">
           CATEGORY
         </label>
 
-        <select id="categoryFilter">
+
+        <select
+          id="categoryFilter"
+        >
 
           <option value="all">
             All Charms
@@ -287,18 +396,26 @@
       </div>
 
 
-      <!-- CHARMS -->
+      <!-- ===================================
+           CHARM GRID
+      ==================================== -->
+
       <div
         id="charmGrid"
         class="charm-grid"
       ></div>
 
+
     </section>
+
 
   </main>
 
 
-  <!-- SCRIPTS -->
+  <!-- =====================================
+       SCRIPTS
+  ====================================== -->
+
   <script src="charms.js"></script>
   <script src="script.js"></script>
 
