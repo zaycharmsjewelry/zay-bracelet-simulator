@@ -29,9 +29,13 @@ const MAX_CHARMS = 12;
 
 /* Add sold-out charm filenames here, without .png */
 const SOLD_OUT = [
-  "bow-003",
-  "flowers-014",
-  "heart-007"
+  "characters-003",
+  "characters-013",
+  "flowers-021",
+  "fruits-003",
+  "ocean-001",
+  "ocean-005",
+  "ocean-008"
 ];
 
 const charmData = categories.map(([name, prefix, start, end, price]) => ({
