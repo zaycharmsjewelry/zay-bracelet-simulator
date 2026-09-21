@@ -112,6 +112,14 @@ h2 {
 }
 
 .chain-card img {
+  /* These image files contain extra transparent space, so enlarge them horizontally. */
+.chain-cable {
+  transform: scaleX(1.75);
+}
+
+.chain-curb {
+  transform: scaleX(1.3);
+}
   display: block;
   width: 100%;
   aspect-ratio: 1.55;
