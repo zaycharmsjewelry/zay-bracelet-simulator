@@ -133,7 +133,7 @@ const selectedList =
    38px = small/delicate.
 */
 
-const CHARM_SIZE = 38;
+const CHARM_SIZE = 52;
 
 
 /*
@@ -387,23 +387,16 @@ function drawCanvas() {
         canvas.height -
         size.height
       ) / 2;
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = "high";
 
-
-    ctx.drawImage(
-
-      braceletImage,
-
-      x,
-
-      y,
-
-      size.width,
-
-      size.height
-
-    );
-
-  }
+ctx.drawImage(
+  img,
+  item.x - CHARM_SIZE / 2,
+  item.y - CHARM_SIZE / 2,
+  CHARM_SIZE,
+  CHARM_SIZE
+);
 
 
   /* =====================================
