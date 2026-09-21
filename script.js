@@ -45,7 +45,7 @@ function renderChains() {
     <button class="chain-card"
       aria-pressed="${selectedChain?.id === chain.id}"
       data-chain="${chain.id}">
-      <img src="${chain.image}" alt="${chain.name}">
+      <img class="chain-${chain.id}" src="${chain.image}" alt="${chain.name}">
       <span>${chain.name}</span>
       <b>${money(chain.price)}</b>
     </button>
@@ -60,6 +60,7 @@ function selectChain(id) {
   selectedChain = CHAINS.find((chain) => chain.id === id);
 
   $("bracelet-image").src = selectedChain.image;
+  $("bracelet-image").className = `chain-${selectedChain.id}`;
   $("bracelet-image").style.display = "block";
   $("choose-chain-message").style.display = "none";
   $("save-button").disabled = false;
@@ -313,13 +314,17 @@ $("save-button").onclick = async () => {
     const chainWidth = chainImage.width * chainScale;
     const chainHeight = chainImage.height * chainScale;
 
-    context.drawImage(
-      chainImage,
-      (1080 - chainWidth) / 2,
-      280 + (420 - chainHeight) / 2,
-      chainWidth,
-      chainHeight
-    );
+    const chainWidthMultiplier =
+  selectedChain.id === "cable" ? 1.75 :
+  selectedChain.id === "curb" ? 1.3 : 1;
+
+context.drawImage(
+  chainImage,
+  (1080 - chainWidth * chainWidthMultiplier) / 2,
+  280 + (420 - chainHeight) / 2,
+  chainWidth * chainWidthMultiplier,
+  chainHeight
+);
 
     for (const charm of design) {
       const image = await loadImage(charmPath(charm));
